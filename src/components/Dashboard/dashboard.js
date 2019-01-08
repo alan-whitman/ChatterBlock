@@ -7,11 +7,12 @@ import Profile from './Profiles/profiles';
 import Settings from './Settings/settings';
 import FriendUserBar from './FriendsBar_ChannelUsers/frienduserbar';
 import PrivateMsg from './PrivateMessaging/privatemsg';
+import './dashboard.css';
 
 class Dashboard extends Component {
     render(){
         return (
-            <div>
+            <div className="Dashboard">
                 <h1>Dashboard</h1>
                 <NavBar/>
                 <Switch>
