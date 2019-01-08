@@ -1,0 +1,21 @@
+.landingHeader {
+    width: 100%;
+    height: 50px;
+    background-color: gray;
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    justify-content: space-between;
+}
+
+.LoginBar {
+    display: flex;
+    justify-content: space-between;
+    width: 375px;
+}
+
+.landingBody {
+    width: 100%;
+    height: calc(100vh - 50px);
+    padding: 50px;
+}

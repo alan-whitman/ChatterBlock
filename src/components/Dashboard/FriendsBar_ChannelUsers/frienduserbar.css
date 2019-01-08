@@ -1,0 +1,10 @@
+.rightBar {
+    width: 300px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    background-color: gray;
+    top: 0;
+    right: 0;
+}
