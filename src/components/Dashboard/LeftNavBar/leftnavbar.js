@@ -7,7 +7,7 @@ class NavBar extends Component {
         return (
             <div className="leftBar">
                 <div className="stillLeftBar">
-                    <div className="navLogo"><Link to="/">Logo Here</Link></div>
+                    <div className="navLogo"><Link to="/">Logo Here</Link><Link to="/dashboard">Recent</Link></div>
 
                     <div className="activeChannels"><h3>Active channels</h3></div>
 

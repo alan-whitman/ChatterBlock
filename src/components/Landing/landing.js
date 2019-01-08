@@ -26,8 +26,27 @@ class Landing extends Component {
                 </header>
 
                 <div className="landingBody">
-                    <div>Title Here</div>
-                    <Link to="/dashboard"><h1>Continue as Guest</h1></Link>
+                    <h2>Title Here</h2>
+                    <div className="sideways">
+                        <div className="registrationForm">
+                            <h2>Registration</h2>
+                            <input placeholder="username" />
+                            <input placeholder="email" />
+                            <input placeholder="password" />
+                            <input placeholder="confirm password" />
+                            <button>submit</button>
+                        </div>
+
+                        <div className="divider"/>
+
+                        <div className="whyRegister">
+                            <p>
+                                You should register because...
+                            </p>
+                            <Link to="/dashboard"><h1>Continue as Guest</h1></Link>
+                        </div>
+                    </div>
+
                 </div></div>}
             </div>
         )
