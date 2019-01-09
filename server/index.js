@@ -27,11 +27,13 @@ massive(CONNECTION_STRING).then(db => {
 
 app.use(bodyParser.json());
 
-app.use(session({
-  secret: SECRET,
-  resave: true,
-  saveUninitialized: false
-}))
+const sessionMiddleware = session({
+    secret: SECRET,
+    resave: true,
+    saveUninitialized: false
+});
+
+app.use(sessionMiddleware);
 
 //Auth
     app.post('/auth/register', Auth.register)
@@ -83,8 +85,16 @@ app.use(session({
 
 //Sockets
 
-io.on('connection', client => {
-    console.log('client connected: ', client.id);
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res, next);
+})
+
+io.on('connection', socket => {
+    // console.log('client connected: ', socket.request.session.user);
+    socket.on('test', () => {
+        console.log(socket.request.session);
+    })
+    // socket.on('get friend list', session.user.id => {})
 });
 
 http.listen(SERVER_PORT, () => {
