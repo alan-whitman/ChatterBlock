@@ -8,6 +8,13 @@ const { CONNECTION_STRING, SERVER_PORT, SECRET} = process.env
 
 //Controllers 
 
+const Auth = require('./controllers/Auth')
+const Channel = require('./controllers/Channels')
+const Friend = require('./controllers/Friends')
+const Private = require('./controllers/PrivateMessages')
+const Profile = require('./controllers/Profile')
+const Search = require('./controllers/Search')
+
 
 const app = express()
 
@@ -28,12 +35,12 @@ app.use(session({
     app.post('/auth/register', Auth.register)
     // Login to account
     app.post('/auth/login', Auth.login)
-    // Logout of account
+    // // Logout of account
     app.get('/auth/logout', Auth.logout)
-    // Get account information
+    // // Get account information
     app.get('/auth/currentUser', Auth.getCurrentUser)
-    // Update account information
-    app.put('/auth/profile/update/:id', Auth.update)
+    // // Update account information
+    app.put('/auth/update/:id', Auth.update)
 
 //Friend Management
     // Send Friend Request
@@ -44,11 +51,17 @@ app.use(session({
 
 //Channel Actions
     // Get all Channels
+    app.get('/api/channel/all', Channel.getAllChannels)
     // Create Channel
+    app.post('/api/channel/new', Channel.createChannel)
+    // Get Channel
+    app.get('/api/channel', Channel.getChannel)
+    // Get Channel and Messages
+    app.get('/api/channel/messages', Channel.getChannelWithMessages)
     // Add Channel Message
+    app.post('/api/channel/message/new', Channel.createMessage)
     // Edit Channel Message
     // Delete Channel Message
-    // Get all Channel Messages
     // React to Channel Message
 
 //Private Message Actions
