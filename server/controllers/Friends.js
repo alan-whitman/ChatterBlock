@@ -11,5 +11,16 @@ requestFriend: async (req,res) => {
         console.log('error sending request:', error)
         res.status(500).send(error)   
     }
+},
+getRequests: async (req, res) => {
+    try{
+        const db = req.app.get('db')
+        const {user_id} = req.body
+        let allRequests = await db.getRequests(user_id)
+        res.status(200).send(allRequests)
+    }catch (error) {
+        console.log('error getting user requests:', error)
+        res.status(500).send(error)  
+    }
 }
 }

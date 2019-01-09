@@ -45,9 +45,10 @@ app.use(session({
 //Friend Management
     // Send Friend Request
     app.post('/api/friend/request', Friend.requestFriend)
-    // Get Friend Requests
+    // Get Friend Requests for user
+    app.get('/api/friend/getRequests', Friend.getRequests)
     // Accept Friend Request
-    // Get Friends
+    // Get Friends for user
     // Delete Friend
 
 //Channel Actions
