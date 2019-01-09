@@ -2,7 +2,6 @@ module.exports = {
     createChannel: async (req,res) => {
         try {
         const db = req.app.get('db')
-            //this is post id    
         const {channel_name, creator_id} = req.body
             // get channel name and creator from rec body
             // console.log(req.body)
@@ -24,7 +23,8 @@ console.log(channelResponse)
 
 
         }catch (error){
-
+            console.log('error creating channel:', error)
+            res.status(500).send(error)   
         }
     },
     getChannel: async (req,res) => {
@@ -38,7 +38,7 @@ console.log(channelResponse)
         res.send(channel)
 
         } catch (error) {
-        console.log('error getting post:', error)
+        console.log('error getting channel:', error)
         res.status(500).send(error)           
         }
     },
@@ -61,7 +61,7 @@ console.log(channelResponse)
         let channelFull = await db.getChannelWithMessages(channel_id)
         res.send(channelFull)
         } catch (error){
-// console.log('error getting channel', error)
+console.log('error getting channel', error)
         }
     },
     createMessage: async (req, res) => {
@@ -95,13 +95,12 @@ console.log(channelResponse)
         // Unfollow Channel
     unfollowChannel: async (req, res) => {
         try{
-            console.log('shit')
         const db = req.app.get('db')
         // get id of connetion between user and channel
         const {id} = req.body
         console.log(`destroying connection: ${id}`)
         let unfollowChannel = await db.unfollowChannel(id)
-        res.send('user is no longer follow channel')
+        res.send('user is no longer following channel')
         }catch (error){
             console.log('error unfollowing Channel',  error)
         }

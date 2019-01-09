@@ -44,6 +44,7 @@ app.use(session({
 
 //Friend Management
     // Send Friend Request
+    app.post('/api/friend/request', Friend.requestFriend)
     // Get Friend Requests
     // Accept Friend Request
     // Get Friends
