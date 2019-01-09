@@ -2,6 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const massive = require('massive');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+
 require('dotenv').config();
 const { CONNECTION_STRING, SERVER_PORT, SECRET} = process.env
 
@@ -76,6 +81,15 @@ app.use(session({
 
 //Analytics
 
-app.listen(SERVER_PORT, () => {
-console.log(`listening on port: ${SERVER_PORT}`)
+
+
+
+//Sockets
+
+io.on('connection', client => {
+    console.log('client connected: ', client.id);
+});
+
+http.listen(SERVER_PORT, () => {
+    console.log(`listening on port: ${SERVER_PORT}`)
 })
