@@ -82,11 +82,12 @@ module.exports = {
         try {
         const db = req.app.get('db')
         // console.log("right here------",req.body)
-        const {id, username, email, user_image, about_text} = req.body
+        const { id } = req.params
+        const { username, email, user_image, about_text} = req.body
         // console.log(id, username, email, user_image, about_text)
         let updateUser = await db.updateUser({id, username, email, user_image, about_text})
         // console.log(99999999,updateUser)
-        res.send(updateUser)
+        res.send(updateUser[0])
 
         } catch (error) {
             console.log('error updating account:', error)

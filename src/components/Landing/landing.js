@@ -26,21 +26,35 @@ class Landing extends Component {
           [name]: value
         })
     }
-
+    
     handleLogin = () => {
-        axios.post('/auth/login', this.state).then(response => {
-            let user = response.data
-            this.props.userLoggedIn(user)
-        })
+        if (this.state.registerPassword === this.state.confirmPassword) {
+            axios.post('/auth/login', this.state).then(response => {
+                let user = response.data
+                this.props.userLoggedIn(user)
+            })
+        }
     }
-
+    
     handleRegister = () => {
         axios.post('/auth/register', this.state).then(response => {
             let user = response.data
             this.props.userLoggedIn(user)
-          })
+        })
+    }
+    
+    handleKeyUpL = (e) => {
+        if(e.keyCode === 13){
+            this.handleLogin()
+        }
     }
 
+    handleKeyUpR = (e) => {
+        if(e.keyCode === 13){
+            this.handleRegister()
+        }
+    }
+    
     render(){
         return (
             <div>
@@ -50,7 +64,7 @@ class Landing extends Component {
                     <section className="LoginBar">
                         <h1>Login: </h1>
                         <input name="loginEmail" type="text" placeholder="email" value={this.state.loginEmail} onChange={this.handleChange} />
-                        <input name="loginPassword" type="password" placeholder="password" value={this.state.loginPassword} onChange={this.handleChange} />
+                        <input name="loginPassword" type="password" placeholder="password" value={this.state.loginPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpL}/>
                         <button onClick={this.handleLogin} >submit</button>
                     </section>
                 </header>
@@ -63,7 +77,8 @@ class Landing extends Component {
                             <input name="registerUsername" type="text" placeholder="username" value={this.state.registerUsername}onChange={this.handleChange} />
                             <input name="registerEmail" type="text" placeholder="email" value={this.state.registerEmail} onChange={this.handleChange} />
                             <input name="registerPassword" type="password" placeholder="password" value={this.state.registerPassword} onChange={this.handleChange} />
-                            <input name="confirmPassword" type="password" placeholder="confirm password" value={this.state.confirmPassword} onChange={this.handleChange} />
+                            <input name="confirmPassword" type="password" placeholder="confirm password" value={this.state.confirmPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpR}/>
+                            {this.state.registerPassword !== this.state.confirmPassword && <div>Passwords do not match</div>}
                             <button onClick={this.handleRegister} >submit</button>
                         </div>
 
