@@ -60,6 +60,10 @@ app.use(session({
     app.get('/api/channel/messages', Channel.getChannelWithMessages)
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
+    // Follow Channel
+    app.post('/api/channel/follow', Channel.followChannel)
+    // Unfollow Channel
+    app.delete('/api/channel/unfollow', Channel.unfollowChannel)
     // Edit Channel Message
     // Delete Channel Message
     // React to Channel Message
