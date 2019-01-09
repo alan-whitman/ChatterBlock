@@ -17,7 +17,7 @@ class NavBar extends Component {
 
                     <div className="profileAndSettings">
                         <Link to="/dashboard/profile" ><h3>Username</h3></Link>
-                        <Link to="/dashboard/settings" ><i class="fas fa-cog"></i></Link>
+                        <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
                     </div>
                 </div>
                 
