@@ -20,9 +20,6 @@ const Private = require('./controllers/PrivateMessages')
 const Profile = require('./controllers/Profile')
 const Search = require('./controllers/Search')
 
-
-const app = express()
-
 massive(CONNECTION_STRING).then(db => {
     app.set('db', db)
     console.log('db connected!')
