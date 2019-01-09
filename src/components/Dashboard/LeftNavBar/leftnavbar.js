@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
+import { connect } from 'react-redux';
+import { userLoggedOut } from '../../../redux/reducer';
 
 class NavBar extends Component {
     render(){
+        console.log(this.props.user)
         return (
             <div className="leftBar">
                 <div className="stillLeftBar">
@@ -16,7 +19,7 @@ class NavBar extends Component {
                     <div className="channels"><Link to="/dashboard/channel" ><button>Channels</button></Link></div>
 
                     <div className="profileAndSettings">
-                        <Link to="/dashboard/profile" ><h3>Username</h3></Link>
+                        <Link to="/dashboard/profile" >{this.props.user.username}</Link>
                         <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
                     </div>
                 </div>
@@ -26,4 +29,11 @@ class NavBar extends Component {
     }
 }
 
-export default NavBar;
+function mapStateToProps(state) {
+    let { user } = state
+    return {
+      user
+    }
+  }
+  
+export default connect(mapStateToProps, { userLoggedOut })(NavBar);
