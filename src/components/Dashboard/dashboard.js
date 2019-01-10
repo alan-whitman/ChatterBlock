@@ -8,6 +8,10 @@ import Settings from './Settings/settings';
 import FriendUserBar from './FriendsBar_ChannelUsers/frienduserbar';
 import PrivateMsg from './PrivateMessaging/privatemsg';
 import './dashboard.css';
+import io from 'socket.io-client';
+const socketPath = window.location.host.split(':')[0];
+const socket = io(socketPath + ':5004');
+
 
 class Dashboard extends Component {
     render(){
@@ -22,7 +26,7 @@ class Dashboard extends Component {
                     <Route path="/dashboard/settings" component={Settings} />
                     <Route path="/dashboard/dms" component={PrivateMsg} />
                 </Switch>
-                <FriendUserBar/>
+                <FriendUserBar socket={socket} />
             </div>
         )
     }

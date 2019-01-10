@@ -54,7 +54,6 @@ class Settings extends Component {
     }
 
     render(){
-        console.log(this.props.user)
         return (
             <div>
                 {this.props.isAuthenticated ? <div>

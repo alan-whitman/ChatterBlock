@@ -7,7 +7,7 @@ module.exports = {
         // console.log('registering user')
         //get info from req body
         const {registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text} =req.body
-        console.log(req.body)
+        // console.log(req.body)
         // see if email is already in use
         let userResponse = await db.getUserByEmail(email)
         //if anything is returned email is already in use
@@ -28,7 +28,7 @@ module.exports = {
         req.session.user = newUser
         //send user info back to client
         res.send(newUser)
-        console.log(newUser)
+        // console.log(newUser)
 
         } catch (error) {
             console.log('error registering account:', error)
@@ -59,10 +59,9 @@ module.exports = {
         }
         // remove user hash before storing to session
         delete user.pw
-        console.log(user.pw)
+        // console.log(user.pw)
 
         req.session.user = user
-        console.log("Worked",req.session.user)
         res.send(req.session.user)
         } catch (error) {
             console.log('error logging into account:', error)

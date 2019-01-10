@@ -5,6 +5,7 @@ const massive = require('massive');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const sharedSession = require('express-socket.io-session');
 
 
 require('dotenv').config();
@@ -23,7 +24,7 @@ const Search = require('./controllers/Search')
 massive(CONNECTION_STRING).then(db => {
     app.set('db', db)
     console.log('db connected!')
-  }) 
+}) 
 
 app.use(bodyParser.json());
 
@@ -33,7 +34,15 @@ const sessionMiddleware = session({
     saveUninitialized: false
 });
 
+io.use(sharedSession(sessionMiddleware), {autoSave: true})
+
 app.use(sessionMiddleware);
+
+
+// io.use((socket, next) => {
+//     sessionMiddleware(socket.request, socket.request.res, next);
+// })
+
 
 //Auth
     app.post('/auth/register', Auth.register)
@@ -85,18 +94,15 @@ app.use(sessionMiddleware);
 
 //Sockets
 
-io.use((socket, next) => {
-    sessionMiddleware(socket.request, socket.request.res, next);
-})
-
 io.on('connection', socket => {
-    // console.log('client connected: ', socket.request.session.user);
+    console.log('client connected');
     socket.on('test', () => {
-        console.log(socket.request.session);
-    })
-    // socket.on('get friend list', session.user.id => {})
+        console.log('session', socket.handshake.session.user)
+        // if (socket.request.session.user)
+    });
+    // socket.on('disconnect', () => console.log('client disconnected'))
 });
 
 http.listen(SERVER_PORT, () => {
     console.log(`listening on port: ${SERVER_PORT}`)
-})
+});
