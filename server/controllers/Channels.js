@@ -29,11 +29,11 @@ console.log(channelResponse)
     },
     getChannel: async (req,res) => {
         try {
-        // console.log('attemping to get single post')
+        // console.log('attemping to get single channel')
         const db = req.app.get('db')
-    //this is post id    
+
         const {channel_name} = req.body
-    // need to verify user has rights to view
+
         let channel = await db.getChannelByName(channel_name)
         res.send(channel)
 
@@ -77,9 +77,7 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
         const db = req.app.get('db')
         const {user_id} =req.body
         let channels = await db.getAllSubscibedChannels(user_id)
-        // console.log(channels)
         var newChannels = []
-        var x =0
 
         //Loop over Channels array
         if(channels.length === 0){
@@ -89,16 +87,12 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
             try{
             // use this later    
             function addCount(num){
-                    channel.count = num
-                    // console.log(6666666666, channel)
-                    newChannels.push(channel)
-                x++
-                    // console.log(newChannels)
-                    if(newChannels.length === channels.length){
-                        console.log(newChannels)
-                        res.send(newChannels)
+                channel.count = num
+                newChannels.push(channel)
+                if(newChannels.length === channels.length){
+                    res.send(newChannels)
                 }
-                    }
+            }
 
             // Convert last view time to int
             let time = parseInt(channel.last_view_time)
@@ -109,11 +103,9 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
             addCount(messageCount[0].count)
 
             }catch (error){
-                console.log('FUUUUUUUUUUUUUCK',error)
+                console.log('error returning subscribed channel message count',error)
             }
         })
-        // console.log('new channels after:',newChannels, 'channels :::::::::::::::::',  channels)
-        console.log(newChannels.length,x, channels.length)
 
     }catch (error){
         console.log('error getting all subscribed channels and count', error)
@@ -128,18 +120,27 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
 
 
 
-
+// need set channel_message_view_time
     getChannelWithMessages: async (req,res) => {
         try {
 
         const db = req.app.get('db')
-        const {channel_id} = req.body
+        const {channel_id,user_id} = req.body
+        let time = Date.now()
         let channelFull = await db.getChannelWithMessages(channel_id)
+        console.log(channel_id,user_id,time)
+        db.updateChannelViewTime({channel_id,user_id,time})
         res.send(channelFull)
         } catch (error){
-console.log('error getting channel', error)
+        console.log('error getting channel', error)
         }
     },
+
+
+
+
+
+
     createMessage: async (req, res) => {
         try {
         console.log("attemping to add channel message", req.body)
