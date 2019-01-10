@@ -49,7 +49,7 @@ app.use(session({
     app.get('/api/friend/getRequests', Friend.getRequests)
     // Accept Friend Request
     // Get Friends for user
-    // Delete Friend
+    // Delete Friend (deactivate)
 
 //Channel Actions
     // Get all Channels
