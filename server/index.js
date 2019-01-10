@@ -52,6 +52,7 @@ app.use(sessionMiddleware);
     // Get Friend Requests for user
     app.get('/api/friend/getRequests', Friend.getRequests)
     // Accept Friend Request
+    app.post('/api/friend/acceptRequest', Friend.acceptRequest)
     // Get Friends for user
     // Delete Friend (deactivate)
 
