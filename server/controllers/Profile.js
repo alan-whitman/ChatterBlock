@@ -22,10 +22,26 @@ module.exports={
                 // Currently limited to 2 messages and ordered by time_stamp.  May need to change db query.  Not 100% on whether these are most recent or oldest.  should be a quick change
             let profileRecentMessages = await db.getProfileRecentMessages(id)
             
-                console.log(userData, userSubChannels, userFriends,postMeta, profileRecentMessages)
+
+
+                // console.log(userData, userSubChannels, userFriends,postMeta, profileRecentMessages)
+            // create new object for frontend
+            function buildJSON(userData, userSubChannels, userFriends,postMeta, profileRecentMessages){
+                let obj = {}
+                obj.user = userData[0];
+                obj.userSubChannels = userSubChannels;
+                obj.userFriends = userFriends;
+                obj.postMeta = postMeta[0];
+                obj.profileRecentMessages = profileRecentMessages;
+                console.log(obj)
+                res.status(200).send(obj)
+            }
+
+            buildJSON(userData, userSubChannels, userFriends,postMeta, profileRecentMessages)
+
+
 
                 // probably going to need to assemble the object before returning
-                res.status(200).send(userData, userFriends, userSubChannels,postMeta)
             }catch (error){
             console.log('error getting user profile:', error)
             res.status(500).send(error)   
