@@ -54,6 +54,8 @@ app.use(session({
 //Channel Actions
     // Get all Channels
     app.get('/api/channel/all', Channel.getAllChannels)
+    // Get all subscribed channels for user
+    app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
     // Create Channel
     app.post('/api/channel/new', Channel.createChannel)
     // Get Channel

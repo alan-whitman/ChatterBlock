@@ -53,6 +53,18 @@ console.log(channelResponse)
         console.log('error getting all channels:', error)
         }
     },
+    getAllSubscribedChannels: async (req,res) => {
+        try {
+        const db = req.app.get('db')
+        const {user_id} = req.body
+        console.log("user id: ", user_id)
+        let channels =await db.getAllSubscibedChannels(user_id)
+        res.send(channels)
+// console.log(channels)
+        }catch (error){
+        console.log('error getting all subscribed channels:', error)
+        }
+    },
     getChannelWithMessages: async (req,res) => {
         try {
 

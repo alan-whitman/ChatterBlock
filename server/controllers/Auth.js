@@ -11,6 +11,11 @@ module.exports = {
         // see if email is already in use
         let userResponse = await db.getUserByEmail(email)
         //if anything is returned email is already in use
+
+
+// also need to check to see if username is taken        
+        
+
         if (userResponse[0]) {
             return res.status(409).send('this email is already registered')
         }
