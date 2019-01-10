@@ -7,10 +7,14 @@ module.exports = {
         // console.log('registering user')
         //get info from req body
         const {registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text} =req.body
-        console.log(req.body)
         // see if email is already in use
         let userResponse = await db.getUserByEmail(email)
         //if anything is returned email is already in use
+
+
+// also need to check to see if username is taken        
+        
+
         if (userResponse[0]) {
             return res.status(409).send('this email is already registered')
         }
@@ -27,7 +31,7 @@ module.exports = {
         // add user info to the session rather than making them log in after registration
         req.session.user = newUser
         //send user info back to client
-        res.send(newUser)
+        res.status(200).send(newUser)
         console.log(newUser)
 
         } catch (error) {
@@ -63,14 +67,14 @@ module.exports = {
 
         req.session.user = user
         console.log("Worked",req.session.user)
-        res.send(req.session.user)
+        res.status(200).send(req.session.user)
         } catch (error) {
             console.log('error logging into account:', error)
             res.status(500).send(error)
         }
     },
     getCurrentUser: (req,res) => {
-        res.send(req.session.user)
+        res.status(200).send(req.session.user)
     },
     logout: (req,res) =>{
         // console.log('destorying session')
@@ -87,7 +91,7 @@ module.exports = {
         // console.log(id, username, email, user_image, about_text)
         let updateUser = await db.updateUser({id, username, email, user_image, about_text})
         // console.log(99999999,updateUser)
-        res.send(updateUser[0])
+        res.status(200).send(updateUser[0])
 
         } catch (error) {
             console.log('error updating account:', error)
