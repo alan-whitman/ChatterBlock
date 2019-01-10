@@ -56,14 +56,22 @@ io.use((socket, next) => {
 
 //Friend Management
     // Send Friend Request
-    // Get Friend Requests
+    app.post('/api/friend/request', Friend.requestFriend)
+    // Get Friend Requests for user
+    app.get('/api/friend/getRequests', Friend.getRequests)
     // Accept Friend Request
-    // Get Friends
-    // Delete Friend
+    app.post('/api/friend/acceptRequest', Friend.acceptRequest)
+    // Get Friends for user
+    // app.get('/api/friend/getUserFriends', Friend.getUserFriends)
+    // Delete Friend (deactivate)
 
 //Channel Actions
     // Get all Channels
     app.get('/api/channel/all', Channel.getAllChannels)
+    // Get all subscribed channels for user
+    app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
+    // Get all subscribed channels for user  and unseen message count
+    app.get('/api/channel/all/subscribed/message/count', Channel.getAllSubscribedChannelMessageCount)
     // Create Channel
     app.post('/api/channel/new', Channel.createChannel)
     // Get Channel
@@ -72,6 +80,10 @@ io.use((socket, next) => {
     app.get('/api/channel/messages', Channel.getChannelWithMessages)
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
+    // Follow Channel
+    app.post('/api/channel/follow', Channel.followChannel)
+    // Unfollow Channel
+    app.delete('/api/channel/unfollow', Channel.unfollowChannel)
     // Edit Channel Message
     // Delete Channel Message
     // React to Channel Message
@@ -85,7 +97,7 @@ io.use((socket, next) => {
 
 //Profile
     // Get profile
-
+    app.get('/api/profile/:id', Profile.getUserProfile)
 //Analytics
 
 
@@ -106,7 +118,7 @@ io.on('connection', socket => {
     // friends endpoints
     socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
     socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
-    
+    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests);
 
     socket.on('disconnect', () => {
         if (socket.request.session.user) {

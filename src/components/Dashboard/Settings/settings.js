@@ -55,7 +55,7 @@ class Settings extends Component {
 
     render(){
         return (
-            <div>
+            <div className="main">
                 {this.props.isAuthenticated ? <div>
                     <h1>Settings</h1>
                     <button onClick={this.handleClickLogout}>Logout</button>

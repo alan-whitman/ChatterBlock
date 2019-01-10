@@ -34,7 +34,7 @@
 -- id serial primary key,
 -- channel_id integer,
 -- user_id integer,
--- last_view_time integer
+-- last_view_time bigint
 -- )
 
 -- create table channel_message(
@@ -43,7 +43,7 @@
 -- user_id integer,
 -- content_text text,
 -- content_image text,
--- time_stamp integer
+-- time_stamp bigint
 -- )
 
 -- create table private_message(
@@ -52,7 +52,7 @@
 -- receiver_id integer,
 -- content_text text,
 -- content_image text,
--- time_stamp integer
+-- time_stamp bigint
 -- )
 
 -- create table channel_message_reactions(

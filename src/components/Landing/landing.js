@@ -63,9 +63,9 @@ class Landing extends Component {
                     <h1>Logo Here</h1>
                     <section className="LoginBar">
                         <h1>Login: </h1>
-                        <input name="loginEmail" type="text" placeholder="email" value={this.state.loginEmail} onChange={this.handleChange} />
-                        <input name="loginPassword" type="password" placeholder="password" value={this.state.loginPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpL}/>
-                        <button onClick={this.handleLogin} >submit</button>
+                        <input className="loginInputs" name="loginEmail" type="text" placeholder="Email" value={this.state.loginEmail} onChange={this.handleChange} />
+                        <input className="loginInputs"name="loginPassword" type="password" placeholder="Password" value={this.state.loginPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpL}/>
+                        <button className="loginButton" onClick={this.handleLogin} >Submit</button>
                     </section>
                 </header>
 
