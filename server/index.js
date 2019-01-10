@@ -2,6 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const massive = require('massive');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+
 require('dotenv').config();
 const { CONNECTION_STRING, SERVER_PORT, SECRET} = process.env
 
@@ -15,9 +20,6 @@ const Private = require('./controllers/PrivateMessages')
 const Profile = require('./controllers/Profile')
 const Search = require('./controllers/Search')
 
-
-const app = express()
-
 massive(CONNECTION_STRING).then(db => {
     app.set('db', db)
     console.log('db connected!')
@@ -25,11 +27,13 @@ massive(CONNECTION_STRING).then(db => {
 
 app.use(bodyParser.json());
 
-app.use(session({
-  secret: SECRET,
-  resave: true,
-  saveUninitialized: false
-}))
+const sessionMiddleware = session({
+    secret: SECRET,
+    resave: true,
+    saveUninitialized: false
+});
+
+app.use(sessionMiddleware);
 
 //Auth
     app.post('/auth/register', Auth.register)
@@ -86,6 +90,23 @@ app.use(session({
 
 //Analytics
 
-app.listen(SERVER_PORT, () => {
-console.log(`listening on port: ${SERVER_PORT}`)
+
+
+
+//Sockets
+
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res, next);
+})
+
+io.on('connection', socket => {
+    // console.log('client connected: ', socket.request.session.user);
+    socket.on('test', () => {
+        console.log(socket.request.session);
+    })
+    // socket.on('get friend list', session.user.id => {})
+});
+
+http.listen(SERVER_PORT, () => {
+    console.log(`listening on port: ${SERVER_PORT}`)
 })
