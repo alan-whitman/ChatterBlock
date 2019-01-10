@@ -5,7 +5,6 @@ import Friends from './Friends';
 
 class FriendUserBar extends Component {
     render(){
-        console.log(this.props.isAuthenticated)
         return (
             <div className="rightBar">
                 {this.props.isAuthenticated ?

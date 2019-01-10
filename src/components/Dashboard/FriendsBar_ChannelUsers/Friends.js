@@ -1,35 +1,53 @@
 import React, { Component } from 'react';
 import './Friends.css';
-import friends from './friendsDummyData';
 import { connect } from 'react-redux';
+import { populateFriends } from '../../../redux/reducer';
 
 class Friends extends Component {
-    constructor() {
-        super();
-        this.state = {
-            friends: friends
-        }
+    constructor(props) {
+        super(props);
+        this.props.socket.on('send your friends', myFriends => {
+            this.props.populateFriends(myFriends);
+        });
+        this.props.socket.on('friend went offline', friendId => {
+            const updatedFriends = this.props.friends.map(friend => {
+                if (friend.id === friendId)
+                    friend.online = false;
+                return friend;
+            });
+            this.props.populateFriends(updatedFriends);
+        });
+        this.props.socket.on('friend came online', friendId => {
+            const updatedFriends = this.props.friends.map(friend => {
+                if (friend.id === friendId)
+                    friend.online = true;
+                return friend;
+            })
+            this.props.populateFriends(updatedFriends);
+        });
     }
     componentDidMount() {
-        // console.log('asdsdaf')
-        setInterval(() => this.props.socket.emit('test'), 3000);
+        this.props.socket.emit('get my friends');
+    }
+    addFriends() {
+
     }
     renderFriends() {
-        let onlineFriends = this.state.friends
+        let onlineFriends = this.props.friends
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => <li key={i}>{friend.username}</li>);
-        let offlineFriends = this.state.friends
+        let offlineFriends = this.props.friends
             .filter(friend => !friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => <li key={i}>{friend.username}</li>);
         return (
             <div>
-                <div>Online</div>
-                <ul className="online-friends">
+                <div style={{fontWeight: 'bold'}}>Online</div>
+                <ul className="online-friends" style={{marginBottom: 10}}>
                     {onlineFriends}
                 </ul>
-                <div>Offline</div>
+                <div style={{fontWeight: 'bold'}}>Offline</div>
                 <ul className="offline-friends">
                     {offlineFriends}
                 </ul>
@@ -46,14 +64,13 @@ class Friends extends Component {
             </div>
         )
     }
-
 }
 
 const mapStateToProps = state => {
-    let { isAuthenticated } = state;
+    let { friends } = state;
     return {
-        isAuthenticated
+        friends
     }
 }
 
-export default connect(mapStateToProps, null)(Friends);
+export default connect(mapStateToProps, {populateFriends})(Friends);

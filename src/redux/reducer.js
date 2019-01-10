@@ -1,10 +1,12 @@
 const USER_LOGGED_IN = 'USER_LOGGED_IN'
 const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 const USER_EDIT = 'USER_EDIT'
+const POPULATE_FRIENDS = 'POPULATE_FRIENDS'
 
 const initialState = {
   isAuthenticated: false,
   user: {},
+  friends: []
 }
 
 export default function reducer(state = initialState, action) {
@@ -15,6 +17,8 @@ export default function reducer(state = initialState, action) {
       return { ...state, isAuthenticated: false, user: {} }
     case USER_EDIT:
       return { ...state, user: action.payload }
+    case POPULATE_FRIENDS:
+      return {...state, friends: action.payload}
     default:
       return state;
   }
@@ -37,5 +41,13 @@ export function userEdit(user) {
   return {
     type: USER_EDIT,
     payload: user
+  }
+}
+
+export function populateFriends(friends) {
+  console.log('\n\nfriends: ', friends);
+  return {
+    type: POPULATE_FRIENDS,
+    payload: friends
   }
 }
