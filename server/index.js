@@ -48,14 +48,21 @@ app.use(sessionMiddleware);
 
 //Friend Management
     // Send Friend Request
-    // Get Friend Requests
+    app.post('/api/friend/request', Friend.requestFriend)
+    // Get Friend Requests for user
+    app.get('/api/friend/getRequests', Friend.getRequests)
     // Accept Friend Request
-    // Get Friends
-    // Delete Friend
+    app.post('/api/friend/acceptRequest', Friend.acceptRequest)
+    // Get Friends for user
+    // Delete Friend (deactivate)
 
 //Channel Actions
     // Get all Channels
     app.get('/api/channel/all', Channel.getAllChannels)
+    // Get all subscribed channels for user
+    app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
+    // Get all subscribed channels for user  and unseen message count
+    app.get('/api/channel/all/subscribed/message/count', Channel.getAllSubscribedChannelMessageCount)
     // Create Channel
     app.post('/api/channel/new', Channel.createChannel)
     // Get Channel
@@ -64,6 +71,10 @@ app.use(sessionMiddleware);
     app.get('/api/channel/messages', Channel.getChannelWithMessages)
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
+    // Follow Channel
+    app.post('/api/channel/follow', Channel.followChannel)
+    // Unfollow Channel
+    app.delete('/api/channel/unfollow', Channel.unfollowChannel)
     // Edit Channel Message
     // Delete Channel Message
     // React to Channel Message
