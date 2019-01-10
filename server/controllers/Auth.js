@@ -32,7 +32,6 @@ module.exports = {
         req.session.user = newUser
         //send user info back to client
         res.status(200).send(newUser)
-        console.log(newUser)
 
         } catch (error) {
             console.log('error registering account:', error)
@@ -63,10 +62,9 @@ module.exports = {
         }
         // remove user hash before storing to session
         delete user.pw
-        console.log(user.pw)
+        // console.log(user.pw)
 
         req.session.user = user
-        console.log("Worked",req.session.user)
         res.status(200).send(req.session.user)
         } catch (error) {
             console.log('error logging into account:', error)

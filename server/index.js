@@ -23,7 +23,7 @@ const Search = require('./controllers/Search')
 massive(CONNECTION_STRING).then(db => {
     app.set('db', db)
     console.log('db connected!')
-  }) 
+}) 
 
 app.use(bodyParser.json());
 
@@ -33,7 +33,15 @@ const sessionMiddleware = session({
     saveUninitialized: false
 });
 
+// io.use(sharedSession(sessionMiddleware), {autoSave: true})
+
 app.use(sessionMiddleware);
+
+
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, socket.request.res, next);
+})
+
 
 //Auth
     app.post('/auth/register', Auth.register)
@@ -93,22 +101,33 @@ app.use(sessionMiddleware);
 //Analytics
 
 
-
-
 //Sockets
 
-io.use((socket, next) => {
-    sessionMiddleware(socket.request, socket.request.res, next);
-})
+const sfc = require('./socket_controllers/friendsController');
+
+let connectedUsers = {};
 
 io.on('connection', socket => {
-    // console.log('client connected: ', socket.request.session.user);
-    socket.on('test', () => {
-        console.log(socket.request.session);
+    console.log('client connected');
+    const db = app.get('db');
+    if (socket.request.session.user) {
+        connectedUsers[socket.request.session.user.id] = socket.id;
+        sfc.comingOnline(db, io, connectedUsers, socket.request.session.user.id)
+    }
+
+    // friends endpoints
+    socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
+    socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
+    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests);
+
+    socket.on('disconnect', () => {
+        if (socket.request.session.user) {
+            sfc.goingOffline(db, io, connectedUsers, socket.request.session.user.id);
+            delete connectedUsers[socket.request.session.user.id];
+        }
     })
-    // socket.on('get friend list', session.user.id => {})
 });
 
 http.listen(SERVER_PORT, () => {
     console.log(`listening on port: ${SERVER_PORT}`)
-})
+});
