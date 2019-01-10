@@ -3,8 +3,51 @@ import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
 import { connect } from 'react-redux';
 import { userLoggedOut } from '../../../redux/reducer';
+import { setChannels } from '../../../redux/reducer';
+import axios from 'axios';
+import Popup from 'reactjs-popup'
 
 class NavBar extends Component {
+  constructor() {
+    super()
+
+    this.state = {
+      searchInput: "",
+      channel_name: ""
+    }
+  }
+
+  componentDidMount() {
+    axios.get('/api/channel/all').then(response => {
+      console.log(response.data);
+      this.props.setChannels(response.data)
+    }).catch(err => {console.log(`Error! Did not get all Channels! ${err}`)})
+  }
+
+  handleChannel = (val) => {
+    this.setState({
+      channel_name: val
+    })
+  }
+
+
+ 
+
+  
+
+  handleAddChannel = (e) => {
+
+    if(e.keyCode === 13){
+      axios.post('/api/channel/new', this.state).then(response => {
+        this.props.setChannels(response.data)
+
+        this.setState({
+          channel_name: ""
+        })
+      })
+    }
+  }
+
     render(){
         return (
             <div className="nav-container">
@@ -53,13 +96,15 @@ class NavBar extends Component {
               <div className="card-header" id="headingThree">
                 <h2 className="mb-0">
                   <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Channels
+                    Channels 
                   </button>
                 </h2>
               </div>
               <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                 <div className="card-body">
-                    <input class="searchInput" type="text" placeholder="Find Channel" />
+                    <input class="searchInput" type="text" placeholder="Find Channel" />    <Popup trigger={<button>Add a Channel</button>} position="bottom left">
+      <input type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
+    </Popup>
                     <ul>
                         <li>Bullying</li>
                         <li>Dogs</li>
@@ -94,4 +139,4 @@ function mapStateToProps(state) {
     }
   }
   
-export default connect(mapStateToProps, { userLoggedOut })(NavBar);
+export default connect(mapStateToProps, { userLoggedOut, setChannels })(NavBar);

@@ -4,7 +4,9 @@
 
 } */
 
-
+.up {
+    z-index: 1;
+}
 
 .nav-container {
     background: rgb(40, 40, 40);
