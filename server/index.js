@@ -105,12 +105,11 @@ io.on('connection', socket => {
 
     // friends endpoints
     socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
-    // socket.on('request friend', username => sfc.addFriend(db, io, socket, connectedUsers));
+    socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
     
 
     socket.on('disconnect', () => {
         if (socket.request.session.user) {
-            // console.log('logged in user going offline: ', socket.request.session.user.id)
             sfc.goingOffline(db, io, connectedUsers, socket.request.session.user.id);
             delete connectedUsers[socket.request.session.user.id];
         }

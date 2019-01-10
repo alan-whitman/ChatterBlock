@@ -45,7 +45,6 @@ export function userEdit(user) {
 }
 
 export function populateFriends(friends) {
-  console.log('\n\nfriends: ', friends);
   return {
     type: POPULATE_FRIENDS,
     payload: friends
