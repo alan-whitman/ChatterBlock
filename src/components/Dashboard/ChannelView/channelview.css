@@ -1,0 +1,75 @@
+.main {
+    background: rgb(55, 55, 55);
+    width: 100%;
+    height: 100vh;
+
+}
+
+.header {
+    background: darkgray;
+    width: 100%;
+    height: 5vh;
+    margin-bottom: 2vh;
+}
+
+
+.header-main {
+
+}
+
+.header-sidebar {
+
+}
+
+.message-input {
+    margin: 0 auto;
+    width: 90%;
+    /* border: 1px solid grey; */
+    
+}
+
+.main-message {
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 5px;
+    height: 5vh;
+    font-size: 20px;
+    padding: 0 20px;
+    background: rgb(55, 55, 55);
+    color: red;
+}
+
+.textarea {
+    width: 100%;
+    height: 86vh;
+    background: rgb(55, 55, 55);
+    overflow: auto;
+}
+
+.right {
+    float: right;
+    padding-right: 2%;
+    margin-top: 5px;
+}
+
+.user-message {
+
+    border-top:  1px solid lightgrey;
+}
+
+.user-message h6 {
+    text-align: initial;
+    color: tan;
+    font-weight: bold;
+    padding-top: 1vh;
+}
+
+.user-message p {
+    color: white;
+    text-align: initial;
+}
+
+.timestamp {
+    font-size: 10px;
+    
+}

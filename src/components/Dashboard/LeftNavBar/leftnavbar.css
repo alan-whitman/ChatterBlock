@@ -1,4 +1,67 @@
-.leftBar {
+/* .body-main {
+    background: lightgrey;
+    display: flex;
+
+} */
+
+
+
+.nav-container {
+    background: rgb(40, 40, 40);
+    width: 24%;
+    margin: 0 auto;
+    height: 100vh;
+    margin: 0 auto;
+    color: lightgrey;
+}
+
+ .card-body, .card-header, #headingTwo, #headingOne, #headingThree {
+    background: rgb(40, 40, 40);
+} 
+
+ul {
+    list-style: none;
+    margin-left: 20%;
+    text-align: left;
+  }
+  
+  ul li::before {
+    content: "\2022";
+    color: green;
+    font-weight: bold;
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em;
+    
+  }
+
+  ul li {
+      margin-left: 30%;
+  }
+
+div.card {
+    border: none;
+}
+
+
+.settings {
+  
+    position: absolute;
+    bottom: 0;
+    width: 16.5%;
+    display: flex;
+    justify-content: space-around;
+    
+}
+
+.settings p {
+    font-size: 20px;
+    padding-left: 10%;
+    letter-spacing: 3px;
+}
+
+
+/* .leftBar {
     width: 300px;
     height: 100vh;
     position: fixed;
@@ -52,4 +115,4 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-}
+} */
