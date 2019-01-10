@@ -2,7 +2,9 @@ module.exports = {
     createChannel: async (req,res) => {
         try {
         const db = req.app.get('db')
-        const {channel_name, creator_id} = req.body
+            //this is post id    
+        const {channel_name} = req.body
+        const { id: creator_id } = req.session.user
             // get channel name and creator from rec body
             // console.log(req.body)
             // see if channel_name is already in use

@@ -1,0 +1,62 @@
+.mainProfile {
+    background: rgb(55, 55, 55);
+    width: 100%;
+    height: 100%;
+    overflow: auto
+}
+.profileImage {
+    width: 80px;
+    height: 80px;
+}
+img {
+    width: 100%;
+}
+.profileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 100px;
+    width: 100%;
+    color: white;
+}
+
+.profileSection1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly; 
+    width: 100%;
+    height: 325px;
+}
+
+.about {
+    width: 35%;
+    height: 250px;
+    border: 1px solid white;
+}
+
+.profileChannels {
+    width: 35%;
+    height: 250px;
+    border: 1px solid white;
+}
+
+.profileSection2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly; 
+    width: 100%;
+    height: 325px;
+}
+
+.friends {
+    width: 35%;
+    height: 250px;
+    border: 1px solid white;
+}
+
+.extraBox {
+    width: 35%;
+    height: 250px;
+    border: 1px solid white;
+}
