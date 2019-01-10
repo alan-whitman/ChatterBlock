@@ -57,7 +57,7 @@ console.log(channelResponse)
         try {
         const db = req.app.get('db')
         const {user_id} = req.body
-        console.log("user id: ", user_id)
+        // console.log("user id: ", user_id)
         let channels =await db.getAllSubscibedChannels(user_id)
         res.send(channels)
 // console.log(channels)
@@ -65,6 +65,70 @@ console.log(channelResponse)
         console.log('error getting all subscribed channels:', error)
         }
     },
+
+
+
+
+
+
+
+getAllSubscribedChannelMessageCount: async (req,res) => {
+    try {
+        const db = req.app.get('db')
+        const {user_id} =req.body
+        let channels = await db.getAllSubscibedChannels(user_id)
+        // console.log(channels)
+        var newChannels = []
+        var x =0
+
+        //Loop over Channels array
+        if(channels.length === 0){
+            res.send([])
+        }
+        await channels.map(async channel => {
+            try{
+            // use this later    
+            function addCount(num){
+                    channel.count = num
+                    // console.log(6666666666, channel)
+                    newChannels.push(channel)
+                x++
+                    // console.log(newChannels)
+                    if(newChannels.length === channels.length){
+                        console.log(newChannels)
+                        res.send(newChannels)
+                }
+                    }
+
+            // Convert last view time to int
+            let time = parseInt(channel.last_view_time)
+            // Go back to db and count the number of messages more recent than users last view for each 
+            let messageCount = await db.getAllSubscribedChannelMessageCount(time,channel.id,user_id)
+            // console.log(888888,channel.id)
+            // console.log(messageCount[0].count)
+            addCount(messageCount[0].count)
+
+            }catch (error){
+                console.log('FUUUUUUUUUUUUUCK',error)
+            }
+        })
+        // console.log('new channels after:',newChannels, 'channels :::::::::::::::::',  channels)
+        console.log(newChannels.length,x, channels.length)
+
+    }catch (error){
+        console.log('error getting all subscribed channels and count', error)
+
+    }
+},
+
+
+
+
+
+
+
+
+
     getChannelWithMessages: async (req,res) => {
         try {
 

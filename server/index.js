@@ -56,6 +56,8 @@ app.use(session({
     app.get('/api/channel/all', Channel.getAllChannels)
     // Get all subscribed channels for user
     app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
+    // Get all subscribed channels for user  and unseen message count
+    app.get('/api/channel/all/subscribed/message/count', Channel.getAllSubscribedChannelMessageCount)
     // Create Channel
     app.post('/api/channel/new', Channel.createChannel)
     // Get Channel
