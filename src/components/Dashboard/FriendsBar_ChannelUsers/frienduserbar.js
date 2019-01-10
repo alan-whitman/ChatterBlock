@@ -23,7 +23,7 @@ class FriendUserBar extends Component {
             .map((friend, i) => <li key={i}>{friend.username}</li>);
         return (
             <div>
-                <div>Online</div>
+                <h4>Online</h4>
                 <ul className="online-friends">
                     {onlineFriends}
                 </ul>

@@ -11,7 +11,8 @@
 .LoginBar {
     display: flex;
     justify-content: space-between;
-    width: 375px;
+    align-items: center;
+    width: 500px;
 }
 
 .landingBody {
@@ -55,4 +56,15 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+}
+
+.loginInputs {
+    width: 150px;
+    height: 30px;
+    border-radius: 7.5px;
+    padding-left: 7.5px;
+}
+
+.loginButton {
+    border-radius: 7.5px;
 }
