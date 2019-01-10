@@ -7,7 +7,8 @@ class ChannelView extends Component {
             <div className="main">
             <div className="header">
                     <div className="header-main">
-                        <div class="right"><input type="text" placeholder="Search Users" /> <span><i class="fas fa-search"></i></span></div>
+                        <h2 style={{color: 'white'}}>Channel Name</h2>
+                        <div><input class="searchInput" type="text" placeholder="Search Users" /> <span><i class="fas fa-search"></i></span></div>
                     </div>
 
                 </div>

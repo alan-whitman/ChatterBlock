@@ -13,7 +13,6 @@ class Dashboard extends Component {
     render(){
         return (
             <div className="Dashboard">
-                {/* <h1>Dashboard</h1> */}
                 <NavBar/>
                 <Switch>
                     <Route path="/dashboard" exact component={Recent} />

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
+import { connect } from 'react-redux';
+import { userLoggedOut } from '../../../redux/reducer';
 
 class NavBar extends Component {
     render(){
         return (
             <div className="nav-container">
+            <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
         <div className="accordion" id="accordionExample">
             <div className="card">
               <div className="card-header" id="headingOne">
@@ -19,7 +22,7 @@ class NavBar extends Component {
               <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div className="card-body">
                     <ul>
-                        <li>Rocket League</li>
+                        <Link to="/dashboard/channel" ><li>Rocket League</li></Link>
                         <li>Bumble Bees</li>
                         <li>Why am I coding?</li>
                         <li>Pizza for breakfast</li>
@@ -38,7 +41,7 @@ class NavBar extends Component {
               <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                 <div className="card-body">
                     <ul>
-                        <li>Brian</li>
+                        <Link to="/dashboard/dms"><li>Brian</li></Link>
                         <li>Alan</li>
                         <li>Heather</li>
                         <li>Jack</li>
@@ -56,7 +59,7 @@ class NavBar extends Component {
               </div>
               <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                 <div className="card-body">
-                    <input type="text" placeholder="Find Channel" />
+                    <input class="searchInput" type="text" placeholder="Find Channel" />
                     <ul>
                         <li>Bullying</li>
                         <li>Dogs</li>
@@ -73,30 +76,22 @@ class NavBar extends Component {
               </div>
             </div>
           </div>
-          <div className="settings">
-                <Link to="/dashboard/profile" ><h3>Username</h3></Link>
-                <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
-          </div>
-    </div>
-            // <div className="leftBar">
-            //     <div className="stillLeftBar">
-            //         <div className="navLogo"><Link to="/">Logo Here</Link><Link to="/dashboard">Recent</Link></div>
-
-            //         <div className="activeChannels"><h3>Active channels</h3></div>
-
-            //         <div className="dms"><Link to="/dashboard/dms" ><button>Private Messaging</button></Link></div>
-
-            //         <div className="channels"><Link to="/dashboard/channel" ><button>Channels</button></Link></div>
-
-            //         <div className="profileAndSettings">
-            //             <Link to="/dashboard/profile" ><h3>Username</h3></Link>
-            //             <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
-            //         </div>
-            //     </div>
-                
-            // </div>
+                {this.props.isAuthenticated ? <div className="profileAndSettings">
+                    <Link to="/dashboard/profile" >{this.props.user.username}</Link>
+                    <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
+                </div>: <div className="profileAndSettings">
+                    <h3>Guest</h3>
+                </div>}
+            </div>        
         )
     }
 }
 
-export default NavBar;
+function mapStateToProps(state) {
+    let { user, isAuthenticated } = state
+    return {
+      user, isAuthenticated
+    }
+  }
+  
+export default connect(mapStateToProps, { userLoggedOut })(NavBar);

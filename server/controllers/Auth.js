@@ -6,7 +6,7 @@ module.exports = {
         const db = req.app.get('db')
         // console.log('registering user')
         //get info from req body
-        const {username, email, pw, user_image, about_text} =req.body
+        const {registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text} =req.body
         console.log(req.body)
         // see if email is already in use
         let userResponse = await db.getUserByEmail(email)
@@ -40,7 +40,7 @@ module.exports = {
             // console.log('attempting to login in user')
         const db = req.app.get('db')
         // get info from req body
-        const {email,pw} = req.body
+        const {loginEmail: email,loginPassword: pw} = req.body
         // make sure email exists on database
         let userResponse = await db.getUserByEmail(email)
         // console.log("userResponse",userResponse)
@@ -58,8 +58,8 @@ module.exports = {
             return res.status(403).send('Password does not match')
         }
         // remove user hash before storing to session
-        delete user.hash
-        console.log(user.hash)
+        delete user.pw
+        console.log(user.pw)
 
         req.session.user = user
         console.log("Worked",req.session.user)
@@ -82,11 +82,12 @@ module.exports = {
         try {
         const db = req.app.get('db')
         // console.log("right here------",req.body)
-        const {id, username, email, user_image, about_text} = req.body
+        const { id } = req.params
+        const { username, email, user_image, about_text} = req.body
         // console.log(id, username, email, user_image, about_text)
         let updateUser = await db.updateUser({id, username, email, user_image, about_text})
         // console.log(99999999,updateUser)
-        res.send(updateUser)
+        res.send(updateUser[0])
 
         } catch (error) {
             console.log('error updating account:', error)
