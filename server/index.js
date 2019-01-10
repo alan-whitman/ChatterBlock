@@ -54,6 +54,7 @@ app.use(sessionMiddleware);
     // Accept Friend Request
     app.post('/api/friend/acceptRequest', Friend.acceptRequest)
     // Get Friends for user
+    // app.get('/api/friend/getUserFriends', Friend.getUserFriends)
     // Delete Friend (deactivate)
 
 //Channel Actions
@@ -88,7 +89,7 @@ app.use(sessionMiddleware);
 
 //Profile
     // Get profile
-
+    app.get('/api/profile/:id', Profile.getUserProfile)
 //Analytics
 
 
