@@ -81,7 +81,6 @@ module.exports = {
 
         buildJSON(userResponse,userSubChannels,userFriends)
 
-
         } catch (error) {
             console.log('error logging into account:', error)
             res.status(500).send(error)
