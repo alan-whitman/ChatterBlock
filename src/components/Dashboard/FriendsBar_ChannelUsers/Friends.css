@@ -18,3 +18,10 @@
     top: -75px;
     float: left;
 }
+.accept-reject {
+    font-size: 10px;
+}
+.accept-reject:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}

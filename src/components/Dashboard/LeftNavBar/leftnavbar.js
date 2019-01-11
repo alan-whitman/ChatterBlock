@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
 import { connect } from 'react-redux';
 import { userLoggedOut } from '../../../redux/reducer';
-import { setChannels } from '../../../redux/reducer';
 import axios from 'axios';
 import Popup from 'reactjs-popup'
 
@@ -13,13 +12,17 @@ class NavBar extends Component {
 
     this.state = {
       searchInput: "",
-      channel_name: ""
+      channel_name: "",
+      channels: []
     }
   }
 
   componentDidMount() {
     axios.get('/api/channel/all').then(response => {
-      this.props.setChannels(response.data)
+      console.log(response.data);
+      this.setState({
+        channels: response.data
+      })
     }).catch(err => {console.log(`Error! Did not get all Channels! ${err}`)})
   }
 
@@ -38,16 +41,33 @@ class NavBar extends Component {
 
     if(e.keyCode === 13){
       axios.post('/api/channel/new', this.state).then(response => {
-        this.props.setChannels(response.data)
 
         this.setState({
+          channels: [...this.state.channels, response.data],
           channel_name: ""
         })
       })
     }
   }
 
+  handleSearch = (val) => {
+    this.setState({
+      searchInput: val
+    })
+  }
+
+
+
+
+
     render(){
+      const { channels, searchInput } = this.state;
+      
+      const channelDisplay = channels.filter(channel => {
+        return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
+      }).map((channel, i) => {
+        return <li key={i}>{channel.channel_name}</li>
+      })
         return (
             <div className="nav-container">
             <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
@@ -63,7 +83,7 @@ class NavBar extends Component {
           
               <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div className="card-body">
-                    <ul>
+                    <ul className="leftbarUL">
                         <Link to="/dashboard/channel" ><li>Rocket League</li></Link>
                         <li>Bumble Bees</li>
                         <li>Why am I coding?</li>
@@ -82,7 +102,7 @@ class NavBar extends Component {
               </div>
               <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                 <div className="card-body">
-                    <ul>
+                    <ul className="leftbarUL">  
                         <Link to="/dashboard/dms"><li>Brian</li></Link>
                         <li>Alan</li>
                         <li>Heather</li>
@@ -101,32 +121,28 @@ class NavBar extends Component {
               </div>
               <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                 <div className="card-body">
-                    <input className="searchInput" type="text" placeholder="Find Channel" />    <Popup trigger={<button>Add a Channel</button>} position="bottom left">
-      <input type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
-    </Popup>
-                    <ul>
-                        <li>Bullying</li>
-                        <li>Dogs</li>
-                        <li>Vacation Destinations</li>
-                        <li>Wasp Stings</li>
-                        <li>Disney Movies</li>
-                        <li>Pubg</li>
-                        <li>Fencing</li>
-                        <li>Ice Hockey</li>
-                        <li>Boating</li>
-                        <li>Fine Dining</li>
+                    <input className="searchInput" type="text" value={this.state.searchInput} onChange={(e) => this.handleSearch(e.target.value)} placeholder="Find Channel" /> 
+                    <span className="addChannel"><Popup trigger={<button>+</button>} position="top left">
+                    <input value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
+                     </Popup></span>
+    <br />
+    <br />
+                    <ul className="leftbarUL">
+                        {channelDisplay}
                     </ul>
                 </div>
               </div>
             </div>
           </div>
+          <div className="settings">
                 {this.props.isAuthenticated ? <div className="profileAndSettings">
                     <Link to={`/dashboard/profile/${this.props.user.id}`} >{this.props.user.username}</Link>
                     <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
                 </div>: <div className="profileAndSettings">
                     <h3>Guest</h3>
                 </div>}
-            </div>        
+          </div>    
+          </div>
         )
     }
 }
@@ -138,4 +154,4 @@ function mapStateToProps(state) {
     }
   }
   
-export default connect(mapStateToProps, { userLoggedOut, setChannels })(NavBar);
+export default connect(mapStateToProps, { userLoggedOut })(NavBar);

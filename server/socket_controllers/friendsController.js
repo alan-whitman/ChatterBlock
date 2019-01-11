@@ -1,7 +1,7 @@
 module.exports = {
     async getMyFriends(db, socket, connectedUsers) {
         try {
-            const friends = await db.getMyFriends(socket.request.session.user.id);
+            const friends = await db.friends.getMyFriends(socket.request.session.user.id);
             if (friends[0]) {
                 friends.forEach(friend => {
                     if (connectedUsers[friend.id])
@@ -11,7 +11,7 @@ module.exports = {
                 });
                 socket.emit('send your friends', friends);
             } else {
-                socket.emit('you have no friends');
+                socket.emit('send your friends', []);
             }
         } catch (err) {
             console.log(err);
@@ -19,7 +19,7 @@ module.exports = {
     },
     async goingOffline(db, io, connectedUsers, id) {
         try {
-            const friends = await db.getMyFriends(id);
+            const friends = await db.friends.getMyFriends(id);
             if (friends[0]) {
                 const onlineFriends = friends.filter(friend => connectedUsers[friend.id]);
                 onlineFriends.forEach(friend => {
@@ -32,7 +32,7 @@ module.exports = {
     },
     async comingOnline(db, io, connectedUsers, id) {
         try {
-            let friends = await db.getMyFriends(id);
+            let friends = await db.friends.getMyFriends(id);
             if (friends[0]) {
                 const onlineFriends = friends.filter(friend => connectedUsers[friend.id]);
                 onlineFriends.forEach(friend => {
@@ -49,21 +49,53 @@ module.exports = {
             const response = await db.getUserByUsername(username);
             const requestee = response[0];
             if (requestee.id === myId)
-                return socket.emit('confirm friend request', 'you can\'t be friends with yourself, weirdo');
+                return socket.emit('confirm friend request', 'you can\'t be friends with yourself');
             if (!requestee)
                 return socket.emit('confirm friend request', 'user not found');
-            const existingFriendRelationship = await db.getFriendRelationship([myId, requestee.id]);
+            const existingFriendRelationship = await db.friends.getFriendRelationship([myId, requestee.id]);
             if (existingFriendRelationship[0])
                 return socket.emit('confirm friend request', 'friend relationship already exists');
-            const existingRequest = await db.getFriendRequestById([myId, requestee.id]);
+            const existingRequest = await db.friends.getFriendRequestById([myId, requestee.id]);
             if (existingRequest[0])
                 return socket.emit('confirm friend request', 'friend request already exists');
-            await db.createFriendRequest([myId, requestee.id]);
+            await db.friends.createFriendRequest([myId, requestee.id]);
             if (connectedUsers[requestee.id])
-                io.to(connectedUsers[requestee.id]).emit('pending friend request', {myUsername, myId});
+                io.to(connectedUsers[requestee.id]).emit('new friend request', {username: myUsername, id: myId});
             return socket.emit('confirm friend request', 'friend request submitted');
         } catch (err) {
             console.log(err);
         }
+    },
+    async getPendingFriendRequests(db, socket) {
+        try {
+            const { id: myId, username: myUsername } = socket.request.session.user;
+            const pendingRequests = await db.friends.getPendingFriendRequests(myId);
+            if (!pendingRequests[0])
+                return socket.emit('send pending requests', 'no requests pending');
+            else {
+                return socket.emit('send pending requests', pendingRequests);
+            }
+        } catch(err) {
+            console.log(err);
+        }
+    },
+    async acceptFriend(db, io, socket, connectedUsers, requester) {
+        const { id: requesteeId } = socket.request.session.user;
+        await db.friends.acceptFriend(requester.id, requesteeId);
+        io.to(connectedUsers[requesteeId]).emit('friend update complete');
+        if (connectedUsers[requester.id])
+            io.to(connectedUsers[requester.id]).emit('friend update complete');
+    },
+    async rejectFriend(db, io, socket, connectedUsers, requester) {
+        const { id: requesteeId } = socket.request.session.user;
+        await db.friends.rejectFriend(requester.id, requesteeId);
+        io.to(connectedUsers[requesteeId]).emit('friend update complete');
+    },
+    async deleteFriend(db, io, socket, connectedUsers, friend) {
+        const { id: myId } = socket.request.session.user;
+        await db.friends.deleteFriend(myId, friend.id);
+        io.to(connectedUsers[myId]).emit('friend update complete');
+        if (connectedUsers[friend.id])
+            io.to(connectedUsers[friend.id]).emit('friend update complete');
     }
 }

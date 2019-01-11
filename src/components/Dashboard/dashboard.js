@@ -12,8 +12,6 @@ import './dashboard.css';
 import io from 'socket.io-client';
 const socketPath = window.location.host.split(':')[0];
 let socket;
-// const socket = io(socketPath + ':5004');
-
 
 class Dashboard extends Component {
     constructor() {
@@ -28,7 +26,12 @@ class Dashboard extends Component {
                     <Route path="/dashboard" exact component={Recent} />
                     <Route path="/dashboard/channel" component={ChannelView} />
                     <Route path={`/dashboard/profile/:id`} component={Profile} />
-                    <Route path="/dashboard/settings" component={Settings} />
+                    <Route path="/dashboard/settings" render={(props) => 
+                        <Settings 
+                            {...props}
+                            socket={socket}
+                        />} 
+                    />
                     <Route path="/dashboard/dms" component={PrivateMsg} />
                 </Switch>
                 <FriendUserBar socket={socket} />
