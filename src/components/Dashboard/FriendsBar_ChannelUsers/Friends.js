@@ -30,7 +30,7 @@ class Friends extends Component {
             this.props.populateFriends(updatedFriends);
         });
         this.props.socket.on('confirm friend request', confirmation => {
-            console.log(confirmation);
+            // console.log(confirmation);
         });
         this.props.socket.on('new friend request', requester => {
             let { pendingFriends } = this.state;

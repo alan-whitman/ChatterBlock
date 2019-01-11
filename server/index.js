@@ -123,6 +123,8 @@ io.on('connection', socket => {
     socket.on('reject friend', requester => sfc.rejectFriend(db, io, socket, connectedUsers, requester));
     socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
+    // socket.on('join channel', channel => scc.joinChannel())
+
     // channel listeners
 
     socket.on('disconnect', () => {

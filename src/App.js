@@ -16,6 +16,8 @@ class App extends Component {
     })
   }
   render() {
+    const currentKey = this.props.user.username ? this.props.user.username : 'guest';
+    console.log(currentKey);
     return (
       <HashRouter>
         <Route path="/" render={(props) => {
@@ -23,7 +25,7 @@ class App extends Component {
             <div className="App">   
             <Switch>
               <Route path="/" exact component={Landing}/>
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/dashboard" component={Dashboard} key={currentKey} />
             </Switch>
           </div>    
           )
