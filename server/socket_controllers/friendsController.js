@@ -1,6 +1,7 @@
 module.exports = {
     async getMyFriends(db, socket, connectedUsers) {
         try {
+            console.log(JSON.stringify(connectedUsers, null, 4));
             const friends = await db.friends.getMyFriends(socket.request.session.user.id);
             if (friends[0]) {
                 friends.forEach(friend => {
