@@ -108,7 +108,6 @@ const sfc = require('./socket_controllers/friendsController');
 let connectedUsers = {};
 
 io.on('connection', socket => {
-    console.log('client connected');
     const db = app.get('db');
     if (socket.request.session.user) {
         connectedUsers[socket.request.session.user.id] = socket.id;
@@ -119,6 +118,9 @@ io.on('connection', socket => {
     socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
     socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
     socket.on('get pending friend requests', () => sfc.getPendingFriendRequests(db, io, socket, connectedUsers));
+    socket.on('accept friend', requester => sfc.acceptFriend(db, io, socket, connectedUsers, requester));
+    socket.on('reject friend', requester => sfc.rejectFriend(db, io, socket, connectedUsers, requester));
+    socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
     socket.on('disconnect', () => {
         if (socket.request.session.user) {

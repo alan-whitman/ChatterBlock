@@ -33,7 +33,6 @@ class Friends extends Component {
             console.log(confirmation);
         });
         this.props.socket.on('new friend request', requester => {
-            console.log(requester);
             let { pendingFriends } = this.state;
             pendingFriends.push(requester);
             this.setState({pendingFriends});
@@ -41,7 +40,13 @@ class Friends extends Component {
         this.props.socket.on('send pending requests', pendingRequests => {
             if (pendingRequests !== 'no requests pending')
                 this.setState({pendingFriends: pendingRequests})
+            else
+                this.setState({pendingFriends: []});
         });
+        this.props.socket.on('friend update complete', () => {
+            this.props.socket.emit('get my friends');
+            this.props.socket.emit('get pending friend requests');
+        })
     }
     componentDidMount() {
         this.props.socket.emit('get my friends');
@@ -57,28 +62,41 @@ class Friends extends Component {
         this.props.socket.emit('request friend', this.state.requestedFriend);
         this.setState({requestedFriend: ''});
     }
-    acceptFriend(id) {
-        this.props.socket.emit('accept friend', id);
+    acceptFriend(user) {
+        this.props.socket.emit('accept friend', user);
     }
-    rejectFriend(id) {
-        this.props.socket.emit('reject friend', id);
+    rejectFriend(user) {
+        this.props.socket.emit('reject friend', user);
+    }
+    deleteFriend(user) {
+        this.props.socket.emit('delete friend', user);
     }
     renderFriends() {
         const onlineFriends = this.props.friends
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => <li key={i}>{friend.username}</li>);
+            .map((friend, i) => 
+                <li key={i}>
+                    {friend.username}<br />
+                    <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span>
+                </li>
+            );
         const offlineFriends = this.props.friends
             .filter(friend => !friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => <li key={i}>{friend.username}</li>);
+            .map((friend, i) => 
+                <li key={i}>
+                    {friend.username}<br />
+                    <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span>
+                </li>
+            );
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
                 <li key={i}>
                     {friend.username}<br />
-                    <span onClick={e => this.acceptFriend(friend.id)} className="accept-reject">Accept</span>&nbsp;&nbsp; 
-                    <span onClick={e => this.rejectFriend(friend.id)} className="accept-reject">Reject</span>
+                    <span onClick={e => this.acceptFriend({id: friend.id, username: friend.username})} className="accept-reject">Accept</span>&nbsp;&nbsp; 
+                    <span onClick={e => this.rejectFriend({id: friend.id, username: friend.username})} className="accept-reject">Reject</span>
                 </li>
             );
         return (

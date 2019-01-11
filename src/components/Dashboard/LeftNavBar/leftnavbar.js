@@ -19,7 +19,6 @@ class NavBar extends Component {
 
   componentDidMount() {
     axios.get('/api/channel/all').then(response => {
-      console.log(response.data);
       this.props.setChannels(response.data)
     }).catch(err => {console.log(`Error! Did not get all Channels! ${err}`)})
   }

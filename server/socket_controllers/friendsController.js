@@ -11,7 +11,7 @@ module.exports = {
                 });
                 socket.emit('send your friends', friends);
             } else {
-                socket.emit('you have no friends');
+                socket.emit('send your friends', []);
             }
         } catch (err) {
             console.log(err);
@@ -70,7 +70,6 @@ module.exports = {
         try {
             const { id: myId, username: myUsername } = socket.request.session.user;
             const pendingRequests = await db.getPendingFriendRequests(myId);
-            console.log(pendingRequests);
             if (!pendingRequests[0])
                 return socket.emit('send pending requests', 'no requests pending');
             else {
@@ -79,5 +78,24 @@ module.exports = {
         } catch(err) {
             console.log(err);
         }
+    },
+    async acceptFriend(db, io, socket, connectedUsers, requester) {
+        const { id: requesteeId } = socket.request.session.user;
+        await db.acceptFriend(requester.id, requesteeId);
+        io.to(connectedUsers[requesteeId]).emit('friend update complete');
+        if (connectedUsers[requester.id])
+            io.to(connectedUsers[requester.id]).emit('friend update complete');
+    },
+    async rejectFriend(db, io, socket, connectedUsers, requester) {
+        const { id: requesteeId } = socket.request.session.user;
+        await db.rejectFriend(requester.id, requesteeId);
+        io.to(connectedUsers[requesteeId]).emit('friend update complete');
+    },
+    async deleteFriend(db, io, socket, connectedUsers, friend) {
+        const { id: myId } = socket.request.session.user;
+        await db.deleteFriend(myId, friend.id);
+        io.to(connectedUsers[myId]).emit('friend update complete');
+        if (connectedUsers[friend.id])
+            io.to(connectedUsers[friend.id]).emit('friend update complete');
     }
 }

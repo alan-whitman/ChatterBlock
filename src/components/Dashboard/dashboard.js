@@ -10,7 +10,6 @@ import PrivateMsg from './PrivateMessaging/privatemsg';
 import './dashboard.css';
 import io from 'socket.io-client';
 const socketPath = window.location.host.split(':')[0];
-console.log(socketPath);
 let socket;
 
 class Dashboard extends Component {
