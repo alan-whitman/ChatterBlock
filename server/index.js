@@ -118,18 +118,22 @@ io.on('connection', socket => {
     // friends listeners
     socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
     socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
-    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests(db, io, socket, connectedUsers));
+    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests(db, socket));
     socket.on('accept friend', requester => sfc.acceptFriend(db, io, socket, connectedUsers, requester));
     socket.on('reject friend', requester => sfc.rejectFriend(db, io, socket, connectedUsers, requester));
     socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
-    // socket.on('join channel', channel => scc.joinChannel())
-
     // channel listeners
+    socket.on('join channel', channel => scc.joinChannel(db, socket, connectUsers, channel));
+    socket.on('get channel messages', channel => scc.getChannel())
+    socket.on('create message', message => scc.createMessage());
+    // update last view time when channel component unmounts
+
 
     socket.on('disconnect', () => {
         if (socket.request.session.user) {
             sfc.goingOffline(db, io, connectedUsers, socket.request.session.user.id);
+            // if user in channel updated last view time
             delete connectedUsers[socket.request.session.user.id];
         }
     })

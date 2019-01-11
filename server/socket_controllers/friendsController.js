@@ -1,7 +1,6 @@
 module.exports = {
     async getMyFriends(db, socket, connectedUsers) {
         try {
-            console.log(JSON.stringify(connectedUsers, null, 4));
             const friends = await db.friends.getMyFriends(socket.request.session.user.id);
             if (friends[0]) {
                 friends.forEach(friend => {
@@ -67,7 +66,7 @@ module.exports = {
             console.log(err);
         }
     },
-    async getPendingFriendRequests(db, io, socket, connectedUsers) {
+    async getPendingFriendRequests(db, socket) {
         try {
             const { id: myId, username: myUsername } = socket.request.session.user;
             const pendingRequests = await db.friends.getPendingFriendRequests(myId);
