@@ -7,7 +7,6 @@ import { Redirect } from 'react-router-dom';
 class Settings extends Component {
     constructor(){
         super()
-
         this.state = {
             edit: false,
             username: '',
@@ -28,6 +27,7 @@ class Settings extends Component {
     }
 
     handleClickLogout = () => {
+        this.props.socket.disconnect();
         axios.get('/auth/logout').then(response => {
             this.props.userLoggedOut()
         })

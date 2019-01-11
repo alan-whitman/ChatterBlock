@@ -10,13 +10,14 @@ module.exports = {
         // see if email is already in use
         let userResponse = await db.getUserByEmail(email)
         //if anything is returned email is already in use
-
-
-// also need to check to see if username is taken        
-        
-
         if (userResponse[0]) {
             return res.status(409).send('this email is already registered')
+        }
+        let userName = await db.getUserByUsername(username)
+        //if anything is returned username is already in use
+        if (userName[0]) {
+            return res.status(409).send('this username is already registered')
+            console.log('attemping to register with existing username')
         }
         // generate salt and apply to password then hash
         const salt = bcrypt.genSaltSync(10)
@@ -63,9 +64,23 @@ module.exports = {
         // remove user hash before storing to session
         delete user.pw
         // console.log(user.pw)
-
         req.session.user = user
-        res.status(200).send(req.session.user)
+
+        //SUBBED CHANNELS
+        let userSubChannels = await db.getAllSubscibedChannels(userResponse[0].id)
+        //FRIENDS
+        let userFriends = await db.getUserFriends(userResponse[0].id)
+
+        function buildJSON(userData){
+            let obj = {}
+            obj.user = userData[0];
+            obj.userSubChannels = userSubChannels;
+            obj.userFriends = userFriends;
+            res.status(200).send(obj)
+        }
+
+        buildJSON(userResponse,userSubChannels,userFriends)
+
         } catch (error) {
             console.log('error logging into account:', error)
             res.status(500).send(error)

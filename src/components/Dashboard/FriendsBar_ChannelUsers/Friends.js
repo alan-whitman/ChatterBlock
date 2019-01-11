@@ -35,6 +35,9 @@ class Friends extends Component {
         this.props.socket.on('pending friend request', requesteeUsername => {
             console.log(requesteeUsername);
         });
+        this.props.socket.on('send pending requests', pendingRequests => {
+            console.log(pendingRequests);
+        });
     }
     componentDidMount() {
         this.props.socket.emit('get my friends');

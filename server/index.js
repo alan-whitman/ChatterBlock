@@ -109,6 +109,18 @@ let connectedUsers = {};
 
 io.on('connection', socket => {
     console.log('client connected');
+
+// DON'T MERGE THIS
+    // socket.request.session.user = { 
+    //     id: 1,
+    //     username: 'LesleyBrown',
+    //     email: 'LesleyBrown',
+    //   is_active: true,
+    //   about_text: 'banans',
+    //   user_image: 'https://randomuser.me/api/portraits/women/55.jpg',
+    //   verified: false,
+    //   verification_code: null }
+
     const db = app.get('db');
     if (socket.request.session.user) {
         connectedUsers[socket.request.session.user.id] = socket.id;
@@ -118,7 +130,7 @@ io.on('connection', socket => {
     // friends endpoints
     socket.on('get my friends', () => sfc.getMyFriends(db, socket, connectedUsers));
     socket.on('request friend', username => sfc.requestFriend(db, io, socket, connectedUsers, username));
-    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests);
+    socket.on('get pending friend requests', () => sfc.getPendingFriendRequests(db, io, socket, connectedUsers));
 
     socket.on('disconnect', () => {
         if (socket.request.session.user) {
