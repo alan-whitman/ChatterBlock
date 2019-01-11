@@ -102,7 +102,7 @@ class NavBar extends Component {
               </div>
               <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                 <div className="card-body">
-                    <input class="searchInput" type="text" placeholder="Find Channel" />    <Popup trigger={<button>Add a Channel</button>} position="bottom left">
+                    <input className="searchInput" type="text" placeholder="Find Channel" />    <Popup trigger={<button>Add a Channel</button>} position="bottom left">
       <input type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
     </Popup>
                     <ul>
