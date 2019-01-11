@@ -7,3 +7,10 @@
 .friends-holder {
     
 }
+.accept-reject {
+    font-size: 10px;
+}
+.accept-reject:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}

@@ -32,11 +32,15 @@ class Friends extends Component {
         this.props.socket.on('confirm friend request', confirmation => {
             console.log(confirmation);
         });
-        this.props.socket.on('pending friend request', requesteeUsername => {
-            console.log(requesteeUsername);
+        this.props.socket.on('new friend request', requester => {
+            console.log(requester);
+            let { pendingFriends } = this.state;
+            pendingFriends.push(requester);
+            this.setState({pendingFriends});
         });
         this.props.socket.on('send pending requests', pendingRequests => {
-            console.log(pendingRequests);
+            if (pendingRequests !== 'no requests pending')
+                this.setState({pendingFriends: pendingRequests})
         });
     }
     componentDidMount() {
@@ -48,16 +52,16 @@ class Friends extends Component {
         this.setState({[name]: value});
     }
     requestFriend() {
-        // if (this.props.friends.findIndex(friend => friend.username === this.state.requestedFriend ) !== -1)
-        //     return console.log(`${this.state.requestedFriend} is already your friend`);
+        if (this.props.friends.findIndex(friend => friend.username === this.state.requestedFriend ) !== -1)
+            return console.log(`${this.state.requestedFriend} is already your friend`);
         this.props.socket.emit('request friend', this.state.requestedFriend);
         this.setState({requestedFriend: ''});
     }
-    acceptFriendRequest() {
-
+    acceptFriend(id) {
+        this.props.socket.emit('accept friend', id);
     }
-    rejectFriendRequest() {
-
+    rejectFriend(id) {
+        this.props.socket.emit('reject friend', id);
     }
     renderFriends() {
         const onlineFriends = this.props.friends
@@ -70,7 +74,13 @@ class Friends extends Component {
             .map((friend, i) => <li key={i}>{friend.username}</li>);
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => <li key={i}>{friend.username}<br /><span>Accept</span> <span>Reject</span></li>);
+            .map((friend, i) => 
+                <li key={i}>
+                    {friend.username}<br />
+                    <span onClick={e => this.acceptFriend(friend.id)} className="accept-reject">Accept</span>&nbsp;&nbsp; 
+                    <span onClick={e => this.rejectFriend(friend.id)} className="accept-reject">Reject</span>
+                </li>
+            );
         return (
             <div>
                 <div style={{fontWeight: 'bold'}}>Online</div>
