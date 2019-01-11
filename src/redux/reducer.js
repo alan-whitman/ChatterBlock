@@ -2,13 +2,12 @@ const USER_LOGGED_IN = 'USER_LOGGED_IN'
 const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 const USER_EDIT = 'USER_EDIT'
 const POPULATE_FRIENDS = 'POPULATE_FRIENDS'
-const SET_CHANNELS = 'SET_CHANNELS'
+
 
 const initialState = {
   isAuthenticated: false,
   user: {},
-  friends: [],
-  channels: []
+  friends: []
 }
 
 export default function reducer(state = initialState, action) {
@@ -21,8 +20,6 @@ export default function reducer(state = initialState, action) {
       return { ...state, user: action.payload }
     case POPULATE_FRIENDS:
       return {...state, friends: action.payload}
-    case SET_CHANNELS:
-    return { ...state, channels: action.payload }
     default:
       return state;
   }
@@ -52,11 +49,5 @@ export function populateFriends(friends) {
   return {
     type: POPULATE_FRIENDS,
     payload: friends
-  }
-}
-export function setChannels(channels) {
-  return {
-      type: SET_CHANNELS,
-      payload: channels
   }
 }
