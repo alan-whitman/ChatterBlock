@@ -49,7 +49,7 @@ module.exports = {
             const response = await db.getUserByUsername(username);
             const requestee = response[0];
             if (requestee.id === myId)
-                return socket.emit('confirm friend request', 'you can\'t be friends with yourself, weirdo');
+                return socket.emit('confirm friend request', 'you can\'t be friends with yourself');
             if (!requestee)
                 return socket.emit('confirm friend request', 'user not found');
             const existingFriendRelationship = await db.getFriendRelationship([myId, requestee.id]);
@@ -63,6 +63,19 @@ module.exports = {
                 io.to(connectedUsers[requestee.id]).emit('pending friend request', {myUsername, myId});
             return socket.emit('confirm friend request', 'friend request submitted');
         } catch (err) {
+            console.log(err);
+        }
+    },
+    async getPendingFriendRequests(db, io, socket, connectedUsers) {
+        try {
+            const { id: myId, username: myUsername } = socket.request.session.user;
+            const pendingRequests = await db.getPendingFriendRequests(myId);
+            if (!pendingRequests[0])
+                return socket.emit('send pending requests', 'no requests pending');
+            else {
+                return socket.emit('send pending requests', pendingRequests);
+            }
+        } catch(err) {
             console.log(err);
         }
     }
