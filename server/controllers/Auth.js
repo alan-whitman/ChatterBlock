@@ -18,6 +18,11 @@ module.exports = {
         if (userResponse[0]) {
             return res.status(409).send('this email is already registered')
         }
+        let userName = await db.getUserByUsername(username)
+        if (userName[0]) {
+            return res.status(409).send('this username is already registered')
+            console.log('attemping to register with existing username')
+        }
         // generate salt and apply to password then hash
         const salt = bcrypt.genSaltSync(10)
         const hash = bcrypt.hashSync(pw, salt)
