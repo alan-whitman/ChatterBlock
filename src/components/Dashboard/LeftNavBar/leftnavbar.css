@@ -4,27 +4,30 @@
 
 } */
 
-.up {
-    z-index: 1;
-}
-
 .nav-container {
     background: rgb(40, 40, 40);
-    width: 24%;
+    width: 35%;
     margin: 0 auto;
     height: 100vh;
     margin: 0 auto;
     color: lightgrey;
 }
 
+
  .card-body, .card-header, #headingTwo, #headingOne, #headingThree {
     background: rgb(40, 40, 40);
 } 
 
-ul {
+#headingTwo, #headingOne, #headingThree {
+    padding: 0px;
+}
+
+div ul.leftbarUL {
     list-style: none;
-    margin-left: 20%;
     text-align: left;
+    height: 40vh;
+    overflow: auto;
+    
   }
   
   ul li::before {
@@ -38,8 +41,9 @@ ul {
   }
 
   ul li {
-      margin-left: 30%;
+      margin-left: 20%;
   }
+
 
 div.card {
     border: none;
@@ -47,20 +51,14 @@ div.card {
 
 
 .settings {
-  
-    position: absolute;
-    bottom: 0;
-    width: 16.5%;
-    display: flex;
-    justify-content: space-around;
+  z-index: 999999;
     
 }
 
-.settings p {
-    font-size: 20px;
-    padding-left: 10%;
-    letter-spacing: 3px;
+div.card-body {
+    overflow: auto;
 }
+
 
 
 /* .leftBar {
@@ -108,7 +106,7 @@ div.card {
 }
 */
 .profileAndSettings {
-    width: 16.65%;
+    width: 21%;
     height: 75px;
     position: absolute;
     bottom: 0;
@@ -117,4 +115,11 @@ div.card {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    
 } 
+
+.addChannel {
+    display: inline;
+    float: left;
+    margin-right: -10%;
+}
