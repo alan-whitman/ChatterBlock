@@ -7,6 +7,17 @@
 .friends-holder {
     
 }
+
+.popupmenu {
+    width: 200px;
+    height: 100px;
+    background-color: black;
+    border: 1px solid gray;
+    position: relative;
+    left: -225px;
+    top: -75px;
+    float: left;
+}
 .accept-reject {
     font-size: 10px;
 }
