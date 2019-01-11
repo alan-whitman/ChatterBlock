@@ -7,25 +7,41 @@ import Profile from './Profiles/profiles';
 import Settings from './Settings/settings';
 import FriendUserBar from './FriendsBar_ChannelUsers/frienduserbar';
 import PrivateMsg from './PrivateMessaging/privatemsg';
+import { connect } from 'react-redux';
 import './dashboard.css';
+import io from 'socket.io-client';
+const socketPath = window.location.host.split(':')[0];
+let socket;
+// const socket = io(socketPath + ':5004');
+
 
 class Dashboard extends Component {
+    constructor() {
+        super();
+        socket = io(socketPath + ':5004');
+    }
     render(){
         return (
             <div className="Dashboard">
-                <h1>Dashboard</h1>
                 <NavBar/>
                 <Switch>
                     <Route path="/dashboard" exact component={Recent} />
                     <Route path="/dashboard/channel" component={ChannelView} />
-                    <Route path="/dashboard/profile" component={Profile} />
+                    <Route path={`/dashboard/profile/:id`} component={Profile} />
                     <Route path="/dashboard/settings" component={Settings} />
                     <Route path="/dashboard/dms" component={PrivateMsg} />
                 </Switch>
-                <FriendUserBar/>
+                <FriendUserBar socket={socket} />
             </div>
         )
     }
 }
 
-export default Dashboard;
+function mapStateToProps(state) {
+    let { user } = state
+    return {
+      user
+    }
+  }
+  
+export default connect(mapStateToProps)(Dashboard);
