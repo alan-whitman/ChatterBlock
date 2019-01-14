@@ -58,15 +58,15 @@ class NavBar extends Component {
     }
     render() {
         const { channels, searchInput, subChannels } = this.state;
-
-        const channelDisplay = channels.filter(channel => {
-            return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
-        }).map((channel, i) => {
-            return <li key={i}>{channel.channel_name}</li>
-        })
-        const subChannelsDisplay = subChannels.map(channel => {
-            return <li>{channel.channel_name} {channel.count}</li>
-        })
+      
+      const channelDisplay = channels.filter(channel => {
+        return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
+      }).map((channel, i) => {
+        return <li key={i}>{channel.channel_name}</li>
+      })
+      const subChannelsDisplay = subChannels.map(channel => {
+        return <li key={channel.id}><Link to={`/dashboard/channel/${channel.channel_name}`}>{channel.channel_name} {channel.count}</Link></li>
+      })
         return (
             <div className="NavBar">
                 <div className="nav-top">
