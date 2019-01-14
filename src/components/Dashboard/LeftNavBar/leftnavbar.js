@@ -19,7 +19,6 @@ class NavBar extends Component {
 
   componentDidMount() {
     axios.get('/api/channel/all').then(response => {
-      console.log(response.data);
       this.setState({
         channels: response.data
       })
@@ -84,7 +83,7 @@ class NavBar extends Component {
               <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div className="card-body">
                     <ul className="leftbarUL">
-                        <Link to="/dashboard/channel" ><li>Rocket League</li></Link>
+                        <Link to="/dashboard/channel/second_channel" ><li>Rocket League</li></Link>
                         <li>Bumble Bees</li>
                         <li>Why am I coding?</li>
                         <li>Pizza for breakfast</li>
