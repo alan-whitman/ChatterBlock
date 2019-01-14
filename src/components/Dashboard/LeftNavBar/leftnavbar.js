@@ -77,7 +77,7 @@ class NavBar extends Component {
         return <li key={i}>{channel.channel_name}</li>
       })
       const subChannelsDisplay = subChannels.map(channel => {
-        return <li>{channel.channel_name} {channel.count}</li>
+        return <li key={channel.id}><Link to={`/dashboard/channel/${channel.channel_name}`}>{channel.channel_name} {channel.count}</Link></li>
       })
         return (
             <div className="nav-container">
