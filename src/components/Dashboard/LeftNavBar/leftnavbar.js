@@ -13,11 +13,20 @@ class NavBar extends Component {
     this.state = {
       searchInput: "",
       channel_name: "",
-      channels: []
+      channels: [],
+      subChannels: []
     }
   }
 
   componentDidMount() {
+
+    axios.get('/api/channel/all/subscribed/message/count',this.props.user.id).then(response => {
+      console.log(response.data);
+      this.setState({
+        subChannels: response.data
+      })
+    }).catch(err => {console.log(`Error! Did not get all Channels! ${err}`)})
+
     axios.get('/api/channel/all').then(response => {
       console.log(response.data);
       this.setState({
@@ -61,12 +70,15 @@ class NavBar extends Component {
 
 
     render(){
-      const { channels, searchInput } = this.state;
+      const { channels, searchInput, subChannels } = this.state;
       
       const channelDisplay = channels.filter(channel => {
         return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
       }).map((channel, i) => {
         return <li key={i}>{channel.channel_name}</li>
+      })
+      const subChannelsDisplay = subChannels.map(channel => {
+        return <li>{channel.channel_name} {channel.count}</li>
       })
         return (
             <div className="nav-container">
@@ -84,10 +96,7 @@ class NavBar extends Component {
               <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div className="card-body">
                     <ul className="leftbarUL">
-                        <Link to="/dashboard/channel" ><li>Rocket League</li></Link>
-                        <li>Bumble Bees</li>
-                        <li>Why am I coding?</li>
-                        <li>Pizza for breakfast</li>
+                        {subChannelsDisplay}
                     </ul>
                 </div>
               </div>
