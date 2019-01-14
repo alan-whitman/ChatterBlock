@@ -12,12 +12,12 @@ class ChannelView extends Component {
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
-            this.setState({messages: initialResponse.existingMessages, channelId: initialResponse.channelId});
+            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId });
         });
         this.props.socket.on('new message', newMessage => {
             let { messages } = this.state
             messages.push(newMessage);
-            this.setState({messages});
+            this.setState({ messages });
         })
     }
     componentWillMount() {
@@ -38,7 +38,7 @@ class ChannelView extends Component {
     }
     updateInput(e) {
         const { name, value } = e.target;
-        this.setState({[name]: value});
+        this.setState({ [name]: value });
 
     }
     sendMessage() {
@@ -53,20 +53,20 @@ class ChannelView extends Component {
                 content_text: this.state.messageInput,
                 content_image: null,
                 time_stamp: Date.now(),
-                username: this.props.user.username,
+                username: this.props.user.user.username,
                 user_image: null
 
             }
             messages.push(localMessage);
-            this.setState({messageInput: '', messages})
+            this.setState({ messageInput: '', messages })
         }
     }
-    render(){
+    render() {
         return (
-            <div className="main">
+            <div className="ChannelView">
                 <div className="header">
                     <div className="header-main">
-                        <h2 style={{color: 'white'}}>{this.props.match.params.channelName}</h2>
+                        <h2 style={{ color: 'white' }}>{this.props.match.params.channelName}</h2>
                         <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
                     </div>
                 </div>
@@ -75,15 +75,15 @@ class ChannelView extends Component {
                 </div>
                 <div className="message-input">
                     {/* {this.props.isAuthenticated ? */}
-                        <input 
-                            className="main-message" 
-                            type="text" 
-                            placeholder="New Message" 
-                            name="messageInput"
-                            value={this.state.messageInput} 
-                            onChange={e => this.updateInput(e)} 
-                            onKeyPress={e => {if (e.key === 'Enter') this.sendMessage()}} 
-                        />
+                    <input
+                        className="main-message"
+                        type="text"
+                        placeholder="New Message"
+                        name="messageInput"
+                        value={this.state.messageInput}
+                        onChange={e => this.updateInput(e)}
+                        onKeyPress={e => { if (e.key === 'Enter') this.sendMessage() }}
+                    />
                     {/* : null} */}
                 </div>
             </div>

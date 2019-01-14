@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import './frienduserbar.css'
 import { connect } from 'react-redux';
 import Friends from './Friends';
+import ChannelUsers from './ChannelUsers';
 
 class FriendUserBar extends Component {
     render(){
         return (
-            <div className="rightBar">
+            <div className="FriendUserBar">
                 {this.props.isAuthenticated ?
                     <Friends socket={this.props.socket} />
                 :
                     null
                 }
+                {/* <ChannelUsers /> */}
             </div>
         )
     }

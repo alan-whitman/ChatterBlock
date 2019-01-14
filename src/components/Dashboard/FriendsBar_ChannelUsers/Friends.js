@@ -70,16 +70,13 @@ class Friends extends Component {
     rejectFriend(user) {
         this.props.socket.emit('reject friend', user);
     }
-    deleteFriend(user) {
-        this.props.socket.emit('delete friend', user);
-    }
     renderFriends() {
         const onlineFriends = this.props.friends
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
                 <li key={i}>
-                    <Popup deleteFriend={this.deleteFriend} friend={friend}/>
+                    <Popup friend={friend} socket={this.props.socket} />
                 </li>
             );
         const offlineFriends = this.props.friends
@@ -87,7 +84,7 @@ class Friends extends Component {
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
                 <li key={i}>
-                    <Popup deleteFriend={this.deleteFriend} friend={friend}/>
+                    <Popup friend={friend} socket={this.props.socket} />
                 </li>
             );
         const pendingFriends = this.state.pendingFriends

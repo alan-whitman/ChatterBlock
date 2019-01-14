@@ -32,7 +32,21 @@ module.exports = {
         // add user info to the session rather than making them log in after registration
         req.session.user = newUser
         //send user info back to client
-        res.status(200).send(newUser)
+
+        //SUBBED CHANNELS
+        let userSubChannels = await db.getAllSubscibedChannels(newUser.id)
+        //FRIENDS
+        let userFriends = await db.getUserFriends(newUser.id)
+
+        function buildJSON(userData){
+            let obj = {}
+            obj.user = newUser;
+            obj.userSubChannels = userSubChannels;
+            obj.userFriends = userFriends;
+            res.status(200).send(obj)
+        }
+
+        buildJSON(userResponse,userSubChannels,userFriends)
 
         } catch (error) {
             console.log('error registering account:', error)
