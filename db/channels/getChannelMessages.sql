@@ -4,4 +4,5 @@ INNER JOIN users u
 ON u.id = cm.user_id
 FULL JOIN channel_message_reactions cmr
 ON cmr.id = cm.id
-WHERE channel_id = $1;
+WHERE channel_id = $1
+ORDER BY cm.time_stamp;

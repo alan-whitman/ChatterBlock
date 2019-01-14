@@ -4,7 +4,7 @@ const session = require('express-session');
 const massive = require('massive');
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {pingTimeout: 15000});
 
 
 require('dotenv').config();
@@ -126,11 +126,10 @@ io.on('connection', socket => {
 
     // channel listeners
     socket.on('join channel', channelName => scc.joinChannel(db, socket, connectedUsers, channelName));
-    // socket.on('get channel users', )
-    // socket.on('get channel messages', channel => scc.getChannel())
-    socket.on('create message', message => scc.createMessage());
+    socket.on('leave channel', () => scc.leaveChannel());
+    socket.on('create message', message => scc.createMessage(db, socket, message));
     socket.on('like message', message => scc.likeMessage());
-    socket.on('unlike message', message => scc.likeMessage());
+    socket.on('unlike message', message => scc.unlikeMessage());
 
     // update last view time when channel component unmounts
 

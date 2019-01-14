@@ -7,13 +7,18 @@ class ChannelView extends Component {
         super(props);
         this.state = {
             messages: [],
-            channelId: -1
+            channelId: -1,
+            messageInput: ''
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
-            console.log(initialResponse);
             this.setState({messages: initialResponse.existingMessages, channelId: initialResponse.channelId});
         });
+        this.props.socket.on('new message', newMessage => {
+            let { messages } = this.state
+            messages.push(newMessage);
+            this.setState({messages});
+        })
     }
     componentWillMount() {
         const { channelName } = this.props.match.params;
@@ -31,6 +36,31 @@ class ChannelView extends Component {
             </div>
         );
     }
+    updateInput(e) {
+        const { name, value } = e.target;
+        this.setState({[name]: value});
+
+    }
+    sendMessage() {
+        if (this.state.messageInput.trim()) {
+            let { messages } = this.state;
+            const message = {
+                contentText: this.state.messageInput,
+                channelId: this.state.channelId
+            }
+            this.props.socket.emit('create message', message);
+            const localMessage = {
+                content_text: this.state.messageInput,
+                content_image: null,
+                time_stamp: Date.now(),
+                username: this.props.user.username,
+                user_image: null
+
+            }
+            messages.push(localMessage);
+            this.setState({messageInput: '', messages})
+        }
+    }
     render(){
         return (
             <div className="main">
@@ -45,7 +75,15 @@ class ChannelView extends Component {
                 </div>
                 <div className="message-input">
                     {/* {this.props.isAuthenticated ? */}
-                        <input className="main-message" type="text" placeholder="Message Here" />
+                        <input 
+                            className="main-message" 
+                            type="text" 
+                            placeholder="New Message" 
+                            name="messageInput"
+                            value={this.state.messageInput} 
+                            onChange={e => this.updateInput(e)} 
+                            onKeyPress={e => {if (e.key === 'Enter') this.sendMessage()}} 
+                        />
                     {/* : null} */}
                 </div>
             </div>
@@ -54,8 +92,9 @@ class ChannelView extends Component {
 }
 
 const mapStateToProps = state => {
-    let { isAuthenticated } = state;
+    let { isAuthenticated, user } = state;
     return {
+        user,
         isAuthenticated
     }
 }
