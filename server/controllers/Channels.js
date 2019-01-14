@@ -126,7 +126,7 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
         const {channel_id,user_id} = req.body
         let time = Date.now()
         let channelFull = await db.getChannelWithMessages(channel_id)
-        console.log(channel_id,user_id,time)
+        // console.log(channel_id,user_id,time)
         db.updateChannelViewTime({channel_id,user_id,time})
         res.status(200).send(channelFull)
         } catch (error){

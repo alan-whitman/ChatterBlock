@@ -88,11 +88,6 @@ class Friends extends Component {
             .map((friend, i) => 
                 <li key={i}>
                     <Popup deleteFriend={this.deleteFriend} friend={friend}/>
-                
-                    {/* <h3 onContextMenu={this.handleClick}>{friend.username}</h3><br />
-                    {this.state.rightclickmenu && <div className="popupmenu"><Link to={`/dashboard/profile/${friend.id}`}>{friend.username}</Link>
-                    <br /><span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span></div>} */}
-                    
                 </li>
             );
         const pendingFriends = this.state.pendingFriends
