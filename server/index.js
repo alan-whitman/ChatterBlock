@@ -109,6 +109,7 @@ const scc = require('./socket_controllers/channelController')
 let connectedUsers = {};
 
 io.on('connection', socket => {
+    console.log('client connected');
     const db = app.get('db');
     if (socket.request.session.user) {
         connectedUsers[socket.request.session.user.id] = socket.id;
@@ -124,9 +125,13 @@ io.on('connection', socket => {
     socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
     // channel listeners
-    socket.on('join channel', channel => scc.joinChannel(db, socket, connectUsers, channel));
-    socket.on('get channel messages', channel => scc.getChannel())
+    socket.on('join channel', channelName => scc.joinChannel(db, socket, connectedUsers, channelName));
+    // socket.on('get channel users', )
+    // socket.on('get channel messages', channel => scc.getChannel())
     socket.on('create message', message => scc.createMessage());
+    socket.on('like message', message => scc.likeMessage());
+    socket.on('unlike message', message => scc.likeMessage());
+
     // update last view time when channel component unmounts
 
 

@@ -24,9 +24,14 @@ class Dashboard extends Component {
                 <NavBar/>
                 <Switch>
                     <Route path="/dashboard" exact component={Recent} />
-                    <Route path="/dashboard/channel" component={ChannelView} />
-                    <Route path={`/dashboard/profile/:id`} component={Profile} />
-                    <Route path="/dashboard/settings" render={(props) => 
+                    <Route path="/dashboard/channel/:channelName" render={props =>
+                        <ChannelView
+                            {...props}
+                            socket={socket}
+                        />}
+                    />
+                    <Route path="/dashboard/profile/:id" component={Profile} />
+                    <Route path="/dashboard/settings" render={props => 
                         <Settings 
                             {...props}
                             socket={socket}
