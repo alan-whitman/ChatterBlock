@@ -135,7 +135,7 @@ class NavBar extends Component {
           </div>
           <div className="settings">
                 {this.props.isAuthenticated ? <div className="profileAndSettings">
-                    <Link to={`/dashboard/profile/${this.props.user.id}`} >{this.props.user.username}</Link>
+                    <Link to={`/dashboard/profile/${this.props.user.user.id}`} >{this.props.user.user.username}</Link>
                     <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
                 </div>: <div className="profileAndSettings">
                     <h3>Guest</h3>
