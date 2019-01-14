@@ -1,8 +1,7 @@
-.rightBar {
-    width: 30%;
-    height: 100vh;
-
+.FriendUserBar {
+    width: 220px;
     background-color: rgb(40, 40, 40);
     color: #fff;
-
+    flex-shrink: 0;
+    flex-grow: 0;
 }
