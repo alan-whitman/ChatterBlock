@@ -30,9 +30,7 @@ class Landing extends Component {
     handleLogin = () => {
         if (this.state.registerPassword === this.state.confirmPassword) {
             axios.post('/auth/login', this.state).then(response => {
-                console.log(response.data);
-                let user = response.data.user
-                this.props.userLoggedIn(user)
+                this.props.userLoggedIn(response.data)
             })
         }
     }
