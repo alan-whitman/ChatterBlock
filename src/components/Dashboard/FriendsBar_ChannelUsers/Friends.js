@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Friends.css';
 import { connect } from 'react-redux';
 import { populateFriends } from '../../../redux/reducer';
-import { Link } from 'react-router-dom';
+import Popup from './popup';
 
 class Friends extends Component {
     constructor(props) {
@@ -77,26 +77,24 @@ class Friends extends Component {
         const onlineFriends = this.props.friends
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => <li key={i}><h3 onContextMenu={this.handleClick}>{friend.username}</h3>{this.state.rightclickmenu && <div>bana</div>}</li>);
+            .map((friend, i) => 
+                <li key={i}>
+                    <Popup deleteFriend={this.deleteFriend} friend={friend}/>
+                </li>
+            );
         const offlineFriends = this.props.friends
             .filter(friend => !friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-    .map((friend, i) => <li key={i}><h3 onContextMenu={this.handleClick}>{friend.username}</h3>{this.state.rightclickmenu && <div className="popupmenu"><Link to={`/dashboard/profile/${friend.id}`}>{friend.username}</Link></div>}</li>);
-        //     .map((friend, i) => 
-        //         <li key={i}>
-        //             {friend.username}<br />
-        //             <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span>
-        //         </li>
-        //     );
-        // const offlineFriends = this.props.friends
-        //     .filter(friend => !friend.online)
-        //     .sort((a, b) => a.username < b.username ? -1 : 1)
-        //     .map((friend, i) => 
-        //         <li key={i}>
-        //             {friend.username}<br />
-        //             <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span>
-        //         </li>
-        //     );
+            .map((friend, i) => 
+                <li key={i}>
+                    <Popup deleteFriend={this.deleteFriend} friend={friend}/>
+                
+                    {/* <h3 onContextMenu={this.handleClick}>{friend.username}</h3><br />
+                    {this.state.rightclickmenu && <div className="popupmenu"><Link to={`/dashboard/profile/${friend.id}`}>{friend.username}</Link>
+                    <br /><span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span></div>} */}
+                    
+                </li>
+            );
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
@@ -122,24 +120,6 @@ class Friends extends Component {
                 </ul>
             </div>
         )
-    }
-
-    handleClick = (event) => {
-        event.preventDefault();
-        if (event.type === 'click') {
-            this.props.history.push('/dashboard/profile')
-        } else if (event.type === 'contextmenu') {
-            
-            this.setState({ rightclickmenu: true }, () => {
-                document.addEventListener('click', this.closeMenu);
-            });
-        }
-    }
-
-    closeMenu = () => {
-        this.setState({ rightclickmenu: false }, () => {
-          document.removeEventListener('click', this.closeMenu);
-        });
     }
 
     render(){
