@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 class Popup extends Component {
-    constructor(){
-        super()
+    constructor(props){
+        super(props);
 
         this.state = {
             show: false
         }
     }
-
+    deleteFriend(user) {
+        this.props.socket.emit('delete friend', user);
+    }
     handleClick = (event) => {
         event.preventDefault();
         if (event.type === 'click') {
@@ -34,7 +36,7 @@ class Popup extends Component {
             <div style={{position: 'relative'}}>
                 <h3 onContextMenu={this.handleClick}>{friend.username}</h3><br />
                 {this.state.show && <div className="popupmenu"><Link to={`/dashboard/profile/${friend.id}`}>{friend.username}</Link>
-                <br /><span onClick={e => this.props.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span></div>}
+                <br /><span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Delete</span></div>}
             </div>
         )
     }

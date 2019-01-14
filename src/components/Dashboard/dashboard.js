@@ -22,23 +22,25 @@ class Dashboard extends Component {
         return (
             <div className="Dashboard">
                 <NavBar/>
-                <Switch>
-                    <Route path="/dashboard" exact component={Recent} />
-                    <Route path="/dashboard/channel/:channelName" render={props =>
-                        <ChannelView
-                            {...props}
-                            socket={socket}
-                        />}
-                    />
-                    <Route path="/dashboard/profile/:id" component={Profile} />
-                    <Route path="/dashboard/settings" render={props => 
-                        <Settings 
-                            {...props}
-                            socket={socket}
-                        />} 
-                    />
-                    <Route path="/dashboard/dms" component={PrivateMsg} />
-                </Switch>
+                <div className="center-container">
+                    <Switch>
+                        <Route path="/dashboard" exact component={Recent} />
+                        <Route path="/dashboard/channel/:channelName" render={props =>
+                            <ChannelView
+                                {...props}
+                                socket={socket}
+                            />}
+                        />
+                        <Route path="/dashboard/profile/:id" component={Profile} />
+                        <Route path="/dashboard/settings" render={props => 
+                            <Settings 
+                                {...props}
+                                socket={socket}
+                            />} 
+                        />
+                        <Route path="/dashboard/dms" component={PrivateMsg} />
+                    </Switch>
+                </div>
                 <FriendUserBar socket={socket} />
             </div>
         )

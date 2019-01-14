@@ -5,7 +5,6 @@ import Dashboard from './components/Dashboard/dashboard';
 import { connect } from 'react-redux';
 import { userLoggedIn } from './redux/reducer';
 import './reset.css';
-import './App.css';
 import axios from 'axios';
 
 class App extends Component {
