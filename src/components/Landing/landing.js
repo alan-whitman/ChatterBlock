@@ -74,7 +74,7 @@ class Landing extends Component {
                     <div className="sideways">
                         <div className="registrationForm">
                             <h2>Registration</h2>
-                            <input name="registerUsername" type="text" placeholder="username" value={this.state.registerUsername}onChange={this.handleChange} />
+                            <input name="registerUsername" type="text" placeholder="username" maxLength="16" value={this.state.registerUsername}onChange={this.handleChange} />
                             <input name="registerEmail" type="text" placeholder="email" value={this.state.registerEmail} onChange={this.handleChange} />
                             <input name="registerPassword" type="password" placeholder="password" value={this.state.registerPassword} onChange={this.handleChange} />
                             <input name="confirmPassword" type="password" placeholder="confirm password" value={this.state.confirmPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpR}/>

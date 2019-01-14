@@ -86,8 +86,26 @@ module.exports = {
             res.status(500).send(error)
         }
     },
-    getCurrentUser: (req,res) => {
-        res.status(200).send(req.session.user)
+    getCurrentUser: async (req,res) => {
+        try {
+            const db = req.app.get('db')
+            //SUBBED CHANNELS
+            let userSubChannels = await db.getAllSubscibedChannels(req.session.user.id)
+            //FRIENDS
+            let userFriends = await db.getUserFriends(req.session.user.id)
+    
+            function buildJSON(userData,userSubChannels,userFriends){
+                let obj = {}
+                obj.user =userData;
+                obj.userSubChannels = userSubChannels;
+                obj.userFriends = userFriends;
+                res.status(200).send(obj)
+            }
+    
+            buildJSON(req.session.user,userSubChannels,userFriends)
+        }catch(error){
+
+        }
     },
     logout: (req,res) =>{
         // console.log('destorying session')
