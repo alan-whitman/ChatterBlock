@@ -22,7 +22,6 @@ module.exports={
                 obj.userFriends = userFriends;
                 obj.postMeta = postMeta[0];
                 obj.profileRecentMessages = profileRecentMessages;
-                console.log(obj)
                 res.status(200).send(obj)
             }
 
