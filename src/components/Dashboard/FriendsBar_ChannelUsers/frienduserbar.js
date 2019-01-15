@@ -9,7 +9,7 @@ class FriendUserBar extends Component {
         return (
             <div className="FriendUserBar">
                 {this.props.isAuthenticated ?
-                    <Friends socket={this.props.socket} />
+                    <Friends socket={this.props.socket} {...this.props}/>
                 :
                     null
                 }

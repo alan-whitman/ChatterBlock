@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './Friends.css';
 import { connect } from 'react-redux';
 import { populateFriends } from '../../../redux/reducer';
-import Popup from './popup';
+import FriendsPopup from './popup';
+import Popup from 'reactjs-popup';
 
 class Friends extends Component {
     constructor(props) {
@@ -76,7 +77,7 @@ class Friends extends Component {
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
                 <li key={i}>
-                    <Popup friend={friend} socket={this.props.socket} />
+                    <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
                 </li>
             );
         const offlineFriends = this.props.friends
@@ -84,7 +85,7 @@ class Friends extends Component {
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) => 
                 <li key={i}>
-                    <Popup friend={friend} socket={this.props.socket} />
+                    <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
                 </li>
             );
         const pendingFriends = this.state.pendingFriends
@@ -98,6 +99,22 @@ class Friends extends Component {
             );
         return (
             <div>
+                <div style={{fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', paddingRight: '20px'}}>
+                    <h3>Pending</h3> 
+                    <Popup trigger={<i className="fas fa-plus"></i>} position="bottom right">
+                        <input 
+                            type="text"
+                            name="requestedFriend"
+                            placeholder="add friend" 
+                            value={this.state.requestedFriend}  
+                            onChange={e => this.updateInput(e)}
+                            onKeyPress={e => {if (e.key === "Enter") this.requestFriend()}}
+                        />
+                    </Popup>
+                </div>
+                <ul className="pending-friends">
+                    {pendingFriends}
+                </ul>
                 <div style={{fontWeight: 'bold'}}>Online</div>
                 <ul className="online-friends" style={{marginBottom: 10}}>
                     {onlineFriends}
@@ -105,10 +122,6 @@ class Friends extends Component {
                 <div style={{fontWeight: 'bold'}}>Offline</div>
                 <ul className="offline-friends" style={{marginBottom: 10}}>
                     {offlineFriends}
-                </ul>
-                <div style={{fontWeight: 'bold'}}>Pending</div>
-                <ul className="pending-friends">
-                    {pendingFriends}
                 </ul>
             </div>
         )
@@ -118,14 +131,6 @@ class Friends extends Component {
         return (
             <div className="rightBar">
                 <div className="friends-holder">
-                    <input 
-                        type="text"
-                        name="requestedFriend"
-                        placeholder="add friend" 
-                        value={this.state.requestedFriend}  
-                        onChange={e => this.updateInput(e)}
-                        onKeyPress={e => {if (e.key === "Enter") this.requestFriend()}}
-                    />
                     {this.renderFriends()}
                 </div>
             </div>
