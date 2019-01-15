@@ -38,7 +38,7 @@ class DateStamp extends Component {
 
     render() {
         return (
-            <div><p className="post-date">{this.getDate()}</p></div>
+            <div>{this.getDate()}</div>
         )
     }
 }

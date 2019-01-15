@@ -24,38 +24,35 @@ class ChannelView extends Component {
         });
         this.props.socket.on('user joined channel', user => {
             let { channelUsers } = this.props;
-            channelUsers.push(user);
-            channelUsers.sort((a, b) => a < b ? - 1 : 1);
+            channelUsers = [...channelUsers, user];
+            channelUsers.sort((a, b) => a.username < b.username ? - 1 : 1);
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('user left channel', username => {
-            let { channelUsers } = this.props;
-            channelUsers = channelUsers.fiter(user => user.username !== username);
+            let channelUsers = [...this.props.channelUsers];
+            channelUsers = channelUsers.filter(user => user.username !== username);
             this.props.populateChannelUsers(channelUsers);
         });
     }
     componentWillMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);
-        this.setState({ prevProps: this.props.match.params.channelName });
     }
     componentDidUpdate(prevProps) {
 
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
-            //leave previous channel
-
-            //end leave previous channel
-
+            console.log('switching channels...');
+            this.props.socket.emit('leave channel');
             const { channelName } = this.props.match.params;
             this.props.socket.emit('join channel', channelName);
-            this.setState({ prevProps: this.props.match.params.channelName });
         }
         // scroll message window to bottom
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
 
     }
     componentWillUnmount() {
-        this.props.socket.emit('leaving channel', this.props.user.user.id);
+        this.props.socket.emit('leave channel');
+        this.props.populateChannelUsers([]);
     }
     renderMessages() {
         let { user } = this.props.user

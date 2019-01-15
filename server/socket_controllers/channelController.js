@@ -11,7 +11,7 @@ module.exports = {
                 const time = Date.now()
                 const lastViewTime = await db.channels.getUpdateLastViewTime(userId, channelId, time);
                 initialChannelResponse.lastViewTime = lastViewTime[0] ? lastViewTime[0].last_view_time : Date.now();
-                socket.request.session.user.currentRoom = channelName;
+                socket.request.session.currentRoom = channelName;
             }
             initialChannelResponse.existingMessages = await db.channels.getChannelMessages(channelId);
             initialChannelResponse.channelId = channelId;
@@ -38,7 +38,8 @@ module.exports = {
     async createMessage(db, socket, message) {
         if (!socket.request.session.user)
             return;
-        const { id: myId, username: myUsername, currentRoom } = socket.request.session.user;
+        const { id: myId, username: myUsername } = socket.request.session.user;
+        const { currentRoom }  = socket.request.session;
         const timestamp = Date.now();
         await db.channels.createMessage(message.channelId, myId, message.contentText, null, timestamp);
         const outgoingMessage = {
@@ -49,5 +50,15 @@ module.exports = {
             user_image: null
         }
         socket.to(currentRoom).emit('new message', outgoingMessage);
+    },
+    async leaveChannel(socket) {
+        const { currentRoom } = socket.request.session;
+        if (socket.request.session.user) {
+            const { username } = socket.request.session.user;
+            console.log(username, ' - is leaving - ', currentRoom);
+            socket.to(currentRoom).emit('user left channel', username);
+        }
+        socket.leave(currentRoom);
+        delete socket.request.session.currentRoom;
     }
 }
