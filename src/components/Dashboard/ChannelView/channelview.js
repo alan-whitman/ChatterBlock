@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { populateChannelUsers } from '../../../redux/reducer';
 import DateStamp from '../../DateFormat/dateStamp'
 import './channelview.css';
-import axios from 'axios';
 
 class ChannelView extends Component {
     constructor(props) {
@@ -10,82 +10,80 @@ class ChannelView extends Component {
         this.state = {
             messages: [],
             channelId: -1,
-            messageInput: '',
-            prevProps:false,
-            subIds:[]
+            messageInput: ''
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
+            this.props.populateChannelUsers(initialResponse.channelUsers);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId });
         });
         this.props.socket.on('new message', newMessage => {
             let { messages } = this.state
             messages.push(newMessage);
             this.setState({ messages });
-        })
+        });
+        this.props.socket.on('user joined channel', user => {
+            let { channelUsers } = this.props;
+            channelUsers = [...channelUsers, user];
+            channelUsers.sort((a, b) => a.username < b.username ? - 1 : 1);
+            this.props.populateChannelUsers(channelUsers);
+        });
+        this.props.socket.on('user left channel', username => {
+            let channelUsers = [...this.props.channelUsers];
+            channelUsers = channelUsers.filter(user => user.username !== username);
+            this.props.populateChannelUsers(channelUsers);
+        });
     }
     componentWillMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);
-        this.getMessages();
-        this.setState({prevProps: this.props.match.params.channelName});
     }
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
 
-        if(this.state.prevProps !== this.props.match.params.channelName){
-            this.setState({prevProps: this.props.match.params.channelName})
-            // console.log(this.state.prevProps)
-            this.getMessages();
+        if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
+            console.log('switching channels...');
+            this.props.socket.emit('leave channel');
+            const { channelName } = this.props.match.params;
+            this.props.socket.emit('join channel', channelName);
         }
         // scroll message window to bottom
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
-        // console.log("channel updated")
-        // this.renderMessages()
 
-        
     }
-
-
-
-
-
-    getMessages = () => {
-        console.log(this.props.match.params.channelName)
-
-//    this.props.user.userSubChannels.forEach(function (chan) {
-//     // var subIds = [];
-//     // subIds.push(chan.id);
-// }); 
-console.log(this.props.user.userSubChannels)
-
-        axios.get(`/api/channel/messages/${this.props.match.params.channelName}`).then(response => {
-            this.setState({messages: response.data}) 
-
-            console.log(this.state.messages)
-        })
+    componentWillUnmount() {
+        this.props.socket.emit('leave channel');
+        this.props.populateChannelUsers([]);
     }
     renderMessages() {
-        let {user} = this.props.user
+        let { user } = this.props.user
         return this.state.messages.map((message, i) =>
-            <div className={`user-message ${message.user_id == user ? 'my-msg' : 'their-msg'}`} key={i}>
-
-                <img className="message-user-image" src={message.user_image}/><h6>{message.username}{message.user_id} <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span></h6>
-                {message.content_image? <img src={message.content_image} src="message-image"/>: false}
-                <p>{message.content_text}</p>
+            <div className={`user-message ${message.user_id === user ? 'my-msg' : 'their-msg'}`} key={i}>
+                <div className="message-user-info">
+                    <div className="message-user-info-image">
+                        {message.user_image ? <img className="message-user-image" src={message.user_image} alt="temporary alt" /> : null}
+                    </div>
+                    <h6>{message.username}{message.user_id} <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)} /></span></h6>
+                </div>
+                <div className="message-content">
+                    {message.content_image ? <img src={message.content_image} className="message-image" alt="temporary alt" /> : false}
+                    <p>{message.content_text}</p>
+                </div>
             </div>
         );
     }
     updateInput(e) {
         const { name, value } = e.target;
         // check to see if message contains an image url then do something about it
-        if(value.match(/\.(jpeg|jpg|gif|png)$/)){
+        if (value.match(/\.(jpeg|jpg|gif|png)$/)) {
             console.log("message input is an image")
         }
-        
+
         this.setState({ [name]: value });
 
     }
     sendMessage() {
+        if (!this.props.user)
+            return;
         if (this.state.messageInput.trim()) {
             let { messages } = this.state;
             const message = {
@@ -109,20 +107,17 @@ console.log(this.props.user.userSubChannels)
         return (
             <div className="ChannelView">
                 <div className="header">
-                    <div className="header-main">
-                        <h2 style={{ color: 'white' }}>{this.props.match.params.channelName}</h2>
-                        {/* {console.log(this.props.user.userSubChannels.indexOf(`id: ${this.state.channelId}`),this.state.channelId)} */}
-                        {/* {this.props.user.userSubChannels.indexOf(this.state.channelId) > -1 ? <button></button> : <button></button>} */}
-                        <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
-                    </div>
+                    <h2 style={{ color: 'white' }}>{this.props.match.params.channelName}</h2>
+                    {/* {console.log(this.props.user.userSubChannels.indexOf(`id: ${this.state.channelId}`),this.state.channelId)} */}
+                    {/* {this.props.user.userSubChannels.indexOf(this.state.channelId) > -1 ? <button></button> : <button></button>} */}
+                    <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
                 </div>
-                <div className="textarea container" ref={this.messageWindowRef}>
+                <div className="messages" ref={this.messageWindowRef}>
                     {this.renderMessages()}
                 </div>
-                <div className="message-input">
-                    {/* {this.props.isAuthenticated ? */}
+                <div className="input-holder">
                     <input
-                        className="main-message"
+                        className="input-bar"
                         type="text"
                         placeholder="New Message"
                         name="messageInput"
@@ -130,7 +125,6 @@ console.log(this.props.user.userSubChannels)
                         onChange={e => this.updateInput(e)}
                         onKeyPress={e => { if (e.key === 'Enter') this.sendMessage() }}
                     />
-                    {/* : null} */}
                 </div>
             </div>
         )
@@ -138,12 +132,13 @@ console.log(this.props.user.userSubChannels)
 }
 
 const mapStateToProps = state => {
-    let { isAuthenticated, user } = state;
+    let { isAuthenticated, user, channelUsers } = state;
     return {
         user,
-        isAuthenticated
+        isAuthenticated,
+        channelUsers
     }
 }
 
 
-export default connect(mapStateToProps)(ChannelView);
+export default connect(mapStateToProps, { populateChannelUsers })(ChannelView);
