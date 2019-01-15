@@ -14,12 +14,11 @@
     display:flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
+    padding: 18px 50px;
 }
 
-.header-sidebar {
 
-}
+
 
 .message-input {
     margin: 0 auto;
