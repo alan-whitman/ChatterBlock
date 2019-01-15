@@ -48,7 +48,7 @@
 
 .user-message {
 
-    border-top:  1px solid lightgrey;
+    /* border-top:  1px solid lightgrey; */
 }
 
 .user-message h6 {
@@ -60,11 +60,17 @@
 
 .user-message p {
     color: white;
+    text-align: left;
     text-align: initial;
+    float: left;
 }
 
 .timestamp {
     font-size: 10px;
+clear: right;
+float: right;
+padding-top: 5px;
+padding-left: 5px;
     
 }
 
@@ -73,4 +79,27 @@
     margin-right: 10px;
     padding-left: 7.5px;
     width: 70%;
+}
+.message-user-image{
+    width: 55px;
+    border-radius: 50%;
+    padding-right: 10px;
+}
+.my-msg h6{
+text-align: right;
+}
+.user-message img {
+    float: left;
+    /* max-width:8%; */
+} 
+.user-message h6 {
+    float: left;
+padding-top: 0px;
+font-weight: lighter;
+width: 92%;
+height: 12px;
+}
+.user-message.their-msg {
+    width: 100%;
+    clear: both;
 }

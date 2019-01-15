@@ -5,3 +5,6 @@
     flex-shrink: 0;
     flex-grow: 0;
 }
+.friends-holder h3{
+    font-size:16px;
+}

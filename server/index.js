@@ -77,7 +77,7 @@ io.use((socket, next) => {
     // Get Channel
     app.get('/api/channel', Channel.getChannel)
     // Get Channel and Messages
-    app.get('/api/channel/messages', Channel.getChannelWithMessages)
+    app.get('/api/channel/messages/:channel_name', Channel.getChannelWithMessages)
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
     // Follow Channel
