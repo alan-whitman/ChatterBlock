@@ -29,6 +29,7 @@ class Dashboard extends Component {
                             <ChannelView
                                 {...props}
                                 socket={socket}
+                                
                             />}
                         />
                         <Route path="/dashboard/profile/:id" component={Profile} />
