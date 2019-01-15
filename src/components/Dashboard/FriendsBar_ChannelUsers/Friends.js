@@ -38,13 +38,13 @@ class Friends extends Component {
         this.props.socket.on('new friend request', requester => {
             let { pendingFriends } = this.state;
             pendingFriends.push(requester);
-            this.setState({pendingFriends});
+            this.setState({ pendingFriends });
         });
         this.props.socket.on('send pending requests', pendingRequests => {
             if (pendingRequests !== 'no requests pending')
-                this.setState({pendingFriends: pendingRequests})
+                this.setState({ pendingFriends: pendingRequests })
             else
-                this.setState({pendingFriends: []});
+                this.setState({ pendingFriends: [] });
         });
         this.props.socket.on('friend update complete', () => {
             this.props.socket.emit('get my friends');
@@ -57,13 +57,13 @@ class Friends extends Component {
     }
     updateInput(e) {
         const { name, value } = e.target;
-        this.setState({[name]: value});
+        this.setState({ [name]: value });
     }
     requestFriend() {
-        if (this.props.friends.findIndex(friend => friend.username === this.state.requestedFriend ) !== -1)
+        if (this.props.friends.findIndex(friend => friend.username === this.state.requestedFriend) !== -1)
             return console.log(`${this.state.requestedFriend} is already your friend`);
         this.props.socket.emit('request friend', this.state.requestedFriend);
-        this.setState({requestedFriend: ''});
+        this.setState({ requestedFriend: '' });
     }
     acceptFriend(user) {
         this.props.socket.emit('accept friend', user);
@@ -75,7 +75,7 @@ class Friends extends Component {
         const onlineFriends = this.props.friends
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => 
+            .map((friend, i) =>
                 <li key={i}>
                     <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
                 </li>
@@ -83,18 +83,18 @@ class Friends extends Component {
         const offlineFriends = this.props.friends
             .filter(friend => !friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => 
+            .map((friend, i) =>
                 <li key={i}>
                     <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
                 </li>
             );
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
-            .map((friend, i) => 
+            .map((friend, i) =>
                 <li key={i}>
                     {friend.username}
-                    <span onClick={e => this.acceptFriend({id: friend.id, username: friend.username})} className="accept-reject">Accept</span>&nbsp;&nbsp; 
-                    <span onClick={e => this.rejectFriend({id: friend.id, username: friend.username})} className="accept-reject">Reject</span>
+                    <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
+                    <span onClick={e => this.rejectFriend({ id: friend.id, username: friend.username })} className="accept-reject">Reject</span>
                 </li>
             );
         return (
@@ -119,17 +119,17 @@ class Friends extends Component {
                 <ul className="online-friends" style={{marginBottom: 10}}>
                     {onlineFriends}
                 </ul>
-                <div style={{fontWeight: 'bold'}}>Offline</div>
-                <ul className="offline-friends" style={{marginBottom: 10}}>
+                <div style={{ fontWeight: 'bold' }}>Offline</div>
+                <ul className="offline-friends" style={{ marginBottom: 10 }}>
                     {offlineFriends}
                 </ul>
             </div>
         )
     }
 
-    render(){
+    render() {
         return (
-            <div className="rightBar">
+            <div className="Friends">
                 <div className="friends-holder">
                     {this.renderFriends()}
                 </div>
@@ -145,4 +145,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, {populateFriends})(Friends);
+export default connect(mapStateToProps, { populateFriends })(Friends);

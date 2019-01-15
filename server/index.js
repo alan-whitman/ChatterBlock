@@ -107,6 +107,7 @@ const sfc = require('./socket_controllers/friendsController');
 const scc = require('./socket_controllers/channelController')
 
 let connectedUsers = {};
+let clientLookupDictionary = {};
 
 io.on('connection', socket => {
 
@@ -126,6 +127,7 @@ io.on('connection', socket => {
     const db = app.get('db');
     if (socket.request.session.user) {
         connectedUsers[socket.request.session.user.id] = socket.id;
+        clientLookupDictionary[socket.id] = socket.request.session.user.id
         sfc.comingOnline(db, io, connectedUsers, socket.request.session.user.id)
     }
 
@@ -138,9 +140,10 @@ io.on('connection', socket => {
     socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
     // channel listeners
-    socket.on('join channel', channelName => scc.joinChannel(db, socket, connectedUsers, channelName));
-    socket.on('leave channel', () => scc.leaveChannel());
+    socket.on('join channel', channelName => scc.joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName));
+    socket.on('leave channel', () => scc.leaveChannel(socket));
     socket.on('create message', message => scc.createMessage(db, socket, message));
+    
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());
 
@@ -148,10 +151,13 @@ io.on('connection', socket => {
 
 
     socket.on('disconnect', () => {
+        // console.log('user disconnecting: ', clientLookupDictionary[socket.id]);
         if (socket.request.session.user) {
             sfc.goingOffline(db, io, connectedUsers, socket.request.session.user.id);
-            // if user in channel updated last view time
+            if (socket.request.session.currentRoom)
+                socket.to(socket.request.session.currentRoom).emit('user left channel', socket.request.session.user.username);
             delete connectedUsers[socket.request.session.user.id];
+            delete clientLookupDictionary[socket.id];
         }
     })
 });

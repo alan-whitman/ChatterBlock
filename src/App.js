@@ -9,10 +9,10 @@ import axios from 'axios';
 
 class App extends Component {
   componentDidMount() {
-      axios.get('/auth/currentUser').then(res => {
-        if (res.data)
-          this.props.userLoggedIn(res.data);
-      })
+    axios.get('/auth/currentUser').then(res => {
+      if (res.data)
+        this.props.userLoggedIn(res.data);
+    })
   }
   
   render() {

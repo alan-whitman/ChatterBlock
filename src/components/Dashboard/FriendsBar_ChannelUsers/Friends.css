@@ -1,3 +1,9 @@
+.Friends {
+    overflow: auto;
+    height: 50vh;
+    border-bottom: 1px solid black;
+}
+
 .online-friends {
     margin-left: 10px;
 }
