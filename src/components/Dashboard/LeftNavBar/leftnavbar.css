@@ -75,7 +75,6 @@
 
 .NavBar .addChannel {
     display: inline;
-    float: left;
     margin-right: -10%;
 }
 .channel-link h4 {

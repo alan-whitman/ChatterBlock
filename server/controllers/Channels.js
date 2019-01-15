@@ -9,9 +9,26 @@ module.exports = {
             // console.log(req.body)
             // see if channel_name is already in use
             let channelResponse = await db.getChannelByName(channel_name)
+
+            //Channel Validation
+        let channelToCheck = channel_name;
+
+        var reg=/[^a-zA-Z0-9\_\|]+/;
+
+            if(reg.test(channelToCheck)) {
+                console.log("Your Channel Cant Have any thing other than a-zA-Z0-9_|");
+                return res.status(508).send("Your Channel Cant Have any thing other than a-zA-Z0-9_| - No spaces!");
+            }
+            let length = channel_name.split('').length
+            if(length < 4 || length > 16){
+                console.log("too short or long")
+                return res.status(510).send("too short or long");
+            }
+
 // console.log(channelResponse)
             if (channelResponse[0]) {
-                return res.status(409).send('this channel name is in use')
+                console.log("This channel name is in use")
+                return res.status(509).send('this channel name is in use')
             }
             // if not in use
 

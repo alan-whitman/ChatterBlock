@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { userLoggedIn } from '../../redux/reducer';
 import './landing.css';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class Landing extends Component {
     constructor(){
@@ -39,6 +41,7 @@ class Landing extends Component {
         axios.post('/auth/register', this.state).then(response => {
             let user = response.data
             this.props.userLoggedIn(user)
+
         })
     }
     
@@ -53,6 +56,8 @@ class Landing extends Component {
             this.handleRegister()
         }
     }
+
+    notify = () => toast("Wow so easy!");
     
     render(){
         return (
@@ -73,7 +78,7 @@ class Landing extends Component {
                     <div className="sideways">
                         <div className="registrationForm">
                             <h2>Registration</h2>
-                            <input name="registerUsername" type="text" placeholder="username" maxLength="16" value={this.state.registerUsername}onChange={this.handleChange} />
+                            <input name="registerUsername" type="text" placeholder="username" min="4" maxLength="16" value={this.state.registerUsername}onChange={this.handleChange} />
                             <input name="registerEmail" type="text" placeholder="email" value={this.state.registerEmail} onChange={this.handleChange} />
                             <input name="registerPassword" type="password" placeholder="password" value={this.state.registerPassword} onChange={this.handleChange} />
                             <input name="confirmPassword" type="password" placeholder="confirm password" value={this.state.confirmPassword} onChange={this.handleChange} onKeyUp={this.handleKeyUpR}/>
