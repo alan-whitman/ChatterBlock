@@ -146,7 +146,8 @@ io.on('connection', socket => {
     socket.on('unlike message', message => scc.unlikeMessage());
 
     // private message listeners
-    socket.on('private message', (content_text,sender_id,reciever_id) => scp.createMessage(db, socket, content_text,sender_id,reciever_id));
+    // socket.on('join pm', channelName => scp.joinChannel(db, socket, channelName));
+    // socket.on('private message', (message,sender_id,reciever_id) => scp.createMessage(db, socket, message,sender_id,reciever_id));
     // update last view time when channel component unmounts
 
 

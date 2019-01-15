@@ -17,7 +17,7 @@ module.exports = {
 
             let response = await db.createChannel( {channel_name, creator_id} )
             // database will return the newly created channel
-            console.log(response)
+            // console.log(response)
             let newChannel = response[0]
             //send user info back to client
             res.status(200).send(newChannel)
@@ -100,7 +100,7 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
             let time = parseInt(channel.last_view_time)
             // Go back to db and count the number of messages more recent than users last view for each 
             let messageCount = await db.getAllSubscribedChannelMessageCount(time,channel.id)
-            console.log('message count', messageCount)
+            // console.log('message count', messageCount)
 
             addCount(messageCount[0].count)
 
@@ -122,12 +122,12 @@ getChannelWithMessages: async (req,res) => {
     try {
 
     const db = req.app.get('db')
-    console.log(req.body)
+    // console.log(req.body)
     const {channel_name} = req.params
     const user_id = req.session.user.id
     let time = Date.now()
     let channelFull = await db.getChannelWithMessages(channel_name)
-    console.log(channel_name,user_id,time)
+    // console.log(channel_name,user_id,time)
     // db.updateChannelViewTime({channel_id,user_id,time})
     res.status(200).send(channelFull)
     } catch (error){
@@ -150,11 +150,11 @@ getChannelWithMessages: async (req,res) => {
     // },
     createMessage: async (req, res) => {
         try {
-        console.log("attemping to add channel message", req.body)
+        // console.log("attemping to add channel message", req.body)
         const db = req.app.get('db')
         let time_stamp = Date.now()
         const {channel_id, user_id, content_text, content_image} = req.body
-        console.log("attemping to add channel message",channel_id, user_id, content_text, content_image, time_stamp)
+        // console.log("attemping to add channel message",channel_id, user_id, content_text, content_image, time_stamp)
 
         let newMessage = await db.createChannelMessage({channel_id, user_id, content_text, content_image, time_stamp})
         res.status(200).send(newMessage)
@@ -168,7 +168,7 @@ getChannelWithMessages: async (req,res) => {
         const db = req.app.get('db')
         const {channel_id, user_id} = req.body
         let time_stamp = Date.now()
-        console.log(`${user_id} attemping to follow ${channel_id}`)
+        // console.log(`${user_id} attemping to follow ${channel_id}`)
         
         let channelFollow = await db.followChannel({channel_id, user_id, time_stamp})
         res.status(200).send(channelFollow)
@@ -182,7 +182,7 @@ getChannelWithMessages: async (req,res) => {
         const db = req.app.get('db')
         // get id of connetion between user and channel
         const {id} = req.body
-        console.log(`destroying connection: ${id}`)
+        // console.log(`destroying connection: ${id}`)
         let unfollowChannel = await db.unfollowChannel(id)
         res.status(200).send('user is no longer following channel')
         }catch (error){
