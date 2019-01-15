@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import DateStamp from '../../DateFormat/dateStamp'
 import './channelview.css';
 import axios from 'axios';
@@ -27,7 +28,7 @@ class ChannelView extends Component {
     componentWillMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);
-        this.getMessages();
+        // this.getMessages();
         this.setState({prevProps: this.props.match.params.channelName});
     }
     componentDidUpdate() {
@@ -35,41 +36,30 @@ class ChannelView extends Component {
         if(this.state.prevProps !== this.props.match.params.channelName){
             this.setState({prevProps: this.props.match.params.channelName})
             // console.log(this.state.prevProps)
-            this.getMessages();
+            // this.getMessages();
         }
         // scroll message window to bottom
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
         // console.log("channel updated")
-        // this.renderMessages()
+        this.renderMessages()
 
         
     }
-
-
-
-
-
-    getMessages = () => {
-        console.log(this.props.match.params.channelName)
-
-//    this.props.user.userSubChannels.forEach(function (chan) {
-//     // var subIds = [];
-//     // subIds.push(chan.id);
-// }); 
-console.log(this.props.user.userSubChannels)
-
-        axios.get(`/api/channel/messages/${this.props.match.params.channelName}`).then(response => {
-            this.setState({messages: response.data}) 
-
-            console.log(this.state.messages)
-        })
-    }
+    // getMessages = () => {
+    //     axios.get(`/api/channel/messages/${this.props.match.params.channelName}`).then(response => {
+    //         this.setState({messages: response.data}) 
+    //     })
+    // }
     renderMessages() {
         let {user} = this.props.user
         return this.state.messages.map((message, i) =>
-            <div className={`user-message ${message.user_id == user ? 'my-msg' : 'their-msg'}`} key={i}>
+            <div className={`user-message ${message.user_id == user ? 'my-msg' : 'their-msg'}`} key={message.id}>
 
-                <img className="message-user-image" src={message.user_image}/><h6>{message.username}{message.user_id} <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span></h6>
+                <Link to={`/dashboard/profile/${message.user_id}`}>
+                    <img className="message-user-image" src={message.user_image}/>
+                    <h6>{message.username}</h6>
+                </Link>
+                <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span>
                 {message.content_image? <img src={message.content_image} src="message-image"/>: false}
                 <p>{message.content_text}</p>
             </div>

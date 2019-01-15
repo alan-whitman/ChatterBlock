@@ -71,7 +71,9 @@ class NavBar extends Component {
             <div className="NavBar">
                 <div className="nav-top">
                     <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
+                    
                     <div className="accordion" id="accordionExample">
+                    {this.props.isAuthenticated ? 
                         <div className="card">
                             <div className="card-header" id="headingOne">
                                 <h2 className="mb-0">
@@ -83,11 +85,12 @@ class NavBar extends Component {
                             <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <ul className="leftbarUL">
-                                        {subChannelsDisplay}
+                                    {subChannelsDisplay}
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </div>: <div></div>}
+                        {this.props.isAuthenticated ? 
                         <div className="card">
                             <div className="card-header" id="headingTwo">
                                 <h2 className="mb-0">
@@ -106,7 +109,8 @@ class NavBar extends Component {
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </div>: <div></div>}
+                        
                         <div className="card">
                             <div className="card-header" id="headingThree">
                                 <h2 className="mb-0">
