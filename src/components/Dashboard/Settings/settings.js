@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { userLoggedOut, userEdit } from '../../../redux/reducer';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
+import './settings.css';
 
 class Settings extends Component {
     constructor(){
         super()
         this.state = {
-            edit: false,
             username: '',
             email: '',
             about_text: '',
@@ -17,12 +17,11 @@ class Settings extends Component {
     }
 
     componentDidMount(){
-        const { username, email, about_text, user_image} = this.props.user
         this.setState({
-            username,
-            email,
-            about_text,
-            user_image
+            username: this.props.user.user.username,
+            email: this.props.user.user.email,
+            about_text: this.props.user.user.about_text,
+            user_image: this.props.user.user.user_image
         })
     }
 
@@ -34,14 +33,8 @@ class Settings extends Component {
     }
 
     handleClickUpdate = () => {
-        axios.put(`/auth/update/${this.props.user.id}`, this.state).then(response => {
+        axios.put(`/auth/update/${this.props.user.user.id}`, this.state).then(response => {
             this.props.userEdit(response.data)
-        })
-    }
-
-    toggleEdit = () => {
-        this.setState({
-            edit: !this.state.edit
         })
     }
 
@@ -55,19 +48,25 @@ class Settings extends Component {
 
     render(){
         return (
-            <div className="main">
+            <div className="settings-main">
                 {this.props.isAuthenticated ? <div>
-                    <h1>Settings</h1>
-                    <button onClick={this.handleClickLogout}>Logout</button>
-
-                    <button onClick={this.toggleEdit}>Edit Profile</button>
-                    {this.state.edit && <div>
-                        <input name="username" onChange={this.handleChange} value={this.state.username}></input>
-                        <input name="email" onChange={this.handleChange} value={this.state.email}></input>
-                        <input name="about_text" onChange={this.handleChange} value={this.state.about_text} placeholder="About you"></input>
-                        <input name="user_image" onChange={this.handleChange} value={this.state.user_image} placeholder="Profile Picture Url"></input>
+                    <div className="settings-header">
+                        <h1 style={{color: 'white'}}>Settings</h1>
+                        <button style={{height: '40px', borderRadius: '3px'}} onClick={this.handleClickLogout}>Logout</button>
+                    </div>
+                    
+                    <h2>Account details</h2>
+                    <section className="editAccount">
+                        <h3>Username</h3>
+                        <input className="accountInputs" name="username" onChange={this.handleChange} value={this.state.username}></input>
+                        <h3>Email</h3>
+                        <input className="accountInputs" name="email" onChange={this.handleChange} value={this.state.email}></input>
+                        <h3>Summary</h3>
+                        <input className="accountInputs" name="about_text" onChange={this.handleChange} value={this.state.about_text} placeholder="About you"></input>
+                        <h3>Profile Picture Url</h3>
+                        <input className="accountInputs" name="user_image" onChange={this.handleChange} value={this.state.user_image} placeholder="Profile Picture Url"></input>
                         <button onClick={this.handleClickUpdate}>Save Changes</button>
-                    </div>}
+                    </section>
                 </div> : <Redirect to="/" /> }
             </div>
         )

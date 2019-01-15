@@ -14,6 +14,7 @@ class App extends Component {
         this.props.userLoggedIn(res.data);
     })
   }
+  
   render() {
     const currentKey = this.props.user.username ? this.props.user.username : 'guest';
     return (

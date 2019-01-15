@@ -5,29 +5,17 @@
 }
 
 .online-friends {
-
+    margin-left: 10px;
 }
 .offline-friends {
-
+    margin-left: 10px;
 }
 .friends-holder {
+    margin-left: 10px;
+}
+
+.pending-friends {
+    display: flex;
     
 }
 
-.popupmenu {
-    width: 200px;
-    height: 100px;
-    background-color: black;
-    border: 1px solid gray;
-    position: absolute;
-    left: -225px;
-    top: -30px;
-    float: left;
-}
-.accept-reject {
-    font-size: 10px;
-}
-.accept-reject:hover {
-    background-color: lightgray;
-    cursor: pointer;
-}
