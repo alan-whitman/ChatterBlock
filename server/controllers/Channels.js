@@ -117,20 +117,37 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
 
 
 // Might need to break out update view time so it can be hit on unmount too
-    getChannelWithMessages: async (req,res) => {
-        try {
+// THis might be breaking something else - but it's working
+getChannelWithMessages: async (req,res) => {
+    try {
 
-        const db = req.app.get('db')
-        const {channel_id,user_id} = req.body
-        let time = Date.now()
-        let channelFull = await db.getChannelWithMessages(channel_id)
-        // console.log(channel_id,user_id,time)
-        db.updateChannelViewTime({channel_id,user_id,time})
-        res.status(200).send(channelFull)
-        } catch (error){
-        console.log('error getting channel', error)
-        }
-    },
+    const db = req.app.get('db')
+    console.log(req.body)
+    const {channel_name} = req.params
+    const user_id = req.session.user.id
+    let time = Date.now()
+    let channelFull = await db.getChannelWithMessages(channel_name)
+    console.log(channel_name,user_id,time)
+    // db.updateChannelViewTime({channel_id,user_id,time})
+    res.status(200).send(channelFull)
+    } catch (error){
+    console.log('error getting channel', error)
+    }
+},
+    // getChannelWithMessages: async (req,res) => {
+    //     try {
+
+    //     const db = req.app.get('db')
+    //     const {channel_id,user_id} = req.body
+    //     let time = Date.now()
+    //     let channelFull = await db.getChannelWithMessages(channel_id)
+    //     // console.log(channel_id,user_id,time)
+    //     db.updateChannelViewTime({channel_id,user_id,time})
+    //     res.status(200).send(channelFull)
+    //     } catch (error){
+    //     console.log('error getting channel', error)
+    //     }
+    // },
     createMessage: async (req, res) => {
         try {
         console.log("attemping to add channel message", req.body)
