@@ -9,13 +9,12 @@ import axios from 'axios';
 
 class App extends Component {
   componentDidMount() {
-    if(this.props.isAuthenticated){
       axios.get('/auth/currentUser').then(res => {
         if (res.data)
           this.props.userLoggedIn(res.data);
       })
     }
-  }
+  
   render() {
     const currentKey = this.props.user.username ? this.props.user.username : 'guest';
     return (

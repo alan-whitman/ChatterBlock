@@ -14,6 +14,22 @@ module.exports = {
             return res.status(409).send('this email is already registered')
         }
         let userName = await db.getUserByUsername(username)
+        
+        //Checking validation for Username
+        let userNameToCheck = username;
+
+        var reg=/[^a-zA-Z0-9\_\|]+/;
+
+            if(reg.test(userNameToCheck)) {
+                console.log("Your Password Cant Have any thing other than a-zA-Z0-9_|");
+                return res.status(408).send("Your Password Cant Have any thing other than a-zA-Z0-9_| - No spaces!");
+            }
+            let length = username.split('').length
+            if(length < 4 || length > 16){
+                console.log("too short or long")
+                return res.status(409).send("too short or long");
+            }
+
         //if anything is returned username is already in use
         if (userName[0]) {
             return res.status(409).send('this username is already registered')
