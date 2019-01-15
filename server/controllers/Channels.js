@@ -77,6 +77,8 @@ module.exports = {
 getAllSubscribedChannelMessageCount: async (req,res) => {
     try {
         const db = req.app.get('db')
+        if (!req.session.user)
+            return res.send([]);
         const {id: user_id} =req.session.user
         let channels = await db.getAllSubscibedChannels(user_id)
         var newChannels = []
@@ -100,7 +102,6 @@ getAllSubscribedChannelMessageCount: async (req,res) => {
             let time = parseInt(channel.last_view_time)
             // Go back to db and count the number of messages more recent than users last view for each 
             let messageCount = await db.getAllSubscribedChannelMessageCount(time,channel.id)
-            // console.log('message count', messageCount)
 
             addCount(messageCount[0].count)
 

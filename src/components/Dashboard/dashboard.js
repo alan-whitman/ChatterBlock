@@ -20,35 +20,34 @@ class Dashboard extends Component {
     }
     render(){
         return (
-            <div className="Dashboard">
-                <NavBar/>
-                <div className="center-container">
-                    <Switch>
-                        <Route path="/dashboard" exact component={Recent} />
-                        <Route path="/dashboard/channel/:channelName" render={props =>
-                            <ChannelView
-                                {...props}
-                                socket={socket}
-                            />}
-                        />
-                        <Route path="/dashboard/profile/:id" component={Profile} />
-                        <Route path="/dashboard/settings" render={props => 
-                            <Settings 
-                                {...props}
-                                socket={socket}
-                            />} 
-                        />
-                        <Route path="/dashboard/dms" render={props => 
-                            <PrivateMsg
-                                {...props}
-                                socket={socket}
-                            />} 
-                             />
-                    </Switch>
-                </div>
-                <FriendUserBar socket={socket} />
-            </div>
-        )
+            <Route path="/dashboard" render={(props) => {
+                return (
+                    <div className="Dashboard">
+                        <NavBar/>
+                        <div className="center-container">
+                            <Switch>
+                                <Route path="/dashboard" exact component={Recent} />
+                                <Route path="/dashboard/channel/:channelName" render={props =>
+                                    <ChannelView
+                                        {...props}
+                                        socket={socket}
+                                    />}
+                                />
+                                <Route path="/dashboard/profile/:id" component={Profile} />
+                                <Route path="/dashboard/settings" render={props => 
+                                    <Settings 
+                                        {...props}
+                                        socket={socket}
+                                    />} 
+                                />
+                                <Route path="/dashboard/dms/:id" component={PrivateMsg} />
+                            </Switch>
+                        </div>
+                        <FriendUserBar socket={socket} {...props}/>
+                    </div>
+                )
+            }}
+        />)
     }
 }
 

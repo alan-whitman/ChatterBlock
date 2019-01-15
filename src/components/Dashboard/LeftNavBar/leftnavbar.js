@@ -9,7 +9,6 @@ import Popup from 'reactjs-popup'
 class NavBar extends Component {
     constructor() {
         super()
-
         this.state = {
             searchInput: "",
             channel_name: "",
@@ -21,7 +20,6 @@ class NavBar extends Component {
     componentDidMount() {
 
         axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
-            console.log(response.data);
             this.setState({
                 subChannels: response.data
             })
@@ -58,15 +56,15 @@ class NavBar extends Component {
     }
     render() {
         const { channels, searchInput, subChannels } = this.state;
-      
-      const channelDisplay = channels.filter(channel => {
-        return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
-      }).map((channel, i) => {
-        return <div key={channel.id}className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> </Link></div>
-      })
-      const subChannelsDisplay = subChannels.map(channel => {
-        return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p class="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
-      })
+
+        const channelDisplay = channels.filter(channel => {
+            return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
+        }).map((channel, i) => {
+            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> </Link></div>
+        })
+        const subChannelsDisplay = subChannels.map(channel => {
+            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
+        })
         return (
             <div className="NavBar">
                 <div className="nav-top">
