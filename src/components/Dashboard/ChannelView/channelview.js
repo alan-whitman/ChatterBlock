@@ -77,6 +77,11 @@ console.log(this.props.user.userSubChannels)
     }
     updateInput(e) {
         const { name, value } = e.target;
+        // check to see if message contains an image url then do something about it
+        if(value.match(/\.(jpeg|jpg|gif|png)$/)){
+            console.log("message input is an image")
+        }
+        
         this.setState({ [name]: value });
 
     }
