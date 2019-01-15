@@ -105,6 +105,7 @@ io.use((socket, next) => {
 
 const sfc = require('./socket_controllers/friendsController');
 const scc = require('./socket_controllers/channelController')
+const scp = require('./socket_controllers/privateController')
 
 let connectedUsers = {};
 let clientLookupDictionary = {};
@@ -147,6 +148,9 @@ io.on('connection', socket => {
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());
 
+    // private message listeners
+    // socket.on('join pm', channelName => scp.joinChannel(db, socket, channelName));
+    // socket.on('private message', (message,sender_id,reciever_id) => scp.createMessage(db, socket, message,sender_id,reciever_id));
     // update last view time when channel component unmounts
 
 

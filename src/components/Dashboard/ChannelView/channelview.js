@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { populateChannelUsers } from '../../../redux/reducer';
 import DateStamp from '../../DateFormat/dateStamp'
 import './channelview.css';
@@ -57,17 +58,15 @@ class ChannelView extends Component {
     renderMessages() {
         let { user } = this.props.user
         return this.state.messages.map((message, i) =>
-            <div className={`user-message ${message.user_id === user ? 'my-msg' : 'their-msg'}`} key={i}>
-                <div className="message-user-info">
-                    <div className="message-user-info-image">
-                        {message.user_image ? <img className="message-user-image" src={message.user_image} alt="temporary alt" /> : null}
-                    </div>
-                    <h6>{message.username}{message.user_id} <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)} /></span></h6>
-                </div>
-                <div className="message-content">
-                    {message.content_image ? <img src={message.content_image} className="message-image" alt="temporary alt" /> : false}
-                    <p>{message.content_text}</p>
-                </div>
+            <div className={`user-message ${message.user_id == user ? 'my-msg' : 'their-msg'}`} key={message.id}>
+
+                <Link to={`/dashboard/profile/${message.user_id}`}>
+                    <img className="message-user-image" src={message.user_image}/>
+                    <h6>{message.username}</h6>
+                </Link>
+                <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span>
+                {message.content_image? <img src={message.content_image} src="message-image"/>: false}
+                <p>{message.content_text}</p>
             </div>
         );
     }
