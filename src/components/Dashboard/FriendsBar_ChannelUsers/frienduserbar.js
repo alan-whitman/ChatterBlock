@@ -13,7 +13,7 @@ class FriendUserBar extends Component {
                 :
                     null
                 }
-                <ChannelUsers />
+                <ChannelUsers socket={this.props.socket} {...this.props}/>
             </div>
         )
     }

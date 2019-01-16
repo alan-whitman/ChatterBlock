@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import './ChannelUsers.css';
 import { connect } from 'react-redux';
+import ChannelPopup from './ChannelPopup';
 
 class ChannelUsers extends Component {
     renderChannelUsers() {
         return this.props.channelUsers.map((user, i) =>
             <li key={i}>
-                {user.username}
+                <ChannelPopup socket={this.props.socket} user={user} {...this.props} />
             </li>
         );
     }

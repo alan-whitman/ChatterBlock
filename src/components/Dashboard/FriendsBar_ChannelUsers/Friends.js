@@ -10,8 +10,7 @@ class Friends extends Component {
         super(props);
         this.state = {
             requestedFriend: '',
-            pendingFriends: [],
-            rightclickmenu: false
+            pendingFriends: []
         }
         this.props.socket.on('send your friends', myFriends => {
             this.props.populateFriends(myFriends);
@@ -100,7 +99,7 @@ class Friends extends Component {
         return (
             <div>
                 <div style={{fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', paddingRight: '20px'}}>
-                    <h3>Pending</h3> 
+                    <h3 style={{fontWeight: 'bold'}}>Pending</h3> 
                     <Popup trigger={<i className="fas fa-plus"></i>} position="bottom right">
                         <input 
                             type="text"
@@ -129,7 +128,7 @@ class Friends extends Component {
 
     render() {
         return (
-            <div className="Friends">
+            <div className="Friends clearfix">
                 <div className="friends-holder">
                     {this.renderFriends()}
                 </div>

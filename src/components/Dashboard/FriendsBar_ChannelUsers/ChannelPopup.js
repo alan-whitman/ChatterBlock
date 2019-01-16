@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './popup.css';
+import './ChannelPopup.css';
 
 class FriendsPopup extends Component {
     constructor(props){
@@ -10,9 +10,6 @@ class FriendsPopup extends Component {
             x: 0,
             y: 0
         }
-    }
-    deleteFriend(user) {
-        this.props.socket.emit('delete friend', user);
     }
     handleClick = (event) => {
         event.preventDefault();
@@ -36,15 +33,14 @@ class FriendsPopup extends Component {
     }
 
     render(){
-        const { friend } = this.props;
+        const { user } = this.props;
         return (
             <div style={{position: 'relative', height: '30px', marginLeft: '15px'}}>
-                <h3 onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</h3><br />
-                {this.state.show && <div className="popupmenu" style={{top: `calc(${this.state.y}px - 130px)`, left: `calc(${this.state.x}px - 200px`}}>
-                    <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${friend.id}`)}}>Profile</div>
-                    <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/dms/${friend.username}`)}}>Send Message</div>
-                    <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Remove Friend</span>
-
+                <h3 style={{fontSize: '15px'}} onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{user.username}</h3><br />
+                {this.state.show && <div className="channel-popupmenu" style={{top: `calc(${this.state.y}px - 130px)`, left: `calc(${this.state.x}px - 200px`}}>
+                    <div className="channel-popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${user.id}`)}}>Profile</div>
+                    <div className="channel-popup-sections" onClick={() => {this.props.history.push(`/dashboard/dms/${user.username}`)}}>Send Message</div>
+                    <div className="channel-popup-sections" style={{height: '34%'}} onClick={()=> {this.props.socket.emit('request friend', user.username);}} >Send Friend Request</div>
                 </div>}
             </div>
         )
