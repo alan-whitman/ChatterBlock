@@ -1,4 +1,6 @@
-.ChannelView {}
+.ChannelView {
+    z-index: -999999;
+}
 
 
 .header {
