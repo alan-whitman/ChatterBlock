@@ -6,7 +6,7 @@ import Recent from './Recent_Notifications/recent';
 import Profile from './Profiles/profiles';
 import Settings from './Settings/settings';
 import FriendUserBar from './FriendsBar_ChannelUsers/frienduserbar';
-import PrivateMsg from './PrivateMessaging/privatemsg';
+import DirectMessage from './DirectMessage/DirectMessage';
 import { connect } from 'react-redux';
 import './dashboard.css';
 import io from 'socket.io-client';
@@ -40,7 +40,13 @@ class Dashboard extends Component {
                                         socket={socket}
                                     />} 
                                 />
-                                <Route path="/dashboard/dms/:id" component={PrivateMsg} />
+                                {/* <Route path="/dashboard/dms/:id" component={PrivateMsg} /> */}
+                                <Route path="/dashboard/dm/:username" render={props => 
+                                    <DirectMessage 
+                                        {...props}
+                                        socket={socket}
+                                    />}
+                                />
                             </Switch>
                         </div>
                         <FriendUserBar socket={socket} {...props}/>

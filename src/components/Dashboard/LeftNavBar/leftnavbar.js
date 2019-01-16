@@ -13,7 +13,9 @@ class NavBar extends Component {
             searchInput: "",
             channel_name: "",
             channels: [],
-            subChannels: []
+            subChannels: [],
+            activeDms: []
+
         }
     }
 
@@ -30,7 +32,12 @@ class NavBar extends Component {
                 channels: response.data
             })
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
+
+        axios.get('/api/dm/getActiveDms').then(response => {
+            this.setState({activeDms: response.data});
+        }).catch(err => console.error(err));
     }
+
 
     handleChannel = (val) => {
         this.setState({
@@ -54,6 +61,11 @@ class NavBar extends Component {
             searchInput: val
         })
     }
+    renderDms() {
+        return this.state.activeDms.map((dm, i) => 
+            <li key={i}><Link to={`/dashboard/dm/${dm.username}`}>{dm.username}</Link></li>
+        )
+    }
     render() {
         const { channels, searchInput, subChannels } = this.state;
 
@@ -69,46 +81,43 @@ class NavBar extends Component {
             <div className="NavBar">
                 <div className="nav-top">
                     <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
-                    
+
                     <div className="accordion" id="accordionExample">
-                    {this.props.isAuthenticated ? 
-                        <div className="card">
-                            <div className="card-header" id="headingOne">
-                                <h2 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="">
-                                        Active Channels
+                        {this.props.isAuthenticated ?
+                            <div className="card">
+                                <div className="card-header" id="headingOne">
+                                    <h2 className="mb-0">
+                                        <button className="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="">
+                                            Active Channels
                                 </button>
-                                </h2>
-                            </div>
-                            <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div className="card-body">
-                                    <ul className="leftbarUL">
-                                    {subChannelsDisplay}
-                                    </ul>
+                                    </h2>
                                 </div>
-                            </div>
-                        </div>: <div></div>}
-                        {this.props.isAuthenticated ? 
-                        <div className="card">
-                            <div className="card-header" id="headingTwo">
-                                <h2 className="mb-0">
-                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Direct Messages
+                                <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div className="card-body">
+                                        <ul className="leftbarUL">
+                                            {subChannelsDisplay}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> : <div></div>}
+                        {this.props.isAuthenticated ?
+                            <div className="card">
+                                <div className="card-header" id="headingTwo">
+                                    <h2 className="mb-0">
+                                        <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Direct Messages
                                 </button>
-                                </h2>
-                            </div>
-                            <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                <div className="card-body">
-                                    <ul className="leftbarUL">
-                                        <Link to="/dashboard/dms"><li>Brian</li></Link>
-                                        <li>Alan</li>
-                                        <li>Heather</li>
-                                        <li>Jack</li>
-                                    </ul>
+                                    </h2>
                                 </div>
-                            </div>
-                        </div>: <div></div>}
-                        
+                                <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                    <div className="card-body">
+                                        <ul className="leftbarUL">
+                                            {this.renderDms()}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> : <div></div>}
+
                         <div className="card">
                             <div className="card-header" id="headingThree">
                                 <h2 className="mb-0">

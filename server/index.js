@@ -16,7 +16,7 @@ const { CONNECTION_STRING, SERVER_PORT, SECRET} = process.env
 const Auth = require('./controllers/Auth')
 const Channel = require('./controllers/Channels')
 const Friend = require('./controllers/Friends')
-const Private = require('./controllers/PrivateMessages')
+const DM = require('./controllers/DirectMessages')
 const Profile = require('./controllers/Profile')
 const Search = require('./controllers/Search')
 
@@ -89,9 +89,7 @@ io.use((socket, next) => {
     // React to Channel Message
 
 //Private Message Actions
-    // Create Private Message
-    // Get Private Messages (between users)
-    // Get all Private Messages (for current user)
+    app.get('/api/dm/getActiveDms', DM.getActiveDms)
 
 //Search
 
@@ -104,27 +102,15 @@ io.use((socket, next) => {
 //Sockets
 
 const sfc = require('./socket_controllers/friendsController');
-const scc = require('./socket_controllers/channelController')
-const scp = require('./socket_controllers/privateController')
+const scc = require('./socket_controllers/channelController');
+const sdmc = require('./socket_controllers/directMessageController');
 
 let connectedUsers = {};
 let clientLookupDictionary = {};
 
 io.on('connection', socket => {
 
-
-    // Static Socket user for Brian
-        // socket.request.session.user = { 
-        // id: 1,
-        // username: 'LesleyBrown',
-        // email: 'LesleyBrown',
-        // is_active: true,
-        // about_text: 'banans',
-        // user_image: 'https://randomuser.me/api/portraits/women/55.jpg',
-        // verified: false,
-        // verification_code: null }
-
-    console.log('client connected');
+    // console.log('client connected');
     const db = app.get('db');
     if (socket.request.session.user) {
         connectedUsers[socket.request.session.user.id] = socket.id;
@@ -149,8 +135,9 @@ io.on('connection', socket => {
     socket.on('unlike message', message => scc.unlikeMessage());
 
     // private message listeners
-    // socket.on('join pm', channelName => scp.joinChannel(db, socket, channelName));
-    // socket.on('private message', (message,sender_id,reciever_id) => scp.createMessage(db, socket, message,sender_id,reciever_id));
+    socket.on('join direct message', username => sdmc.joinDm(db, io, socket, connectedUsers, username));
+    socket.on('send direct message', (message, receiverId) => sdmc.sendDm(db, io, socket, message, receiverId, connectedUsers));
+
     // update last view time when channel component unmounts
 
 
