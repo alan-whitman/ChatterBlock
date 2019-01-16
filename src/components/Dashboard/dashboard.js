@@ -40,7 +40,7 @@ class Dashboard extends Component {
                                         socket={socket}
                                     />} 
                                 />
-                                <Route path="/dashboard/dms/:id" component={PrivateMsg} />
+                                <Route path="/dashboard/dms/:username" component={PrivateMsg} />
                             </Switch>
                         </div>
                         <FriendUserBar socket={socket} {...props}/>
