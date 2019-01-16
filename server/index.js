@@ -90,6 +90,7 @@ io.use((socket, next) => {
 
 //Private Message Actions
     app.get('/api/dm/getActiveDms', DM.getActiveDms)
+    app.delete('/api/dm/hideDm/:dmPartnerId', DM.hideDm);
 
 //Search
 

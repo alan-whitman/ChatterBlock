@@ -2,21 +2,29 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
 import { connect } from 'react-redux';
-import { userLoggedOut } from '../../../redux/reducer';
+import { userLoggedOut, populateActiveDms } from '../../../redux/reducer';
 import axios from 'axios';
 import Popup from 'reactjs-popup'
 
 class NavBar extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
             searchInput: "",
             channel_name: "",
             channels: [],
-            subChannels: [],
-            activeDms: []
+            subChannels: []
 
         }
+        this.props.socket.on('relay direct message', newMessage => {
+            let activeDms = [...this.props.activeDms];
+            let { sender } = newMessage
+            if (activeDms.indexOf(sender) === -1) {
+                activeDms.push(sender);
+                activeDms.sort();
+                this.props.populateActiveDms(activeDms);
+            }
+        });
     }
 
     componentDidMount() {
@@ -34,7 +42,7 @@ class NavBar extends Component {
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
 
         axios.get('/api/dm/getActiveDms').then(response => {
-            this.setState({activeDms: response.data});
+            this.props.populateActiveDms(response.data.map(user => user.username));
         }).catch(err => console.error(err));
     }
 
@@ -62,8 +70,8 @@ class NavBar extends Component {
         })
     }
     renderDms() {
-        return this.state.activeDms.map((dm, i) => 
-            <li key={i}><Link to={`/dashboard/dm/${dm.username}`}>{dm.username}</Link></li>
+        return this.props.activeDms.map((user, i) =>
+            <li key={i}><Link to={`/dashboard/dm/${user}`}>{user}</Link></li>
         )
     }
     render() {
@@ -155,10 +163,12 @@ class NavBar extends Component {
 }
 
 function mapStateToProps(state) {
-    let { user, isAuthenticated } = state
+    let { user, isAuthenticated, activeDms } = state
     return {
-        user, isAuthenticated
+        user, 
+        isAuthenticated, 
+        activeDms
     }
 }
 
-export default connect(mapStateToProps, { userLoggedOut })(NavBar);
+export default connect(mapStateToProps, { userLoggedOut, populateActiveDms })(NavBar);

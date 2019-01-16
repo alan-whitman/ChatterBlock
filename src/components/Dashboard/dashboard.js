@@ -23,7 +23,7 @@ class Dashboard extends Component {
             <Route path="/dashboard" render={(props) => {
                 return (
                     <div className="Dashboard">
-                        <NavBar/>
+                        <NavBar socket={socket} />
                         <div className="center-container">
                             <Switch>
                                 <Route path="/dashboard" exact component={Recent} />
