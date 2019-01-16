@@ -42,7 +42,7 @@ class FriendsPopup extends Component {
                 <h3 onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</h3><br />
                 {this.state.show && <div className="popupmenu" style={{top: `calc(${this.state.y}px - 130px)`, left: `calc(${this.state.x}px - 200px`}}>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${friend.id}`)}}>Profile</div>
-                    <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/dms/${friend.username}`)}}>Send Message</div>
+                    <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/dm/${friend.username}`)}}>Send Message</div>
                     <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="accept-reject">Remove Friend</span>
 
                 </div>}

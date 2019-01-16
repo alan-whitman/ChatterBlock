@@ -58,14 +58,14 @@ class ChannelView extends Component {
     renderMessages() {
         let { user } = this.props.user
         return this.state.messages.map((message, i) =>
-            <div className={`user-message ${message.user_id == user ? 'my-msg' : 'their-msg'}`} key={message.id}>
+            <div className={`user-message ${message.user_id === user ? 'my-msg' : 'their-msg'}`} key={i}>
 
                 <Link to={`/dashboard/profile/${message.user_id}`}>
-                    <img className="message-user-image" src={message.user_image}/>
+                    <img className="message-user-image" src={message.user_image} alt="temporary alt" />
                     <h6>{message.username}</h6>
                 </Link>
                 <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span>
-                {message.content_image? <img src={message.content_image} src="message-image"/>: false}
+                {message.content_image? <img src={message.content_image} className="message-image"  alt="temporary alt" />: false}
                 <p>{message.content_text}</p>
             </div>
         );
@@ -107,8 +107,6 @@ class ChannelView extends Component {
             <div className="ChannelView">
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.props.match.params.channelName}</h2>
-                    {/* {console.log(this.props.user.userSubChannels.indexOf(`id: ${this.state.channelId}`),this.state.channelId)} */}
-                    {/* {this.props.user.userSubChannels.indexOf(this.state.channelId) > -1 ? <button></button> : <button></button>} */}
                     <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>

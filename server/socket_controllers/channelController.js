@@ -19,7 +19,7 @@ module.exports = {
             let usersInChannel;
             await io.in(channelName).clients(async (err, clients) => {
                 usersInChannel = clients.map(client => clientLookupDictionary[client]).filter(user => user);
-                console.log(usersInChannel);
+                // console.log(usersInChannel);
                 if (usersInChannel[0]) {
                     let userList = await db.users.find({id: usersInChannel})
                     initialChannelResponse.channelUsers = userList.map(user => {return {id: user.id, username: user.username}}).sort((a, b) => a.username < b.username ? -1 : 1)
@@ -55,7 +55,7 @@ module.exports = {
         const { currentRoom } = socket.request.session;
         if (socket.request.session.user) {
             const { username } = socket.request.session.user;
-            console.log(username, ' - is leaving - ', currentRoom);
+            // console.log(username, ' - is leaving - ', currentRoom);
             socket.to(currentRoom).emit('user left channel', username);
         }
         socket.leave(currentRoom);
