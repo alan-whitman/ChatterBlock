@@ -40,7 +40,6 @@ class Dashboard extends Component {
                                         socket={socket}
                                     />} 
                                 />
-                                {/* <Route path="/dashboard/dms/:id" component={PrivateMsg} /> */}
                                 <Route path="/dashboard/dm/:username" render={props => 
                                     <DirectMessage 
                                         {...props}

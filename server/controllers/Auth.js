@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const toast = require('react-toastify');
 
 module.exports = {
     register: async (req,res) => {
@@ -65,8 +66,9 @@ module.exports = {
         buildJSON(userResponse,userSubChannels,userFriends)
 
         } catch (error) {
+            
             console.log('error registering account:', error)
-            res.status(500).send(error)
+            
         }
     },
     login: async (req,res) =>{
