@@ -146,8 +146,10 @@ io.on('connection', socket => {
         // console.log('user disconnecting: ', clientLookupDictionary[socket.id]);
         if (socket.request.session.user) {
             sfc.goingOffline(db, io, connectedUsers, socket.request.session.user.id);
-            if (socket.request.session.currentRoom)
+            if (socket.request.session.currentRoom) {
                 socket.to(socket.request.session.currentRoom).emit('user left channel', socket.request.session.user.username);
+                socket.leave(socket.request.session.currentRoom);
+            }
             delete connectedUsers[socket.request.session.user.id];
             delete clientLookupDictionary[socket.id];
         }

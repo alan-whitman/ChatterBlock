@@ -18,7 +18,9 @@ module.exports = {
             socket.join(channelName);
             let usersInChannel;
             await io.in(channelName).clients(async (err, clients) => {
-                usersInChannel = clients.map(client => clientLookupDictionary[client]).filter(user => user);
+                usersInChannel = clients.map(client => clientLookupDictionary[client])
+                // console.log('\nusers in channel: \n', usersInChannel);
+                usersInChannel = usersInChannel.filter(user => user);
                 // console.log(usersInChannel);
                 if (usersInChannel[0]) {
                     let userList = await db.users.find({id: usersInChannel})
@@ -27,8 +29,11 @@ module.exports = {
                     initialChannelResponse.channelUsers = [];
                 }
                 socket.emit('send initial response', initialChannelResponse);
-                if (socket.request.session.user)
+                
+                if (socket.request.session.user) {
+                    // console.log(`notifying users in -${channelName}- that -${socket.request.session.user.username}- is joining`);
                     socket.to(channelName).emit('user joined channel', {username: socket.request.session.user.username, id: socket.request.session.user.id});
+                }
             });
 
         } catch(err) {
