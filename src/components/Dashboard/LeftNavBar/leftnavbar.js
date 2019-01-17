@@ -31,10 +31,8 @@ class NavBar extends Component {
     componentDidMount() {
 
         axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
-            console.log(response.data)
             let subId = []
             response.data.forEach( data => subId.push(data.id))
-            // console.log(subId)
             this.setState({
                 subChannels: response.data,
                 subChannelIds: subId
@@ -67,20 +65,17 @@ class NavBar extends Component {
     }
 
 
-handleSubChannel = (id,i) =>{
-    console.log(this.state.channels[0],this.state.subChannels[0])
+    handleSubChannel = (id,i) =>{
+        console.log(this.state.channels[0],this.state.subChannels[0])
 
-}
+    }
 
 
-// this still needs work - not rerendering channels when subbed channel is deleted
     handleUnSubChannel = (id,i) => {
-        console.log(id,9999,this.state.channels,this.props.user.user.id)
         let subChannels = this.state.subChannels
         let subChannelIds = this.state.subChannelIds
         subChannelIds.splice(i,1)
         axios.delete(`/api/channel/unfollow/${id}`).then( () => {axios.get('/api/channel/all').then(response => {
-            console.log(response.data)
             this.setState({
                 channels: response.data,
                 subChannelIds: subChannelIds
@@ -90,7 +85,6 @@ handleSubChannel = (id,i) =>{
         this.setState({
             subChannels
         })
-
     }
 
     handleAddChannel = (e) => {
@@ -142,8 +136,6 @@ handleSubChannel = (id,i) =>{
         const subChannelsDisplay = subChannels.map((channel,i) => {
             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
         })
-
-        // console.log(this.state.channel_description.length);
 
         let count = 100;
 
