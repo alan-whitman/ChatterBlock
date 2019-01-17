@@ -48,10 +48,10 @@ module.exports = {
             const { id: myId, username: myUsername } = socket.request.session.user;
             const response = await db.getUserByUsername(username);
             const requestee = response[0];
-            if (requestee.id === myId)
-                return socket.emit('confirm friend request', 'you can\'t be friends with yourself');
             if (!requestee)
                 return socket.emit('confirm friend request', 'user not found');
+            if (requestee.id === myId)
+                return socket.emit('confirm friend request', 'you can\'t be friends with yourself');
             const existingFriendRelationship = await db.friends.getFriendRelationship([myId, requestee.id]);
             if (existingFriendRelationship[0])
                 return socket.emit('confirm friend request', 'friend relationship already exists');
