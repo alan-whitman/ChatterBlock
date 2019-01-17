@@ -44,6 +44,8 @@ class NavBar extends Component {
         axios.get('/api/dm/getActiveDms').then(response => {
             this.props.populateActiveDms(response.data.map(user => user.username));
         }).catch(err => console.error(err));
+
+        console.log(this.state.subChannels)
     }
 
 
@@ -58,6 +60,20 @@ class NavBar extends Component {
             description: val
         })
     }
+
+
+
+    handleUnSubChannel = (id,i) => {
+        let subChannels = this.state.subChannels
+        let removeSubbed = subChannels.splice(i,1)
+        this.setState({
+            subChannels
+        })
+
+
+    }
+
+
 
     handleAddChannel = (e) => {
 
@@ -100,8 +116,9 @@ class NavBar extends Component {
         }).map((channel, i) => {
             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> </Link></div>
         })
-        const subChannelsDisplay = subChannels.map(channel => {
-            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
+        
+        const subChannelsDisplay = subChannels.map((channel,i) => {
+            return <div key={i} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
         })
 
         console.log(this.state.description.length);
