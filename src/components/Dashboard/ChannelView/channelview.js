@@ -115,10 +115,6 @@ class ChannelView extends Component {
             <div className="ChannelView">
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
-                    {/* if channel.id is not in subchannel array  */}
-                    <button className="follow">+</button>
-                    {/* if channel.id IS in subchannel array  */}
-                    <button className="unfollow">-</button>
 
                     <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
                 </div>

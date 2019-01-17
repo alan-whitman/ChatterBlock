@@ -14,6 +14,7 @@ class NavBar extends Component {
             channel_name: "",
             channels: [],
             subChannels: [],
+            subChannelIds:[],
             channel_description: ''
         }
         this.props.socket.on('relay direct message', newMessage => {
@@ -30,8 +31,13 @@ class NavBar extends Component {
     componentDidMount() {
 
         axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
+            console.log(response.data)
+            let subId = []
+            response.data.forEach( data => subId.push(data.id))
+            // console.log(subId)
             this.setState({
-                subChannels: response.data
+                subChannels: response.data,
+                subChannelIds: subId
             })
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
         
@@ -48,7 +54,6 @@ class NavBar extends Component {
 
     }
 
-
     handleChannel = (val) => {
         this.setState({
             channel_name: val
@@ -62,34 +67,40 @@ class NavBar extends Component {
     }
 
 
+handleSubChannel = (id,i) =>{
+    console.log(this.state.channels[0],this.state.subChannels[0])
 
+}
+
+
+// this still needs work - not rerendering channels when subbed channel is deleted
     handleUnSubChannel = (id,i) => {
         console.log(id,9999,this.state.channels,this.props.user.user.id)
         let subChannels = this.state.subChannels
-        axios.delete(`/api/channel/unfollow/${id}`).then(
-            
-        )
+        let subChannelIds = this.state.subChannelIds
+        subChannelIds.splice(i,1)
+        axios.delete(`/api/channel/unfollow/${id}`).then( () => {axios.get('/api/channel/all').then(response => {
+            console.log(response.data)
+            this.setState({
+                channels: response.data,
+                subChannelIds: subChannelIds
+            })
+        }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })})
         let removeSubbed = subChannels.splice(i,1)
         this.setState({
             subChannels
         })
 
-
     }
 
-
-
     handleAddChannel = (e) => {
-
             axios.post('/api/channel/new', this.state).then(response => {
-
                 this.setState({
                     channels: [...this.state.channels, response.data],
                     channel_name: "",
                     channel_description: ""
                 })
             })
-        
     }
     handleSearch = (val) => {
         this.setState({
@@ -114,11 +125,18 @@ class NavBar extends Component {
 
     render() {
         const { channels, searchInput, subChannels } = this.state;
+        console.log('channels', channels)
 
         const channelDisplay = channels.filter(channel => {
             return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
         }).map((channel, i) => {
-            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link></div>
+            
+            return (
+            this.state.subChannelIds.indexOf(channel.id) === -1 ? 
+            <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
+            <div className="Sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
+            </div> : null
+            )
         })
 
         const subChannelsDisplay = subChannels.map((channel,i) => {
