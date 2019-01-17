@@ -24,9 +24,11 @@ class ChannelView extends Component {
             this.setState({ messages });
         });
         this.props.socket.on('user joined channel', user => {
-            let { channelUsers } = this.props;
-            channelUsers = [...channelUsers, user];
-            channelUsers.sort((a, b) => a.username < b.username ? - 1 : 1);
+            let channelUsers = [...this.props.channelUsers];
+            if (channelUsers.findIndex(existingUser => existingUser.id === user.id) !== -1)
+                return;
+            channelUsers.push(user);
+            channelUsers.sort((a, b) => a.username < b.username ? -1 : 1);
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('user left channel', username => {
@@ -52,7 +54,12 @@ class ChannelView extends Component {
 
     }
     componentWillUnmount() {
+        console.log('channel view component unmounting');
         this.props.socket.emit('leave channel');
+        this.props.socket.off('new message');
+        this.props.socket.off('user joined channel');
+        this.props.socket.off('send initial response');
+        this.props.socket.off('user left channel');
         this.props.populateChannelUsers([]);
     }
     renderMessages() {

@@ -103,9 +103,6 @@ class NavBar extends Component {
         const subChannelsDisplay = subChannels.map(channel => {
             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
         })
-
-        console.log(this.state.description.length);
-
         let count = 100;
 
         count -= this.state.description.length;
@@ -163,22 +160,26 @@ class NavBar extends Component {
                             <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <input className="searchInput" type="text" value={this.state.searchInput} onChange={(e) => this.handleSearch(e.target.value)} placeholder="Find Channel" />
-                                    <span className="addChannel">  <Popup
-    trigger={<button className="button"> + </button>}
-    modal
-    closeOnDocumentClick
-  >
-    <h1 style={{color: "green", textAlign: 'center'}}> Add Channel </h1>
-    <hr />
-    <div>
-        <h6 style={{ color: "blue", textAlign: "right", paddingRight: "35px"}}>Characters left: {count}</h6>
-    <label style={{color: "black", paddingRight: "10px"}}>Add Channel: </label>
-    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
-    <label style={{color: "black", paddingRight: "10px"}}>Channel Description: </label>
-    <input className="addChannelBar" value={this.state.description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
-    </div>
-
-  </Popup></span><br /><br />
+                                    <span className="addChannel">  
+                                        <Popup
+                                            trigger={<button className="button"> + </button>}
+                                            modal
+                                            closeOnDocumentClick
+                                        >
+                                            <div>
+                                                <h1 style={{color: "green", textAlign: 'center'}}> Add Channel </h1>
+                                                <hr />
+                                                <div>
+                                                    <h6 style={{ color: "blue", textAlign: "right", paddingRight: "35px"}}>Characters left: {count}</h6>
+                                                    <label style={{color: "black", paddingRight: "10px"}}>Add Channel: </label>
+                                                    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
+                                                    <label style={{color: "black", paddingRight: "10px"}}>Channel Description: </label>
+                                                    <input className="addChannelBar" value={this.state.description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
+                                                </div>
+                                            </div>
+                                        </Popup>
+                                    </span>
+                                    <br /><br />
                                     <ul className="leftbarUL">
                                         {channelDisplay}
                                     </ul>
