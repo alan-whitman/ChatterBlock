@@ -54,7 +54,7 @@ class ChannelView extends Component {
 
     }
     componentWillUnmount() {
-        console.log('channel view component unmounting');
+        // console.log('channel view component unmounting');
         this.props.socket.emit('leave channel');
         this.props.socket.off('new message');
         this.props.socket.off('user joined channel');
