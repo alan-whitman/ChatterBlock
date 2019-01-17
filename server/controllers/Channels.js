@@ -3,7 +3,7 @@ module.exports = {
         try {
         const db = req.app.get('db')
             //this is post id    
-        const {channel_name} = req.body
+        const {channel_name, channel_description} = req.body
         const { id: creator_id } = req.session.user
             // get channel name and creator from rec body
             // console.log(req.body)
@@ -32,7 +32,7 @@ module.exports = {
             }
             // if not in use
 
-            let response = await db.createChannel( {channel_name, creator_id} )
+            let response = await db.createChannel( {channel_name, creator_id, channel_description} )
             // database will return the newly created channel
             // console.log(response)
             let newChannel = response[0]

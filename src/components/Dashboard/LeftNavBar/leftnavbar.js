@@ -14,7 +14,7 @@ class NavBar extends Component {
             channel_name: "",
             channels: [],
             subChannels: [],
-            description: ''
+            channel_description: ''
         }
         this.props.socket.on('relay direct message', newMessage => {
             let activeDms = [...this.props.activeDms];
@@ -55,21 +55,21 @@ class NavBar extends Component {
 
     handleDescription = (val) => {
         this.setState({
-            description: val
+            channel_description: val
         })
     }
 
     handleAddChannel = (e) => {
 
-        if (e.keyCode === 13) {
             axios.post('/api/channel/new', this.state).then(response => {
 
                 this.setState({
                     channels: [...this.state.channels, response.data],
-                    channel_name: ""
+                    channel_name: "",
+                    channel_description: ""
                 })
             })
-        }
+        
     }
     handleSearch = (val) => {
         this.setState({
@@ -98,17 +98,17 @@ class NavBar extends Component {
         const channelDisplay = channels.filter(channel => {
             return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
         }).map((channel, i) => {
-            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> </Link></div>
+            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link></div>
         })
         const subChannelsDisplay = subChannels.map(channel => {
             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
         })
 
-        console.log(this.state.description.length);
+        console.log(this.state.channel_description.length);
 
         let count = 100;
 
-        count -= this.state.description.length;
+        count -= this.state.channel_description.length;
 
      
         return (
@@ -173,9 +173,10 @@ class NavBar extends Component {
     <div>
         <h6 style={{ color: "blue", textAlign: "right", paddingRight: "35px"}}>Characters left: {count}</h6>
     <label style={{color: "black", paddingRight: "10px"}}>Add Channel: </label>
-    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} onKeyUp={this.handleAddChannel} />
+    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)}  />
     <label style={{color: "black", paddingRight: "10px"}}>Channel Description: </label>
-    <input className="addChannelBar" value={this.state.description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
+    <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
+    <button onClick={this.handleAddChannel}>Add</button>
     </div>
 
   </Popup></span><br /><br />
