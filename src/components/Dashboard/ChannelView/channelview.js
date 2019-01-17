@@ -16,7 +16,8 @@ class ChannelView extends Component {
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
             this.props.populateChannelUsers(initialResponse.channelUsers);
-            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId });
+
+            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
         });
         this.props.socket.on('new message', newMessage => {
             let { messages } = this.state
@@ -113,7 +114,7 @@ class ChannelView extends Component {
         return (
             <div className="ChannelView">
                 <div className="header">
-                    <h2 style={{ color: 'white' }}>{this.props.match.params.channelName}</h2>
+                    <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
                     {/* if channel.id is not in subchannel array  */}
                     <button className="follow">+</button>
                     {/* if channel.id IS in subchannel array  */}
