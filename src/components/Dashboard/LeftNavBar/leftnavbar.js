@@ -34,7 +34,7 @@ class NavBar extends Component {
                 subChannels: response.data
             })
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
-
+        
         axios.get('/api/channel/all').then(response => {
             this.setState({
                 channels: response.data
@@ -45,7 +45,7 @@ class NavBar extends Component {
             this.props.populateActiveDms(response.data.map(user => user.username));
         }).catch(err => console.error(err));
 
-        console.log(this.state.subChannels)
+
     }
 
 
@@ -64,7 +64,11 @@ class NavBar extends Component {
 
 
     handleUnSubChannel = (id,i) => {
+        console.log(id,9999,this.state.channels,this.props.user.user.id)
         let subChannels = this.state.subChannels
+        axios.delete(`/api/channel/unfollow/${id}`).then(
+            
+        )
         let removeSubbed = subChannels.splice(i,1)
         this.setState({
             subChannels

@@ -81,13 +81,6 @@ module.exports = {
         console.log('error getting all subscribed channels:', error)
         }
     },
-
-
-
-
-
-
-
     getAllSubscribedChannelMessageCount: async (req,res) => {
         try {
             const db = req.app.get('db')
@@ -196,9 +189,10 @@ module.exports = {
         try{
         const db = req.app.get('db')
         // get id of connetion between user and channel
-        const {id} = req.body
-        // console.log(`destroying connection: ${id}`)
-        let unfollowChannel = await db.unfollowChannel(id)
+        const {channel_id} = req.params
+        const user_id = req.session.user.id
+        // console.log(`destroying connection: ${channel_id} & ${user_id}`)
+        let unfollowChannel = await db.unfollowChannel(channel_id,user_id)
         res.status(200).send('user is no longer following channel')
         }catch (error){
             console.log('error unfollowing Channel',  error)

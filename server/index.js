@@ -83,7 +83,7 @@ io.use((socket, next) => {
     // Follow Channel
     app.post('/api/channel/follow', Channel.followChannel)
     // Unfollow Channel
-    app.delete('/api/channel/unfollow', Channel.unfollowChannel)
+    app.delete('/api/channel/unfollow/:channel_id', Channel.unfollowChannel)
     // Edit Channel Message
     // Delete Channel Message
     // React to Channel Message
