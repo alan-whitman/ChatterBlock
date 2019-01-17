@@ -47,9 +47,7 @@ module.exports = {
         try {
         // console.log('attemping to get single channel')
         const db = req.app.get('db')
-
         const {channel_name} = req.body
-
         let channel = await db.getChannelByName(channel_name)
         res.status(200).send(channel)
 
@@ -128,7 +126,6 @@ module.exports = {
     // THis might be breaking something else - but it's working
     getChannelWithMessages: async (req,res) => {
         try {
-
         const db = req.app.get('db')
         // console.log(req.body)
         const {channel_name} = req.params
@@ -177,8 +174,7 @@ module.exports = {
         const {channel_id} = req.params
         const user_id = req.session.user.id
         let time_stamp = Date.now()
-        console.log(`${user_id} attemping to follow ${channel_id}`)
-        
+        // console.log(`${user_id} attemping to follow ${channel_id}`)
         let channelFollow = await db.followChannel({channel_id, user_id, time_stamp})
         res.status(200).send(channelFollow)
         }catch (error){

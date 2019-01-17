@@ -48,16 +48,12 @@ class NavBar extends Component {
         axios.get('/api/dm/getActiveDms').then(response => {
             this.props.populateActiveDms(response.data.map(user => user.username));
         }).catch(err => console.error(err));
-
-
     }
-
     handleChannel = (val) => {
         this.setState({
             channel_name: val
         })
     }
-
     handleDescription = (val) => {
         this.setState({
             channel_description: val
@@ -85,12 +81,11 @@ class NavBar extends Component {
                 subChannelIds: subChannelIds
             })
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })})
-        let removeSubbed = subChannels.splice(i,1)
+        subChannels.splice(i,1)
         this.setState({
             subChannels
         })
     }
-
     handleAddChannel = (e) => {
             axios.post('/api/channel/new', this.state).then(response => {
                 this.setState({
@@ -146,7 +141,7 @@ class NavBar extends Component {
         return (
             <div className="NavBar">
                 <div className="nav-top">
-                    <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
+                    <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>Logo Here</h2></Link> : <Link to="/"><h2>Logo Here</h2></Link>}</div>
 
                     <div className="accordion" id="accordionExample">
                         {this.props.isAuthenticated ?

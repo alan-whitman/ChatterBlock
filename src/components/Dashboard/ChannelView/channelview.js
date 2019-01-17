@@ -116,7 +116,7 @@ class ChannelView extends Component {
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
 
-                    <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
+                    {/* <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div> */}
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>
                     {this.renderMessages()}
