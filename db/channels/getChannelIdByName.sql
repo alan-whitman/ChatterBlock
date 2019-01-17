@@ -1,3 +1,3 @@
-SELECT id
+SELECT id, channel_name
 FROM channel
-WHERE channel_name = $1;
+WHERE channel_url = $1;

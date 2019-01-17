@@ -5,7 +5,9 @@ module.exports = {
             if (!response[0])
                 return console.log('channel doesn\'t exist');
             let initialChannelResponse = {};
+            console.log(response[0].channel_name)
             const channelId = response[0].id;
+            const name = response[0].channel_name
             if (socket.request.session.user) {
                 const { id: userId } = socket.request.session.user;
                 const time = Date.now()
@@ -15,6 +17,7 @@ module.exports = {
             }
             initialChannelResponse.existingMessages = await db.channels.getChannelMessages(channelId);
             initialChannelResponse.channelId = channelId;
+            initialChannelResponse.channelName = name;
             socket.join(channelName);
             let usersInChannel;
             await io.in(channelName).clients(async (err, clients) => {
