@@ -81,7 +81,7 @@ io.use((socket, next) => {
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
     // Follow Channel
-    app.post('/api/channel/follow', Channel.followChannel)
+    app.post('/api/channel/follow/:channel_id', Channel.followChannel)
     // Unfollow Channel
     app.delete('/api/channel/unfollow/:channel_id', Channel.unfollowChannel)
     // Edit Channel Message

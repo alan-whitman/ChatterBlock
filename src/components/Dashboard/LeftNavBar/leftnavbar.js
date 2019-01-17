@@ -66,7 +66,18 @@ class NavBar extends Component {
 
 
     handleSubChannel = (id,i) =>{
-        console.log(this.state.channels[0],this.state.subChannels[0])
+        let channels = this.state.channels
+        channels.splice(i,1)
+        console.log(channels)
+
+        axios.post(`/api/channel/follow/${id}`).then( () => {axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
+            let subId = []
+            response.data.forEach( data => subId.push(data.id))
+            this.setState({
+                subChannels: response.data,
+                subChannelIds: subId
+            })
+        }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })})
 
     }
 
@@ -124,11 +135,10 @@ class NavBar extends Component {
         const channelDisplay = channels.filter(channel => {
             return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
         }).map((channel, i) => {
-            
             return (
             this.state.subChannelIds.indexOf(channel.id) === -1 ? 
             <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
-            <div className="Sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
+            <div className="sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
             </div> : null
             )
         })

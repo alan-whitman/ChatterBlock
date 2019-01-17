@@ -174,9 +174,10 @@ module.exports = {
     followChannel: async (req, res) => {
         try {
         const db = req.app.get('db')
-        const {channel_id, user_id} = req.body
+        const {channel_id} = req.params
+        const user_id = req.session.user.id
         let time_stamp = Date.now()
-        // console.log(`${user_id} attemping to follow ${channel_id}`)
+        console.log(`${user_id} attemping to follow ${channel_id}`)
         
         let channelFollow = await db.followChannel({channel_id, user_id, time_stamp})
         res.status(200).send(channelFollow)

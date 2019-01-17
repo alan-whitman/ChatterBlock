@@ -73,7 +73,7 @@
     
 } 
 
-.NavBar .unSub{
+.NavBar .unSub, .NavBar .sub{
 margin-left:10px;
 float: left;
 cursor: pointer;
