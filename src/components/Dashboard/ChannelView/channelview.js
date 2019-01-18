@@ -46,7 +46,6 @@ class ChannelView extends Component {
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('user left channel', username => {
-            // console.log('user leaving channel: ', username);
             let channelUsers = [...this.props.channelUsers];
             const userIndex = channelUsers.findIndex(user => user.username === username);
             if (channelUsers[userIndex].subbed)
@@ -78,6 +77,13 @@ class ChannelView extends Component {
             else
                 channelUsers[userIndex].subbed = true;
             this.props.populateChannelUsers(channelUsers);
+        });
+        this.props.socket.on('user unsubbed from channel', userId => {
+            const channelUsers = [...this.props.channelUsers];
+            const userIndex = channelUsers.findIndex(user => user.id === userId);
+            if (userIndex !== -1) {
+                channelUsers[userIndex].subbed = false;
+            }
         });
     }
     userNotTyping = (x) => {

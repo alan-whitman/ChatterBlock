@@ -67,6 +67,8 @@ io.use((socket, next) => {
 
 //Channel Actions
     // Get all Channels
+    app.get('/api/channel/getChannels', Channel.getChannels);
+
     app.get('/api/channel/all', Channel.getAllChannels)
     // Get all subscribed channels for user
     app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
@@ -132,6 +134,7 @@ io.on('connection', socket => {
     socket.on('leave channel', () => scc.leaveChannel(socket));
     socket.on('create message', message => scc.createMessage(db, socket, message));
     socket.on('subscribe to channel', channelId => scc.subscribeToChannel(db, socket, io, channelId));
+    socket.on('unsubscribe from channel', channelId => scc.unsubscribeFromChannel(db, socket, io, channelId));
 
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());

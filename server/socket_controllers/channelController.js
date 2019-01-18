@@ -117,10 +117,22 @@ module.exports = {
                 online: false
             }
             io.in(roomName).emit('user subbed to channel', user);
-            socket.emit('successfully subbed to channel', response[0]);
+            socket.emit('successfully subbed to channel', response[0].id);
+        } catch(err) {
+            console.log(err);
+        }
+    },
+    async unsubscribeFromChannel(db, socket, io, channelId) {
+        try {
+            if (!socket.request.session.user)
+                return;
+            const { id: myId } = socket.request.session.user;
+            const response = await db.channels.unsubAndGetName(channelId, myId);
+            const roomName = response[0].channel_url;
+            io.in(roomName).emit('user unsubbed from channel', myId);
+            socket.emit('successfully unsubbed to channel', channelId);
         } catch(err) {
             console.log(err);
         }
     }
-   
 }
