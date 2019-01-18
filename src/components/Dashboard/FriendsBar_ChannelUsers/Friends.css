@@ -19,3 +19,17 @@
     
 }
 
+.accept-reject {
+    font-size: 20px;
+    width: 90px;
+    background-color: rgb(134, 134, 134);
+    text-align: center;
+    margin-left: 5px;
+    border-radius: 3px;
+}
+
+.accept-reject:hover {
+    background-color: rgb(121, 121, 121);
+    cursor: pointer;
+}
+
