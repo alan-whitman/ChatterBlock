@@ -8,9 +8,9 @@ module.exports = {
             const channelId = response[0].id;
             const name = response[0].channel_name
             if (socket.request.session.user) {
-                const { id: userId } = socket.request.session.user;
+                const { id: myId } = socket.request.session.user;
                 const time = Date.now()
-                const lastViewTime = await db.channels.getUpdateLastViewTime(userId, channelId, time);
+                const lastViewTime = await db.channels.getUpdateLastViewTime(myId, channelId, time);
                 initialChannelResponse.lastViewTime = lastViewTime[0] ? lastViewTime[0].last_view_time : Date.now();
                 socket.request.session.currentRoom = channelName;
             }
@@ -19,7 +19,7 @@ module.exports = {
             initialChannelResponse.channelName = name;
             socket.join(channelName);
             let usersInChannel;
-            await io.in(channelName).clients(async (err, clients) => {
+            io.in(channelName).clients(async (err, clients) => {
                 // get list of online users in the channel, filter out ones who are not in clientDictionary, and therefore aren't logged in
                 usersInChannel = clients.map(client => clientLookupDictionary[client])
                 usersInChannel = usersInChannel.filter(user => user);
@@ -32,6 +32,7 @@ module.exports = {
                 }
                 // get user data for all channel subscribers
                 let subbedUsers = await db.channels.getChannelUsers(channelId);
+                // console.log(subbedUsers);
                 // set there subbed status to true on return object, and online status by reconciling with usersInChannel
                 let users = subbedUsers.map(user => {
                     user.subbed = true;
@@ -46,7 +47,12 @@ module.exports = {
                 initialChannelResponse.users = users;
                 socket.emit('send initial response', initialChannelResponse);
                 if (socket.request.session.user) {
-                    socket.to(channelName).emit('user joined channel', {username: socket.request.session.user.username, id: socket.request.session.user.id});
+                    const mySubStatus = subbedUsers.findIndex(user => user.id === socket.request.session.user.id) === -1 ? false : true;
+                    socket.to(channelName).emit('user joined channel', {
+                        username: socket.request.session.user.username, 
+                        id: socket.request.session.user.id, 
+                        subbed: mySubStatus, 
+                        online: true});
                 }
             });
 
