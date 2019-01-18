@@ -64,9 +64,9 @@ class Dashboard extends Component {
                         <FriendUserBar socket={socket} {...props}/>
                         {/* <MobileNav /> */}
                         <div className="mobile-nav">
-                            <div className="mobile-nav-link" ><i class="fas fa-cog"></i></div>
-                            <div className="mobile-nav-link" name="Channels" onClick={(e,a)=> this.showNav("NavBar","FriendUserBar")}><i class="fas fa-comments"></i></div>
-                            <div className="mobile-nav-link" name="FriendUserBar" onClick={(e,a)=> this.showNav("FriendUserBar","NavBar")}><i class="fas fa-user-friends"></i></div>
+                            <div className="mobile-nav-link" ><i className="fas fa-cog"></i></div>
+                            <div className="mobile-nav-link" name="Channels" onClick={(e,a)=> this.showNav("NavBar","FriendUserBar")}><i className="fas fa-comments"></i></div>
+                            <div className="mobile-nav-link" name="FriendUserBar" onClick={(e,a)=> this.showNav("FriendUserBar","NavBar")}><i className="fas fa-user-friends"></i></div>
                         </div>
                     </div>
                 )
