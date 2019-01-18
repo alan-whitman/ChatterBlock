@@ -1,2 +1,2 @@
 DELETE FROM channel_users
-WHERE id = $1;
+WHERE channel_id = $1 AND user_id = $2;
