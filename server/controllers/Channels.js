@@ -59,10 +59,8 @@ module.exports = {
     getAllChannels: async (req,res) => {
         try {
         const db = req.app.get('db')
-        
         let channels =await db.getAllChannels()
         res.status(200).send(channels)
-
         }catch (error){
         console.log('error getting all channels:', error)
         }
@@ -71,10 +69,8 @@ module.exports = {
         try {
         const db = req.app.get('db')
         const {user_id} = req.body
-        // console.log("user id: ", user_id)
         let channels =await db.getAllSubscibedChannels(user_id)
         res.status(200).send(channels)
-
         }catch (error){
         console.log('error getting all subscribed channels:', error)
         }

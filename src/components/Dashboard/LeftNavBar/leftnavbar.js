@@ -139,7 +139,7 @@ class NavBar extends Component {
 
      
         return (
-            <div className="NavBar">
+            <div className="NavBar" id="NavBar">
                 <div className="nav-top">
                     <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>Logo Here</h2></Link> : <Link to="/"><h2>Logo Here</h2></Link>}</div>
 
