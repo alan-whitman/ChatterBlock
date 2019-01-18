@@ -15,8 +15,7 @@ class ChannelView extends Component {
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
-            this.props.populateChannelUsers(initialResponse.channelUsers);
-
+            this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
         });
         this.props.socket.on('new message', newMessage => {
