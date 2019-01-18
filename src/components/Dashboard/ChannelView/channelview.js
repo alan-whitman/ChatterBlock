@@ -9,9 +9,11 @@ class ChannelView extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            typingUsers: [],
             messages: [],
             channelId: -1,
-            messageInput: ''
+            messageInput: '',
+            typing:false
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
@@ -22,6 +24,8 @@ class ChannelView extends Component {
             let { messages } = this.state
             messages.push(newMessage);
             this.setState({ messages });
+            console.log(newMessage.username)
+            this.userNotTyping(newMessage.username)
         });
         this.props.socket.on('user joined channel', newUser => {
             // console.log('user joining channel: ', newUser)
@@ -45,10 +49,44 @@ class ChannelView extends Component {
                 channelUsers = channelUsers.filter(user => user.username !== username);
             this.props.populateChannelUsers(channelUsers);
         });
+        this.props.socket.on('stopped typing', username => {
+            console.log(username+' stopped typing')
+            // let channelUsers = [...this.props.channelUsers];
+            // channelUsers = channelUsers.filter(user => user.username !== username);
+            // this.props.populateChannelUsers(channelUsers);
+        });
+        this.props.socket.on('is typing', username => {
+            console.log(username+' is typing')
+            let typing = this.state.typingUsers
+            if(typing.indexOf(username) === -1 ){
+                typing.push(username)
+                this.setState({
+                    typingUsers: typing
+                })
+            
+                    setTimeout(this.userNotTyping, 3000)
+        }
+            // let channelUsers = [...this.props.channelUsers];
+            // channelUsers = channelUsers.filter(user => user.username !== username);
+            // this.props.populateChannelUsers(channelUsers);
+        });
     }
+
+    userNotTyping = (x) => {
+        let typing = this.state.typingUsers
+        typing.splice(typing.indexOf(x),1)
+        this.setState({
+            typingUsers:typing
+        })
+        this.props.socket.emit('stopped typing');
+        console.log('stopped typing')
+    }
+
     componentWillMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);
+        // this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+
     }
     componentDidUpdate(prevProps) {
 
@@ -92,10 +130,33 @@ class ChannelView extends Component {
         if (value.match(/\.(jpeg|jpg|gif|png)$/)) {
             console.log("message input is an image")
         }
-
         this.setState({ [name]: value });
-
+        this.isTyping()
     }
+
+
+    isTyping = () =>{
+        this.setState({
+            typing:true
+        })
+        // this.setTimeout()
+        console.log('is typing')
+        this.props.socket.emit('is typing');
+        setTimeout(this.notTyping, 3000)
+    }
+    
+    notTyping = () => {
+        this.setState({
+            typing:false
+        })
+        this.props.socket.emit('stopped typing');
+        console.log('stopped typing')
+    }
+
+
+
+
+
     sendMessage() {
         if (!this.props.user)
             return;
@@ -119,20 +180,23 @@ class ChannelView extends Component {
         }
     }
     render() {
+            
+    const displayTypingUsers = this.state.typingUsers.map((user,i) => {
+        return <div key={i} className="typing-users">{user}</div>
+    })
+
         return (
             <div className="ChannelView">
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
-                    {/* if channel.id is not in subchannel array  */}
-                    <button className="follow">+</button>
-                    {/* if channel.id IS in subchannel array  */}
-                    <button className="unfollow">-</button>
 
-                    <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div>
+                    {/* <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div> */}
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>
                     {this.renderMessages()}
                 </div>
+
+                {displayTypingUsers}
                 <div className="input-holder">
                     <input
                         className="input-bar"

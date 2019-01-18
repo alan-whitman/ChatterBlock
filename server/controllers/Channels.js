@@ -47,9 +47,7 @@ module.exports = {
         try {
         // console.log('attemping to get single channel')
         const db = req.app.get('db')
-
         const {channel_name} = req.body
-
         let channel = await db.getChannelByName(channel_name)
         res.status(200).send(channel)
 
@@ -61,10 +59,8 @@ module.exports = {
     getAllChannels: async (req,res) => {
         try {
         const db = req.app.get('db')
-        
         let channels =await db.getAllChannels()
         res.status(200).send(channels)
-
         }catch (error){
         console.log('error getting all channels:', error)
         }
@@ -73,21 +69,12 @@ module.exports = {
         try {
         const db = req.app.get('db')
         const {user_id} = req.body
-        // console.log("user id: ", user_id)
         let channels =await db.getAllSubscibedChannels(user_id)
         res.status(200).send(channels)
-
         }catch (error){
         console.log('error getting all subscribed channels:', error)
         }
     },
-
-
-
-
-
-
-
     getAllSubscribedChannelMessageCount: async (req,res) => {
         try {
             const db = req.app.get('db')
@@ -135,7 +122,6 @@ module.exports = {
     // THis might be breaking something else - but it's working
     getChannelWithMessages: async (req,res) => {
         try {
-
         const db = req.app.get('db')
         // console.log(req.body)
         const {channel_name} = req.params
@@ -181,10 +167,10 @@ module.exports = {
     followChannel: async (req, res) => {
         try {
         const db = req.app.get('db')
-        const {channel_id, user_id} = req.body
+        const {channel_id} = req.params
+        const user_id = req.session.user.id
         let time_stamp = Date.now()
         // console.log(`${user_id} attemping to follow ${channel_id}`)
-        
         let channelFollow = await db.followChannel({channel_id, user_id, time_stamp})
         res.status(200).send(channelFollow)
         }catch (error){
@@ -196,9 +182,10 @@ module.exports = {
         try{
         const db = req.app.get('db')
         // get id of connetion between user and channel
-        const {id} = req.body
-        // console.log(`destroying connection: ${id}`)
-        let unfollowChannel = await db.unfollowChannel(id)
+        const {channel_id} = req.params
+        const user_id = req.session.user.id
+        // console.log(`destroying connection: ${channel_id} & ${user_id}`)
+        let unfollowChannel = await db.unfollowChannel(channel_id,user_id)
         res.status(200).send('user is no longer following channel')
         }catch (error){
             console.log('error unfollowing Channel',  error)

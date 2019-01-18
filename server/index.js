@@ -81,9 +81,9 @@ io.use((socket, next) => {
     // Add Channel Message
     app.post('/api/channel/message/new', Channel.createMessage)
     // Follow Channel
-    app.post('/api/channel/follow', Channel.followChannel)
+    app.post('/api/channel/follow/:channel_id', Channel.followChannel)
     // Unfollow Channel
-    app.delete('/api/channel/unfollow', Channel.unfollowChannel)
+    app.delete('/api/channel/unfollow/:channel_id', Channel.unfollowChannel)
     // Edit Channel Message
     // Delete Channel Message
     // React to Channel Message
@@ -134,6 +134,9 @@ io.on('connection', socket => {
     
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());
+
+    socket.on('is typing', () => scc.isTyping(socket));
+    socket.on('stopped typing', () => scc.stoppedTyping(socket));
 
     // private message listeners
     socket.on('join direct message', username => sdmc.joinDm(db, io, socket, connectedUsers, username));

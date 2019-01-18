@@ -7,7 +7,7 @@ import ChannelUsers from './ChannelUsers';
 class FriendUserBar extends Component {
     render(){
         return (
-            <div className="FriendUserBar">
+            <div className="FriendUserBar" id="FriendUserBar">
                 {this.props.isAuthenticated ?
                     <Friends socket={this.props.socket} {...this.props}/>
                 :

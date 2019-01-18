@@ -73,7 +73,7 @@
     
 } 
 
-.NavBar .unSub{
+.NavBar .unSub, .NavBar .sub{
 margin-left:10px;
 float: left;
 cursor: pointer;
@@ -169,4 +169,9 @@ cursor: pointer;
   
   .tooltip:hover .tooltiptext {
     visibility: visible;
+  }
+  @media screen and (max-width: 960px) {
+    .NavBar, .FriendUserBar {
+      display: none;
+    }
   }

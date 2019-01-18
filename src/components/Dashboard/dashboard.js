@@ -18,6 +18,19 @@ class Dashboard extends Component {
         super();
         socket = io(socketPath + ':5004');
     }
+    showNav = (e,a) =>{
+            var x = document.getElementById(e);
+            var y = document.getElementById(a);
+            if (x.style.display === "none") {
+              x.style.display = "block";
+              y.style.display="none";
+            } else {
+              x.style.display = "none";
+            }
+
+
+    }
+
     render(){
         return (
             <Route path="/dashboard" render={(props) => {
@@ -49,6 +62,12 @@ class Dashboard extends Component {
                             </Switch>
                         </div>
                         <FriendUserBar socket={socket} {...props}/>
+                        {/* <MobileNav /> */}
+                        <div className="mobile-nav">
+                            <div className="mobile-nav-link" ><i class="fas fa-cog"></i></div>
+                            <div className="mobile-nav-link" name="Channels" onClick={(e,a)=> this.showNav("NavBar","FriendUserBar")}><i class="fas fa-comments"></i></div>
+                            <div className="mobile-nav-link" name="FriendUserBar" onClick={(e,a)=> this.showNav("FriendUserBar","NavBar")}><i class="fas fa-user-friends"></i></div>
+                        </div>
                     </div>
                 )
             }}

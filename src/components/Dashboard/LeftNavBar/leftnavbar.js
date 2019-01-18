@@ -14,6 +14,7 @@ class NavBar extends Component {
             channel_name: "",
             channels: [],
             subChannels: [],
+            subChannelIds:[],
             channel_description: ''
         }
         this.props.socket.on('relay direct message', newMessage => {
@@ -30,11 +31,14 @@ class NavBar extends Component {
     componentDidMount() {
 
         axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
+            let subId = []
+            response.data.forEach( data => subId.push(data.id))
             this.setState({
-                subChannels: response.data
+                subChannels: response.data,
+                subChannelIds: subId
             })
         }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
-
+        
         axios.get('/api/channel/all').then(response => {
             this.setState({
                 channels: response.data
@@ -44,48 +48,52 @@ class NavBar extends Component {
         axios.get('/api/dm/getActiveDms').then(response => {
             this.props.populateActiveDms(response.data.map(user => user.username));
         }).catch(err => console.error(err));
-
-        console.log(this.state.subChannels)
     }
-
-
     handleChannel = (val) => {
         this.setState({
             channel_name: val
         })
     }
-
     handleDescription = (val) => {
         this.setState({
             channel_description: val
         })
     }
-
-
-
+    handleSubChannel = (id,i) =>{
+        let channels = this.state.channels
+        channels.splice(i,1)
+        axios.post(`/api/channel/follow/${id}`).then( () => {axios.get('/api/channel/all/subscribed/message/count', this.props.user.id).then(response => {
+            let subId = []
+            response.data.forEach( data => subId.push(data.id))
+            this.setState({
+                subChannels: response.data,
+                subChannelIds: subId
+            })
+        }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })})
+    }
     handleUnSubChannel = (id,i) => {
         let subChannels = this.state.subChannels
-        let removeSubbed = subChannels.splice(i,1)
+        let subChannelIds = this.state.subChannelIds
+        subChannelIds.splice(i,1)
+        axios.delete(`/api/channel/unfollow/${id}`).then( () => {axios.get('/api/channel/all').then(response => {
+            this.setState({
+                channels: response.data,
+                subChannelIds: subChannelIds
+            })
+        }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })})
+        subChannels.splice(i,1)
         this.setState({
             subChannels
         })
-
-
     }
-
-
-
     handleAddChannel = (e) => {
-
             axios.post('/api/channel/new', this.state).then(response => {
-
                 this.setState({
                     channels: [...this.state.channels, response.data],
                     channel_name: "",
                     channel_description: ""
                 })
             })
-        
     }
     handleSearch = (val) => {
         this.setState({
@@ -110,18 +118,20 @@ class NavBar extends Component {
 
     render() {
         const { channels, searchInput, subChannels } = this.state;
-
         const channelDisplay = channels.filter(channel => {
             return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
         }).map((channel, i) => {
-            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link></div>
+            return (
+            this.state.subChannelIds.indexOf(channel.id) === -1 ? 
+            <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
+            <div className="sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
+            </div> : null
+            )
         })
 
         const subChannelsDisplay = subChannels.map((channel,i) => {
             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
         })
-
-        // console.log(this.state.channel_description.length);
 
         let count = 100;
 
@@ -129,9 +139,9 @@ class NavBar extends Component {
 
      
         return (
-            <div className="NavBar">
+            <div className="NavBar" id="NavBar">
                 <div className="nav-top">
-                    <div className="navLogo"><h2>Logo Here</h2>{this.props.isAuthenticated ? <Link to="/dashboard">Recent</Link> : <Link to="/">Home</Link>}</div>
+                    <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>Logo Here</h2></Link> : <Link to="/"><h2>Logo Here</h2></Link>}</div>
 
                     <div className="accordion" id="accordionExample">
                         {this.props.isAuthenticated ?
