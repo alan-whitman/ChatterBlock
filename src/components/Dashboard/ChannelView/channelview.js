@@ -57,9 +57,6 @@ class ChannelView extends Component {
         });
         this.props.socket.on('stopped typing', username => {
             console.log(username+' stopped typing')
-            // let channelUsers = [...this.props.channelUsers];
-            // channelUsers = channelUsers.filter(user => user.username !== username);
-            // this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('is typing', username => {
             console.log(username+' is typing')
@@ -72,12 +69,17 @@ class ChannelView extends Component {
             
                     setTimeout(this.userNotTyping, 3000)
         }
-            // let channelUsers = [...this.props.channelUsers];
-            // channelUsers = channelUsers.filter(user => user.username !== username);
-            // this.props.populateChannelUsers(channelUsers);
+        });
+        this.props.socket.on('user subbed to channel', newSubUser => {
+            const channelUsers = [...this.props.channelUsers];
+            const userIndex = channelUsers.findIndex(user => user.id === newSubUser.id);
+            if (userIndex === -1)
+                channelUsers.push(newSubUser);
+            else
+                channelUsers[userIndex].subbed = true;
+            this.props.populateChannelUsers(channelUsers);
         });
     }
-
     userNotTyping = (x) => {
         let typing = this.state.typingUsers
         typing.splice(typing.indexOf(x),1)
@@ -87,7 +89,6 @@ class ChannelView extends Component {
         this.props.socket.emit('stopped typing');
         console.log('stopped typing')
     }
-
     componentWillMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);

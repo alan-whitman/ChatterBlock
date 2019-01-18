@@ -131,7 +131,8 @@ io.on('connection', socket => {
     socket.on('join channel', channelName => scc.joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName));
     socket.on('leave channel', () => scc.leaveChannel(socket));
     socket.on('create message', message => scc.createMessage(db, socket, message));
-    
+    socket.on('subscribe to channel', channelId => scc.subscribeToChannel(db, socket, io, channelId));
+
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());
 
