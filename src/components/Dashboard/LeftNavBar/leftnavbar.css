@@ -73,15 +73,15 @@
     
 } 
 
-.NavBar .addChannel {
+/* .NavBar .addChannel {
     display: inline;
     margin-right: -10%;
-}
+} */
 
-.NavBar .addChannelBar {
-    width: 30%;
-    margin-right: 30px;
-}
+/* .NavBar .addChannelBar {
+    width: 20%;
+    margin-right: 3%;
+} */
 
 .channel-link h4 {
     text-decoration: none;
@@ -145,24 +145,5 @@
   }
 
 
-  /* tooltip for channels */
-
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
     
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-    top: -5px;
-    left: 105%;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-  }
+
