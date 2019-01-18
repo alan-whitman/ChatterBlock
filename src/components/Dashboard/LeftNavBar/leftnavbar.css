@@ -74,6 +74,12 @@
 } 
 
 /* .NavBar .addChannel {
+.NavBar .unSub, .NavBar .sub{
+margin-left:10px;
+float: left;
+cursor: pointer;
+}
+.NavBar .addChannel {
     display: inline;
     margin-right: -10%;
 } */
@@ -102,7 +108,6 @@
     text-align: center;
 }
 .channel-list {
-
     width: 100%;
     clear: both;
 
@@ -143,7 +148,8 @@
     border-radius: 18px;
     border: 1px solid #cfcece;
   }
-
-
-    
-
+  @media screen and (max-width: 960px) {
+    .NavBar, .FriendUserBar {
+      display: none;
+    }
+  }

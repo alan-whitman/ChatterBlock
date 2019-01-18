@@ -32,7 +32,7 @@ class Friends extends Component {
             this.props.populateFriends(updatedFriends);
         });
         this.props.socket.on('confirm friend request', confirmation => {
-            // console.log(confirmation);
+            console.log(confirmation);
         });
         this.props.socket.on('new friend request', requester => {
             let { pendingFriends } = this.state;
@@ -53,6 +53,16 @@ class Friends extends Component {
     componentDidMount() {
         this.props.socket.emit('get my friends');
         this.props.socket.emit('get pending friend requests');
+    }
+    componentWillUnmount() {
+        this.props.socket.off('send your friends');
+        this.props.socket.off('friend went offline');
+        this.props.socket.off('friend came online');
+        this.props.socket.off('send pending requests');
+        this.props.socket.off('confirm friend request');
+        this.props.socket.off('new friend request');
+        this.props.socket.off('friend update complete');
+
     }
     updateInput(e) {
         const { name, value } = e.target;
@@ -90,10 +100,12 @@ class Friends extends Component {
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) =>
-                <li key={i}>
+                <li style={{width: '100%'}} key={i}>
                     {friend.username}
-                    <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
-                    <span onClick={e => this.rejectFriend({ id: friend.id, username: friend.username })} className="accept-reject">Reject</span>
+                    <div style={{display: 'flex', justifyContent: 'center;', alignItems: 'center', width: '100%'}}>
+                        <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
+                        <span onClick={e => this.rejectFriend({ id: friend.id, username: friend.username })} className="accept-reject">Reject</span>
+                    </div>
                 </li>
             );
         return (

@@ -1,4 +1,4 @@
-SELECT cu.last_view_time, c.channel_name, c.id
+SELECT cu.last_view_time, c.channel_name, c.id, c.channel_url
 FROM channel c
 JOIN channel_users cu ON cu.channel_id = c.id
 WHERE cu.user_id = $1

@@ -88,8 +88,8 @@ class DirectMessage extends Component {
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.props.match.params.username}</h2>
                     <div>
-                        <input className="searchInput" type="text" placeholder="Search Users" /> 
-                        <span><i className="fas fa-search"></i></span>
+                        {/* <input className="searchInput" type="text" placeholder="Search Users" />  */}
+                        {/* <span><i className="fas fa-search"></i></span> */}
                     </div>
                     {this.props.activeDms.indexOf(this.props.match.params.username) !== -1 ?
                         <button onClick={e => this.hideConversation()}>Hide</button>

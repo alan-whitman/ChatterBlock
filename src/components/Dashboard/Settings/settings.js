@@ -17,11 +17,15 @@ class Settings extends Component {
     }
 
     componentDidMount(){
+        let user = {...this.props.user.user};
+        for (let key in user)
+            if (user[key] === null)
+                user[key] = '';
         this.setState({
-            username: this.props.user.user.username,
-            email: this.props.user.user.email,
-            about_text: this.props.user.user.about_text,
-            user_image: this.props.user.user.user_image
+            username: user.username,
+            email: user.email,
+            about_text: user.about_text,
+            user_image: user.user_image
         })
     }
 
