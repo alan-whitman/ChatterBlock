@@ -68,5 +68,23 @@ module.exports = {
         }
         socket.leave(currentRoom);
         delete socket.request.session.currentRoom;
+    },
+    async isTyping(socket){
+        const { currentRoom } = socket.request.session;
+        console.log('is typing')
+        if (socket.request.session.user) {
+            const { username } = socket.request.session.user;
+            console.log(username, '- is typing -', currentRoom);
+            socket.to(currentRoom).emit('is typing', username);
+        }
+    },
+    async stoppedTyping(socket){
+        const { currentRoom } = socket.request.session;
+        console.log('it being hit')
+        if (socket.request.session.user) {
+            const { username } = socket.request.session.user;
+            console.log(username, '- stopped typing -', currentRoom);
+            socket.to(currentRoom).emit('stopped typing', username);
+        }
     }
 }

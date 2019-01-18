@@ -135,6 +135,9 @@ io.on('connection', socket => {
     socket.on('like message', message => scc.likeMessage());
     socket.on('unlike message', message => scc.unlikeMessage());
 
+    socket.on('is typing', () => scc.isTyping(socket));
+    socket.on('stopped typing', () => scc.stoppedTyping(socket));
+
     // private message listeners
     socket.on('join direct message', username => sdmc.joinDm(db, io, socket, connectedUsers, username));
     socket.on('send direct message', (message, receiverId) => sdmc.sendDm(db, io, socket, message, receiverId, connectedUsers));
