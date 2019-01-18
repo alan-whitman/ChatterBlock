@@ -28,12 +28,18 @@ class ChannelView extends Component {
             this.userNotTyping(newMessage.username)
         });
         this.props.socket.on('user joined channel', newUser => {
-            // console.log('user joining channel: ', newUser)
+            console.log('user joining channel: ', newUser)
             let channelUsers = [...this.props.channelUsers];
             if (channelUsers.findIndex(existingUser => existingUser.id === newUser.id && existingUser.online === newUser.online) !== -1)
                 return;
-            if (newUser.subbed)
-                channelUsers[channelUsers.findIndex(existingUser => existingUser.id === newUser.id)].online = true;
+            if (newUser.subbed) {
+                let userIndex = channelUsers.findIndex(existingUser => existingUser.id === newUser.id)
+                if (userIndex !== -1)
+                    channelUsers[channelUsers.findIndex(existingUser => existingUser.id === newUser.id)].online = true;
+                else    {
+                    channelUsers.push(newUser)
+                }
+            }
             else
                 channelUsers.push(newUser);
             channelUsers.sort((a, b) => a.username < b.username ? -1 : 1);
