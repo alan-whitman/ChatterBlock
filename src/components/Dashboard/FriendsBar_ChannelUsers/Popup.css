@@ -9,7 +9,7 @@
     z-index: 1000;
 }
 
-.accept-reject {
+.delete {
     font-size: 20px;
     height: 34%;
     width: 100%;
@@ -19,7 +19,7 @@
     color: rgb(46, 46, 46);
 }
 
-.accept-reject:hover {
+.delete:hover {
     background-color: darkgray;
     cursor: pointer;
 }
