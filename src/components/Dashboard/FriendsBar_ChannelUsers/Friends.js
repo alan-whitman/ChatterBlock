@@ -102,7 +102,7 @@ class Friends extends Component {
             .map((friend, i) =>
                 <li style={{width: '100%'}} key={i}>
                     {friend.username}
-                    <div style={{display: 'flex', justifyContent: 'center;', alignItems: 'center', width: '100%'}}>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
                         <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
                         <span onClick={e => this.rejectFriend({ id: friend.id, username: friend.username })} className="accept-reject">Reject</span>
                     </div>
