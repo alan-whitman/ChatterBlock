@@ -14,6 +14,7 @@ class NavBar extends Component {
             channel_name: "",
             channels: [],
             subChannels: [],
+            open: false,
             subChannelIds:[],
             channel_description: ''
         }
@@ -92,6 +93,7 @@ class NavBar extends Component {
                     channels: [...this.state.channels, response.data],
                     channel_name: "",
                     channel_description: ""
+
                 })
             })
     }
@@ -106,32 +108,63 @@ class NavBar extends Component {
         )
     }
 
-    Modal =  () => (
-        <Popup
-          trigger={<button className="button"> Open Modal </button>}
-          modal
-          closeOnDocumentClick
-        >
-          <span> Modal content </span>
-        </Popup>
-      )
+    openModal = (e) => {
+        e.preventDefault()
+        this.setState({ open: true })
+      }
+      closeModal = () => {
+        this.setState({ open: false })
+      }
 
-    render() {
-        const { channels, searchInput, subChannels } = this.state;
-        const channelDisplay = channels.filter(channel => {
-            return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
-        }).map((channel, i) => {
-            return (
-            this.state.subChannelIds.indexOf(channel.id) === -1 ? 
-            <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
-            <div className="sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
-            </div> : null
-            )
-        })
 
-        const subChannelsDisplay = subChannels.map((channel,i) => {
-            return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
-        })
+//     render() {
+//         const { channels, searchInput, subChannels } = this.state;
+//         const channelDisplay = channels.filter(channel => {
+//             return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
+//         }).map((channel, i) => {
+// <<<<<<< HEAD
+//             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name"  onContextMenu={(e) => this.openModal(e)}>{channel.channel_name}</h4><Popup
+//             open={this.state.open}
+//             closeOnDocumentClick
+//             onClose={this.closeModal}
+//           >
+//               <p style={{ color: "purple"}}>{channel.channel_description}</p>
+
+       
+//           </Popup></Link></div>
+//         })
+//         const subChannelsDisplay = subChannels.map(channel => {
+//             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_name}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link></div>
+// =======
+//             return (
+//             this.state.subChannelIds.indexOf(channel.id) === -1 ? 
+//             <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
+//             <div className="sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
+//             </div> : null
+//             )
+// >>>>>>> master
+//         })
+
+//         const subChannelsDisplay = subChannels.map((channel,i) => {
+//             return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
+//         })
+
+render() {
+    const { channels, searchInput, subChannels } = this.state;
+    const channelDisplay = channels.filter(channel => {
+        return channel.channel_name.toLowerCase().includes(searchInput.toLowerCase());
+    }).map((channel, i) => {
+        return (
+        this.state.subChannelIds.indexOf(channel.id) === -1 ? 
+        <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4></Link>
+        <div className="sub" onClick={e => this.handleSubChannel(channel.id,i)}>+</div>
+        </div> : null
+        )
+    })
+
+    const subChannelsDisplay = subChannels.map((channel,i) => {
+        return <div key={channel.id} className="channel-list"><Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link"><h4 className="channel-name">{channel.channel_name}</h4> {channel.count > 0 ? <p className="unseen-channel-messages">{channel.count}</p> : false}</Link><div className="unSub" onClick={e => this.handleUnSubChannel(channel.id,i)}>-</div></div>
+    })
 
         let count = 100;
 
@@ -190,27 +223,35 @@ class NavBar extends Component {
                             <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                                 <div className="card-body">
                                     <input className="searchInput" type="text" value={this.state.searchInput} onChange={(e) => this.handleSearch(e.target.value)} placeholder="Find Channel" />
-                                    <span className="addChannel">  
-                                        <Popup
-                                            trigger={<button className="button"> + </button>}
-                                            modal
-                                            closeOnDocumentClick
-                                        >
-                                            <div>
-                                                <h1 style={{color: "green", textAlign: 'center'}}> Add Channel </h1>
-                                                <hr />
-                                                <div>
-                                                    <h6 style={{ color: "blue", textAlign: "right", paddingRight: "35px"}}>Characters left: {count}</h6>
-                                                    <label style={{color: "black", paddingRight: "10px"}}>Add Channel: </label>
-                                                    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel Name" maxLength="20" onChange={(e) => this.handleChannel(e.target.value)}  />
-                                                    <label style={{color: "black", paddingRight: "10px"}}>Channel Description: </label>
-                                                    <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
-                                                    <button onClick={this.handleAddChannel}>Add</button>
-                                                </div>
-                                            </div>
-                                        </Popup>
-                                    </span>
-                                    <br /><br />
+                                    
+                                    <span className="addChannel">
+                                    <Popup
+                                        trigger={<button className="button"> + </button>}
+                                        modal
+                                        closeOnDocumentClick>
+                                        <h1 style={{color: "green", textAlign: 'center'}}> Add Channel </h1>
+                                        <hr />
+                                        <div>
+                                        
+                                       <div className="container">
+                                        <div className="row">
+                                        <div className="col">                                        
+                                            <label style={{color: "black", paddingRight: "10px"}}>Channel Name: </label>
+                                            <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)}  />
+                                        </div>
+                                        <div className="col">
+                                        
+                                            <label style={{color: "black", paddingRight: "10px"}}>Channel Description: </label>
+                                            <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)}/>
+                                            <span style={{ color: "blue", textAlign: "right", paddingRight: "35px"}}>{count}x</span>
+                                        </div>
+
+                                        <button onClick={this.handleAddChannel}>Add</button>
+                                        </div>
+                                        </div>
+                                        </div>
+
+                                    </Popup></span><br /><br />
                                     <ul className="leftbarUL">
                                         {channelDisplay}
                                     </ul>
