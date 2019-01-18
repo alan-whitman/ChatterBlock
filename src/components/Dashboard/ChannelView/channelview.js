@@ -17,8 +17,7 @@ class ChannelView extends Component {
         }
         this.messageWindowRef = React.createRef();
         this.props.socket.on('send initial response', initialResponse => {
-            this.props.populateChannelUsers(initialResponse.channelUsers);
-
+            this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
         });
         this.props.socket.on('new message', newMessage => {
@@ -28,17 +27,26 @@ class ChannelView extends Component {
             console.log(newMessage.username)
             this.userNotTyping(newMessage.username)
         });
-        this.props.socket.on('user joined channel', user => {
+        this.props.socket.on('user joined channel', newUser => {
+            // console.log('user joining channel: ', newUser)
             let channelUsers = [...this.props.channelUsers];
-            if (channelUsers.findIndex(existingUser => existingUser.id === user.id) !== -1)
+            if (channelUsers.findIndex(existingUser => existingUser.id === newUser.id && existingUser.online === newUser.online) !== -1)
                 return;
-            channelUsers.push(user);
+            if (newUser.subbed)
+                channelUsers[channelUsers.findIndex(existingUser => existingUser.id === newUser.id)].online = true;
+            else
+                channelUsers.push(newUser);
             channelUsers.sort((a, b) => a.username < b.username ? -1 : 1);
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('user left channel', username => {
+            // console.log('user leaving channel: ', username);
             let channelUsers = [...this.props.channelUsers];
-            channelUsers = channelUsers.filter(user => user.username !== username);
+            const userIndex = channelUsers.findIndex(user => user.username === username);
+            if (channelUsers[userIndex].subbed)
+                channelUsers[userIndex].online = false;
+            else
+                channelUsers = channelUsers.filter(user => user.username !== username);
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('stopped typing', username => {
@@ -83,7 +91,7 @@ class ChannelView extends Component {
     componentDidUpdate(prevProps) {
 
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
-            console.log('switching channels...');
+            // console.log('switching channels...');
             this.props.socket.emit('leave channel');
             const { channelName } = this.props.match.params;
             this.props.socket.emit('join channel', channelName);
