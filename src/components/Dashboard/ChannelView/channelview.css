@@ -33,24 +33,24 @@
 }
 
 .ChannelView .messages {
-    background: rgb(55, 55, 55);
+    background: rgb(35, 35, 35);
     height: calc(100vh - 100px);
     overflow: auto;
     padding: 10px;
 }
 .ChannelView .messages div:last-child {
-    border-bottom: none;
     margin-bottom: 0px;
 }
 
 .ChannelView .user-message {
     background: rgb(75, 75, 75);
-    padding: 5px 10px 5px 10px;
-    margin-bottom: 10px;
+    padding: 5px 10px 10px 10px;
+    margin-bottom: 15px;
     border-radius: 5px;
-    display: block;
+    position: relative;
+
 }
-.ChannelView .user-message .post-data {
+.ChannelView .user-message .message-data {
     border-bottom: 1px solid lightgray;
     display: flex;
     padding-bottom: 5px;
@@ -73,11 +73,18 @@
 
     
 }
-.ChannelView .post-content {
+.ChannelView .message-content {
     padding-top: 3px;
 }
 
 .ChannelView .typing-users{
     color:#fff;
     font-size: 8px;
+}
+.ChannelView .message-reactions {
+    background-color: rgb(60, 60, 60);
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
 }

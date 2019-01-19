@@ -15,6 +15,7 @@ module.exports = {
                 socket.request.session.currentRoom = channelName;
             }
             initialChannelResponse.existingMessages = await db.channels.getChannelMessages(channelId);
+            initialChannelResponse.existingMessageReactions = await db.channels.getChannelMessageReactions(channelId);
             initialChannelResponse.channelId = channelId;
             initialChannelResponse.channelName = name;
             socket.join(channelName);

@@ -23,6 +23,17 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
+            let messageReactions = {};
+            initialResponse.existingMessageReactions.forEach(reaction => {
+                if (!messageReactions[reaction.channel_message_id])
+                    messageReactions[reaction.channel_message_id] = {}
+                messageReactions[reaction.channel_message_id][reaction.reaction_name] = reaction.reaction_count;
+            });
+            initialResponse.existingMessages.forEach(message => {
+                if (messageReactions[message.id])
+                    message.reactions = messageReactions[message.id];
+            })
+            // console.log(JSON.stringify(initialResponse.existingMessages[0], null, 2));
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
         });
@@ -187,16 +198,30 @@ class ChannelView extends Component {
         Render Methods
     */
 
+    // renderMessageReactions(messageReactions) {
+    //     let reactions = [];
+    //     let jsxKey = 0;
+    //     for (let key in messageReactions) {
+    //         reactions.push(<span key={jsxKey}><i className="fas fa-thumbs-up"></i> {messageReactions[key]}</span>)
+    //         jsxKey++;
+    //     }
+    //     return reactions;
+    // }
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
         return this.state.messages.map((message, i) =>
             <div className="user-message" key={i}>
-                <div className="post-data">
+                <div className="message-data">
                     <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
                     <div className="time-stamp">{getDate(message.time_stamp)}</div>
                 </div>
-                <div className="post-content">{message.content_text}</div>
+                <div className="message-content">{message.content_text}</div>
+                <div className="message-reactions">
+                    <span>
+                        <i className="fas fa-thumbs-up"></i> {message.reactions ? message.reactions.like : null}
+                    </span>
+                </div>
             </div>
         );
     }
