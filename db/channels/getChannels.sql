@@ -1,4 +1,4 @@
-SELECT c.id, c.channel_name, c.channel_url, c.channel_description, cu.last_view_time, cu.user_id
+SELECT c.id, c.channel_name, c.channel_url, c.channel_description, c.creator_id, cu.last_view_time, cu.user_id
 FROM channel c
 FULL JOIN (
     SELECT *

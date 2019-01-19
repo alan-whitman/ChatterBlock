@@ -148,8 +148,8 @@ cursor: pointer;
     border-radius: 18px;
     border: 1px solid #cfcece;
   }
-  @media screen and (max-width: 960px) {
+  /* @media screen and (max-width: 960px) {
     .NavBar, .FriendUserBar {
       display: none;
     }
-  }
+  } */

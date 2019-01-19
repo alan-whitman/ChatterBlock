@@ -41,8 +41,15 @@ class NavBar extends Component {
                  this.setState({channels});
             }
         });
+        this.props.socket.on('channel creation error', error => {
+            console.log(error);
+        });
         this.props.socket.on('new channel created', newChannel => {
-
+            let { channels } = this.state;
+            newChannel.subbed = false;
+            channels.push(newChannel);
+            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1);
+            this.setState({channels});
         });
     }
 
@@ -55,6 +62,7 @@ class NavBar extends Component {
                     channel_url: channel.channel_url,
                     channel_description: channel.channel_description,
                     last_view_time: channel.last_view_time,
+                    creator_id: channel.creator_id,
                     subbed: channel.user_id ? true : false
                 }
             });
@@ -79,31 +87,24 @@ class NavBar extends Component {
     }
     handleUnSubChannel = (channelId) => {
         this.props.socket.emit('unsubscribe from channel', channelId);
-        // let subChannels = this.state.subChannels
-        // let subChannelIds = this.state.subChannelIds
-        // subChannelIds.splice(i, 1)
-        // axios.delete(`/api/channel/unfollow/${id}`).then(() => {
-        //     axios.get('/api/channel/all').then(response => {
-        //         this.setState({
-        //             channels: response.data,
-        //             subChannelIds: subChannelIds
-        //         })
-        //     }).catch(err => { console.log(`Error! Did not get all Channels! ${err}`) })
-        // })
-        // subChannels.splice(i, 1)
-        // this.setState({
-        //     subChannels
-        // })
     }
     handleAddChannel = (e) => {
-        axios.post('/api/channel/new', this.state).then(response => {
-            this.setState({
-                channels: [...this.state.channels, response.data],
-                channel_name: "",
-                channel_description: ""
+        const { channel_name, channel_description } = this.state;
+        if (!channel_name.trim())
+            return;
+        const newChannel = {
+            channel_name,
+            channel_description
+        }
+        this.props.socket.emit('create new channel', newChannel)
+        // axios.post('/api/channel/new', this.state).then(response => {
+        //     this.setState({
+        //         channels: [...this.state.channels, response.data],
+        //         channel_name: "",
+        //         channel_description: ""
 
-            })
-        })
+        //     })
+        // })
     }
     handleSearch = (val) => {
         this.setState({
@@ -157,7 +158,7 @@ class NavBar extends Component {
         return (
             <div className="NavBar" id="NavBar">
                 <div className="nav-top">
-                    <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>Logo Here</h2></Link> : <Link to="/"><h2>Logo Here</h2></Link>}</div>
+                    <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>ChatterBlock</h2></Link> : <Link to="/"><h2>ChatterBlock</h2></Link>}</div>
                     <div className="accordion" id="accordionExample">
                         {this.props.isAuthenticated ?
                             <div className="card">

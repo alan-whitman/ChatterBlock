@@ -206,7 +206,4 @@ module.exports = {
             console.log(err);
         }
     }
-    // Edit Channel Message
-    // Delete Channel Message
-    // React to Channel Message
 }

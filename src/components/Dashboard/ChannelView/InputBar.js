@@ -34,13 +34,3 @@ class InputBar extends Component {
 }
 
 export default InputBar;
-
-// const mapStateToProps = state => {
-//     const { user } = state;
-//     return {
-//         user
-//     }
-// }
-
-
-// export default connect(mapStateToProps, { populateChannelUsers })(InputBar);

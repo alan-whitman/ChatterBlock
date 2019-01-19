@@ -30,10 +30,10 @@ class ChannelView extends Component {
             let { messages } = this.state
             messages.push(newMessage);
             this.setState({ messages });
-            this.userNotTyping(newMessage.username)
+            // this.userNotTyping(newMessage.username)
         });
         this.props.socket.on('user joined channel', newUser => {
-            console.log('user joining channel: ', newUser)
+            // console.log('user joining channel: ', newUser)
             let channelUsers = [...this.props.channelUsers];
             if (channelUsers.findIndex(existingUser => existingUser.id === newUser.id && existingUser.online === newUser.online) !== -1)
                 return;
@@ -84,10 +84,14 @@ class ChannelView extends Component {
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('user unsubbed from channel', userId => {
-            const channelUsers = [...this.props.channelUsers];
+            let channelUsers = [...this.props.channelUsers];
             const userIndex = channelUsers.findIndex(user => user.id === userId);
             if (userIndex !== -1) {
-                channelUsers[userIndex].subbed = false;
+                if (channelUsers[userIndex].online)
+                    channelUsers[userIndex].subbed = false;
+                else
+                    channelUsers = channelUsers.filter(user => user.id !== userId);
+                this.props.populateChannelUsers(channelUsers);
             }
         });
 
@@ -197,9 +201,9 @@ class ChannelView extends Component {
         );
     }
     render() {
-        const displayTypingUsers = this.state.typingUsers.map((user, i) => {
-            return <div key={i} className="typing-users">{user}</div>
-        })
+        // const displayTypingUsers = this.state.typingUsers.map((user, i) => {
+        //     return <div key={i} className="typing-users">{user}</div>
+        // })
         return (
             <div className="ChannelView">
                 <div className="header">

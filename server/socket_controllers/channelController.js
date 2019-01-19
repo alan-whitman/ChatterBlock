@@ -134,5 +134,25 @@ module.exports = {
         } catch(err) {
             console.log(err);
         }
+    },
+    async createNewChannel(db, socket, io, newChannel) {
+        if (!socket.request.session.user)
+            return;
+        const { id: creator_id } = socket.request.session.user;
+        const { channel_name, channel_description } = newChannel;
+        const reg = /[^a-zA-Z0-9\_\ \|]+/;
+        if (reg.test(channel_name)) {
+            return socket.emit('channel creation error', 'Channel name must have only alphanumeric characters and spaces');
+        }
+        const channel_url = channel_name.toLowerCase().replace(/ /g, '_');
+        if (channel_name.length < 4 || channel_name.length > 20)
+            return socket.emit('channel creation error', 'Channel names must be between 4 and 20 characters in length');
+        let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
+        if (channelResponse[0])
+            return socket.emit('channel creation error', 'Channel name or channel url already in use');
+        console.log('channel passed valication checks');
+        let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
+        newChannel = response[0];
+        return io.emit('new channel created', newChannel);
     }
 }
