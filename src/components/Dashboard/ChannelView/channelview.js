@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import InputBar from './InputBar';
 import { populateChannelUsers } from '../../../redux/reducer';
-import DateStamp from '../../DateFormat/dateStamp'
+import getDate from '../../DateFormat/dateStamp';
 import './channelview.css';
 
 class ChannelView extends Component {
@@ -12,10 +13,15 @@ class ChannelView extends Component {
             typingUsers: [],
             messages: [],
             channelId: -1,
-            messageInput: '',
-            typing:false
+            typing: false,
+            userScrolledUp: false
         }
         this.messageWindowRef = React.createRef();
+        this.sendMessage = this.sendMessage.bind(this);
+        /*
+            Socket Listeners
+        */
+
         this.props.socket.on('send initial response', initialResponse => {
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
@@ -24,7 +30,6 @@ class ChannelView extends Component {
             let { messages } = this.state
             messages.push(newMessage);
             this.setState({ messages });
-            console.log(newMessage.username)
             this.userNotTyping(newMessage.username)
         });
         this.props.socket.on('user joined channel', newUser => {
@@ -36,7 +41,7 @@ class ChannelView extends Component {
                 let userIndex = channelUsers.findIndex(existingUser => existingUser.id === newUser.id)
                 if (userIndex !== -1)
                     channelUsers[channelUsers.findIndex(existingUser => existingUser.id === newUser.id)].online = true;
-                else    {
+                else {
                     channelUsers.push(newUser)
                 }
             }
@@ -55,19 +60,19 @@ class ChannelView extends Component {
             this.props.populateChannelUsers(channelUsers);
         });
         this.props.socket.on('stopped typing', username => {
-            console.log(username+' stopped typing')
+            console.log(username + ' stopped typing')
         });
         this.props.socket.on('is typing', username => {
-            console.log(username+' is typing')
+            console.log(username + ' is typing')
             let typing = this.state.typingUsers
-            if(typing.indexOf(username) === -1 ){
+            if (typing.indexOf(username) === -1) {
                 typing.push(username)
                 this.setState({
                     typingUsers: typing
                 })
-            
-                    setTimeout(this.userNotTyping, 3000)
-        }
+
+                setTimeout(this.userNotTyping, 3000)
+            }
         });
         this.props.socket.on('user subbed to channel', newSubUser => {
             const channelUsers = [...this.props.channelUsers];
@@ -85,23 +90,22 @@ class ChannelView extends Component {
                 channelUsers[userIndex].subbed = false;
             }
         });
+
+
+        /*
+            End Socket Listeners
+        */
     }
-    userNotTyping = (x) => {
-        let typing = this.state.typingUsers
-        typing.splice(typing.indexOf(x),1)
-        this.setState({
-            typingUsers:typing
-        })
-        this.props.socket.emit('stopped typing');
-        console.log('stopped typing')
-    }
-    componentWillMount() {
+
+    /*
+        Lifecyle Methods
+    */
+
+    componentDidMount() {
         const { channelName } = this.props.match.params;
         this.props.socket.emit('join channel', channelName);
-        // this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
-
     }
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
 
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
             // console.log('switching channels...');
@@ -109,9 +113,11 @@ class ChannelView extends Component {
             const { channelName } = this.props.match.params;
             this.props.socket.emit('join channel', channelName);
         }
-        // scroll message window to bottom
+        // const { clientHeight, scrollHeight, scrollTop } = this.messageWindowRef.current;
+        // console.log(clientHeight, scrollHeight - scrollTop);
+        // console.log(this.state.messages);
+        // if (clientHeight === scrollHeight - scrollTop)
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
-
     }
     componentWillUnmount() {
         // console.log('channel view component unmounting');
@@ -122,104 +128,89 @@ class ChannelView extends Component {
         this.props.socket.off('user left channel');
         this.props.populateChannelUsers([]);
     }
-    renderMessages() {
-        let { user } = this.props.user
-        return this.state.messages.map((message, i) =>
-            <div className={`user-message ${message.user_id === user ? 'my-msg' : 'their-msg'}`} key={i}>
 
-                <Link to={`/dashboard/profile/${message.user_id}`}>
-                    <img className="message-user-image" src={message.user_image} alt="temporary alt" />
-                    <h6>{message.username}</h6>
-                </Link>
-                <span className="timestamp"> <DateStamp date={parseInt(message.time_stamp)}/></span>
-                {message.content_image? <img src={message.content_image} className="message-image"  alt="temporary alt" />: false}
-                <p>{message.content_text}</p>
-            </div>
-        );
-    }
-    updateInput(e) {
-        const { name, value } = e.target;
-        // check to see if message contains an image url then do something about it
-        if (value.match(/\.(jpeg|jpg|gif|png)$/)) {
-            console.log("message input is an image")
-        }
-        this.setState({ [name]: value });
-        this.isTyping()
-    }
+    /*
+        User Input
+    */
 
-
-    isTyping = () =>{
+    userNotTyping = (x) => {
+        let typing = this.state.typingUsers
+        typing.splice(typing.indexOf(x), 1)
         this.setState({
-            typing:true
-        })
-        // this.setTimeout()
-        console.log('is typing')
-        this.props.socket.emit('is typing');
-        setTimeout(this.notTyping, 3000)
-    }
-    
-    notTyping = () => {
-        this.setState({
-            typing:false
+            typingUsers: typing
         })
         this.props.socket.emit('stopped typing');
         console.log('stopped typing')
     }
+    isTyping = () => {
+        this.setState({
+            typing: true
+        })
+        this.props.socket.emit('is typing');
+        setTimeout(this.notTyping, 3000)
+    }
 
-
-
-
-
-    sendMessage() {
+    notTyping = () => {
+        this.setState({
+            typing: false
+        })
+        this.props.socket.emit('stopped typing');
+        // console.log('stopped typing')
+    }
+    sendMessage(newMessage) {
         if (!this.props.user)
             return;
-        if (this.state.messageInput.trim()) {
+        if (newMessage.trim()) {
             let { messages } = this.state;
             const message = {
-                contentText: this.state.messageInput,
+                contentText: newMessage,
                 channelId: this.state.channelId
             }
             this.props.socket.emit('create message', message);
             const localMessage = {
-                content_text: this.state.messageInput,
+                content_text: newMessage,
                 content_image: null,
                 time_stamp: Date.now(),
                 username: this.props.user.user.username,
                 user_image: null
-
             }
             messages.push(localMessage);
-            this.setState({ messageInput: '', messages })
+            this.setState({messages});
         }
     }
-    render() {
-            
-    const displayTypingUsers = this.state.typingUsers.map((user,i) => {
-        return <div key={i} className="typing-users">{user}</div>
-    })
 
+    /*
+        Render Methods
+    */
+
+    renderMessages() {
+        if (!this.state.messages[0])
+            return <div className="user-message">No messages in this channel yet. Start chatting!</div>
+        return this.state.messages.map((message, i) =>
+            <div className="user-message" key={i}>
+                <div className="post-data">
+                    <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
+                    <div className="time-stamp">{getDate(message.time_stamp)}</div>
+                </div>
+                <div className="post-content">{message.content_text}</div>
+            </div>
+        );
+    }
+    render() {
+        const displayTypingUsers = this.state.typingUsers.map((user, i) => {
+            return <div key={i} className="typing-users">{user}</div>
+        })
         return (
             <div className="ChannelView">
                 <div className="header">
                     <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
-
-                    {/* <div><input className="searchInput" type="text" placeholder="Search Users" /> <span><i className="fas fa-search"></i></span></div> */}
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>
                     {this.renderMessages()}
                 </div>
-
-                {displayTypingUsers}
+                    {/* {displayTypingUsers} */}
                 <div className="input-holder">
-                    <input
-                        className="input-bar"
-                        type="text"
-                        placeholder="New Message"
-                        name="messageInput"
-                        value={this.state.messageInput}
-                        onChange={e => this.updateInput(e)}
-                        onKeyPress={e => { if (e.key === 'Enter') this.sendMessage() }}
-                    />
+                    <InputBar socket={this.props.socket} sendMessage={this.sendMessage} />
                 </div>
             </div>
         )
@@ -227,7 +218,7 @@ class ChannelView extends Component {
 }
 
 const mapStateToProps = state => {
-    let { isAuthenticated, user, channelUsers } = state;
+    const { isAuthenticated, user, channelUsers } = state;
     return {
         user,
         isAuthenticated,
