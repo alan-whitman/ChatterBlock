@@ -12,8 +12,8 @@ module.exports = {
                 const time = Date.now()
                 const lastViewTime = await db.channels.getUpdateLastViewTime(myId, channelId, time);
                 initialChannelResponse.lastViewTime = lastViewTime[0] ? lastViewTime[0].last_view_time : Date.now();
-                socket.request.session.currentRoom = channelName;
             }
+            socket.request.session.currentRoom = channelName;
             initialChannelResponse.existingMessages = await db.channels.getChannelMessages(channelId);
             initialChannelResponse.existingMessageReactions = await db.channels.getChannelMessageReactions(channelId);
             initialChannelResponse.channelId = channelId;
@@ -68,7 +68,7 @@ module.exports = {
         const { id: myId, username: myUsername } = socket.request.session.user;
         const { currentRoom } = socket.request.session;
         const timestamp = Date.now();
-        await db.channels.createMessage(message.channelId, myId, message.contentText, null, timestamp);
+        await db.channels.createMessage(message.channelId, myId, message.contentText.trim(), null, timestamp);
         const outgoingMessage = {
             content_text: message.contentText,
             content_image: null,
@@ -155,5 +155,18 @@ module.exports = {
         let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
         newChannel = response[0];
         return io.emit('new channel created', newChannel);
+    },
+    async likeMessage(db, socket, io, messageId, channelId, reactionName) {
+        // if (!socket.request.session.user)
+        //     return;
+        // const { id: myId } = socket.request.session.user;
+        const existingReactions = await db.channels.getMessageReactionsByType(messageId, reactionName);
+        if (!existingReactions[0]) {
+            db.channels.createReactionRecord(messageId, channelId, reactionName);
+        } else {
+            db.channels.updateReactionRecord(messageId, reactionName);
+        }
+        io.to(socket.request.session.currentRoom).emit('message was reacted to', messageId, reactionName);
+
     }
 }

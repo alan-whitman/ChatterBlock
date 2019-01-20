@@ -1,4 +1,3 @@
-SELECT channel_message_id, reaction_name, reaction_count
+SELECT *
 FROM channel_message_reactions
-WHERE channel_id = $1
-ORDER BY reaction_name;
+WHERE channel_id = $1;

@@ -23,16 +23,16 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
-            let messageReactions = {};
-            initialResponse.existingMessageReactions.forEach(reaction => {
-                if (!messageReactions[reaction.channel_message_id])
-                    messageReactions[reaction.channel_message_id] = {}
-                messageReactions[reaction.channel_message_id][reaction.reaction_name] = reaction.reaction_count;
-            });
-            initialResponse.existingMessages.forEach(message => {
-                if (messageReactions[message.id])
-                    message.reactions = messageReactions[message.id];
-            })
+            // let messageReactions = {};
+            // initialResponse.existingMessageReactions.forEach(reaction => {
+            //     if (!messageReactions[reaction.channel_message_id])
+            //         messageReactions[reaction.channel_message_id] = {}
+            //     messageReactions[reaction.channel_message_id][reaction.reaction_name] = reaction.reaction_count;
+            // });
+            // initialResponse.existingMessages.forEach(message => {
+            //     if (messageReactions[message.id])
+            //         message.reactions = messageReactions[message.id];
+            // })
             // console.log(JSON.stringify(initialResponse.existingMessages[0], null, 2));
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
@@ -42,6 +42,18 @@ class ChannelView extends Component {
             messages.push(newMessage);
             this.setState({ messages });
             // this.userNotTyping(newMessage.username)
+        });
+        this.props.socket.on('message was reacted to', (messageId, reactionName) => {
+            // let { messages } = this.state;
+            // const messageIndex = messages.findIndex(message => message.id === messageId);
+            // console.log(messages[messageIndex]);
+            // if (messages[messageIndex].reactions) {
+            //     messages[messageIndex].reactions[reactionName]++;
+            // } else {
+            //     messages[messageIndex].reactions = {};
+            //     messages[messageIndex].reactions[reactionName] = 1;
+            // }
+            // this.setState({messages});
         });
         this.props.socket.on('user joined channel', newUser => {
             // console.log('user joining channel: ', newUser)
@@ -172,6 +184,11 @@ class ChannelView extends Component {
         this.props.socket.emit('stopped typing');
         // console.log('stopped typing')
     }
+
+    /*
+        Message Functionality
+    */
+
     sendMessage(newMessage) {
         if (!this.props.user)
             return;
@@ -183,7 +200,7 @@ class ChannelView extends Component {
             }
             this.props.socket.emit('create message', message);
             const localMessage = {
-                content_text: newMessage,
+                content_text: newMessage.trim(),
                 content_image: null,
                 time_stamp: Date.now(),
                 username: this.props.user.user.username,
@@ -192,6 +209,11 @@ class ChannelView extends Component {
             messages.push(localMessage);
             this.setState({messages});
         }
+    }
+    likeMessage(messageId) {
+        // if (!this.props.user)
+        //     return;
+        this.props.socket.emit('react to message', messageId, this.state.channelId, 'like');
     }
 
     /*
@@ -219,7 +241,7 @@ class ChannelView extends Component {
                 <div className="message-content">{message.content_text}</div>
                 <div className="message-reactions">
                     <span>
-                        <i className="fas fa-thumbs-up"></i> {message.reactions ? message.reactions.like : null}
+                        <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like : null}
                     </span>
                 </div>
             </div>
