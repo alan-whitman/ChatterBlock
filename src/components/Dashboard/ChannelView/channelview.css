@@ -7,11 +7,18 @@
 
 .ChannelView .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
     height: 50px;
-    background-color: rgb(35, 35, 35);
+    padding: 0px 10px 0px 10px;
+    background-color: rgb(55, 55, 55);
+}
+
+.ChannelView .header input.message-filter  {
+    margin-left: auto;
+    width: 200px;
+    border-radius: 5px;
+    background-color: rgb(55, 55, 55);
+    outline: none;
 }
 
 .ChannelView .input-holder {

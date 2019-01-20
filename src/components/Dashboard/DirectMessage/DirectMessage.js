@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { populateActiveDms } from '../../../redux/reducer';
 import './DirectMessage.css';
+import { Link } from 'react-router-dom';
+import getDate from '../../DateFormat/dateStamp';
 import axios from 'axios';
 
 class DirectMessage extends Component {
@@ -10,7 +12,8 @@ class DirectMessage extends Component {
         this.state = {
             messages: [],
             messageInput: '',
-            dmPartner: {}
+            dmPartner: {},
+            messageFilter: ''
         }
         this.props.socket.on('send initial dm response', initialResponse => {
             if (initialResponse === -1) {
@@ -34,7 +37,6 @@ class DirectMessage extends Component {
         }
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
     }
-
     sendMessage() {
         const { messageInput, messages } = this.state;
         if (messageInput.trim() === '')
@@ -59,28 +61,36 @@ class DirectMessage extends Component {
         activeDms = activeDms.filter(username => username !== this.props.match.params.username);
         this.props.populateActiveDms(activeDms);
         axios.delete('/api/dm/hideDm/' + this.state.dmPartner.id);
-
     }
     updateInput(e) {
         const { name, value } = e.target;
         this.setState({ [name]: value });
     }
     renderMessages() {
-        return this.state.messages[0] ?
-            this.state.messages.map((message, i) =>
-                <div key={i} className="user-message">
-                    <h6 style={{ fontWeight: 'bold' }}>
-                        <span>Sender: {message.sender}</span><br />
-                        {message.content_text}
-                    </h6>
+        if (!this.state.messages[0])
+            return <div className="user-message">You have no message history with {this.props.match.params.username}. Say hello!</div>
+        let { messages }= this.state;
+        console.log(messages);
+        if (this.state.messageFilter.trim())
+            messages = messages.filter(message => message.content_text.includes(this.state.messageFilter.trim()))
+        return messages.map((message, i) =>
+            <div className="user-message" key={i}>
+                <div className="message-data">
+                    <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
+                    <div className="time-stamp">{getDate(message.time_stamp)}</div>
                 </div>
-            )
-        :
-            <p>No direct messages to show</p>
+                <div className="message-content">{message.content_text}</div>
+                <div className="message-reactions">
+                    <span>
+                        <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like.length : null}
+                    </span>
+                </div>
+            </div>
+        );
     }
     render() {
         const friendIndex = this.props.friends.findIndex(friend => friend.username === this.props.match.params.username);
-        let indicatorColor
+        let indicatorColor;
         if (friendIndex !== -1)
             indicatorColor = this.props.friends[friendIndex].online ? 'green' : 'red';
         return (

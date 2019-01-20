@@ -14,7 +14,7 @@ class ChannelView extends Component {
             messages: [],
             channelId: -1,
             typing: false,
-            userScrolledUp: false
+            messageFilter: ''
         }
         this.messageWindowRef = React.createRef();
         this.sendMessage = this.sendMessage.bind(this);
@@ -40,7 +40,6 @@ class ChannelView extends Component {
         });
         this.props.socket.on('new message', newMessage => {
             let { messages } = this.state;
-            console.log(newMessage);
             messages.push(newMessage);
             this.setState({ messages });
             // this.userNotTyping(newMessage.username)
@@ -217,7 +216,6 @@ class ChannelView extends Component {
         if (!this.props.user)
             return;
         if (newMessage.trim()) {
-            let { messages } = this.state;
             const message = {
                 contentText: newMessage,
                 channelId: this.state.channelId
@@ -226,10 +224,16 @@ class ChannelView extends Component {
         }
     }
     likeMessage(messageId) {
-        // if (!this.props.user)
-        //     return;
+        if (!this.props.user)
+            return;
         this.props.socket.emit('react to message', messageId, this.state.channelId, 'like');
     }
+
+    handleInput(e) {
+        const { name, value } = e.target;
+        this.setState({[name]: value});
+    }
+
 
     /*
         Render Methods
@@ -238,7 +242,10 @@ class ChannelView extends Component {
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
-        return this.state.messages.map((message, i) =>
+        let { messages }= this.state;
+        if (this.state.messageFilter.trim())
+            messages = messages.filter(message => message.content_text.includes(this.state.messageFilter.trim()))
+        return messages.map((message, i) =>
             <div className="user-message" key={i}>
                 <div className="message-data">
                     <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
@@ -254,13 +261,18 @@ class ChannelView extends Component {
         );
     }
     render() {
-        // const displayTypingUsers = this.state.typingUsers.map((user, i) => {
-        //     return <div key={i} className="typing-users">{user}</div>
-        // })
         return (
             <div className="ChannelView">
                 <div className="header">
-                    <h2 style={{ color: 'white' }}>{this.state.channelName}</h2>
+                    <h2>{this.state.channelName}</h2>
+                    <input 
+                        type="text" 
+                        name="messageFilter" 
+                        className="message-filter"
+                        placeholder="Filter Messages"
+                        value={this.state.messageFilter}
+                        onChange={e => this.handleInput(e)}
+                    />
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>
                     {this.renderMessages()}

@@ -63,17 +63,21 @@ module.exports = {
         }
     },
     async createMessage(db, socket, io, message) {
-        if (!socket.request.session.user)
-            return;
-        const { id: myId, username: myUsername } = socket.request.session.user;
-        const { currentRoom } = socket.request.session;
-        const timestamp = Date.now();
-        const messageResponse = await db.channels.createMessage(message.channelId, myId, message.contentText.trim(), null, timestamp);
-        let newMessage = messageResponse[0];
-        delete newMessage.user_id;
-        delete newMessage.channel_id;
-        newMessage.username = myUsername;
-        io.in(currentRoom).emit('new message', newMessage);
+        try {
+            if (!socket.request.session.user)
+                return;
+            const { id: myId, username: myUsername } = socket.request.session.user;
+            const { currentRoom } = socket.request.session;
+            const timestamp = Date.now();
+            const messageResponse = await db.channels.createMessage(message.channelId, myId, message.contentText.trim(), null, timestamp);
+            let newMessage = messageResponse[0];
+            delete newMessage.user_id;
+            delete newMessage.channel_id;
+            newMessage.username = myUsername;
+            io.in(currentRoom).emit('new message', newMessage);
+        } catch(err) {
+            console.log(err);
+        }
     },
     async leaveChannel(socket) {
         const { currentRoom } = socket.request.session;
@@ -133,34 +137,42 @@ module.exports = {
         }
     },
     async createNewChannel(db, socket, io, newChannel) {
-        if (!socket.request.session.user)
-            return;
-        const { id: creator_id } = socket.request.session.user;
-        const { channel_name, channel_description } = newChannel;
-        const reg = /[^a-zA-Z0-9\_\ \|]+/;
-        if (reg.test(channel_name)) {
-            return socket.emit('channel creation error', 'Channel name must have only alphanumeric characters and spaces');
+        try {
+            if (!socket.request.session.user)
+                return;
+            const { id: creator_id } = socket.request.session.user;
+            const { channel_name, channel_description } = newChannel;
+            const reg = /[^a-zA-Z0-9\_\ \|]+/;
+            if (reg.test(channel_name)) {
+                return socket.emit('channel creation error', 'Channel name must have only alphanumeric characters and spaces');
+            }
+            const channel_url = channel_name.toLowerCase().replace(/ /g, '_');
+            if (channel_name.length < 4 || channel_name.length > 20)
+                return socket.emit('channel creation error', 'Channel names must be between 4 and 20 characters in length');
+            let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
+            if (channelResponse[0])
+                return socket.emit('channel creation error', 'Channel name or channel url already in use');
+            // console.log('channel passed valication checks');
+            let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
+            newChannel = response[0];
+            return io.emit('new channel created', newChannel);
+        } catch(err) {
+            console.log(err);
         }
-        const channel_url = channel_name.toLowerCase().replace(/ /g, '_');
-        if (channel_name.length < 4 || channel_name.length > 20)
-            return socket.emit('channel creation error', 'Channel names must be between 4 and 20 characters in length');
-        let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
-        if (channelResponse[0])
-            return socket.emit('channel creation error', 'Channel name or channel url already in use');
-        // console.log('channel passed valication checks');
-        let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
-        newChannel = response[0];
-        return io.emit('new channel created', newChannel);
     },
     async reactToMessage(db, socket, io, messageId, channelId, reactionName) {
-        if (!socket.request.session.user)
-            return;
-        const { id: myId, username: myUsername } = socket.request.session.user;
-        const existingReaction = await db.channels.getExistingUserReaction(messageId, myId, reactionName);
-        if (!existingReaction[0])
-            db.channels.addReaction(messageId, channelId, myId, reactionName)
-        else
-            db.channels.removeReaction(messageId, myId, reactionName);
-        io.to(socket.request.session.currentRoom).emit('message was reacted to', messageId, reactionName, myUsername);
+        try {
+            if (!socket.request.session.user)
+                return;
+            const { id: myId, username: myUsername } = socket.request.session.user;
+            const existingReaction = await db.channels.getExistingUserReaction(messageId, myId, reactionName);
+            if (!existingReaction[0])
+                db.channels.addReaction(messageId, channelId, myId, reactionName)
+            else
+                db.channels.removeReaction(messageId, myId, reactionName);
+            io.to(socket.request.session.currentRoom).emit('message was reacted to', messageId, reactionName, myUsername);
+        } catch(err) {
+            console.log(err);
+        }
     }
 }

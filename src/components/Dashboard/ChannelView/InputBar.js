@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 class InputBar extends Component {
     state = {
@@ -16,9 +17,9 @@ class InputBar extends Component {
             <input
                 className="input-bar"
                 type="text"
-                placeholder="New Message"
+                placeholder={this.props.isAuthenticated ? 'New Message' : 'Please log in or register to send messages'}
                 name="messageInput"
-                value={this.state.messageInput}
+                value={this.props.isAuthenticated ? this.state.messageInput : ''}
                 onChange={e => this.updateInput(e)}
                 onKeyPress={
                     e => {
@@ -33,4 +34,11 @@ class InputBar extends Component {
     }
 }
 
-export default InputBar;
+const mapStateToProps = state => {
+    const { isAuthenticated } = state;
+    return {
+        isAuthenticated
+    }
+}
+
+export default connect(mapStateToProps)(InputBar);
