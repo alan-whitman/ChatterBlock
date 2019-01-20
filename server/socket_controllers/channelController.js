@@ -34,13 +34,13 @@ module.exports = {
                 // get user data for all channel subscribers
                 let subbedUsers = await db.channels.getChannelUsers(channelId);
                 // console.log(subbedUsers);
-                // set there subbed status to true on return object, and online status by reconciling with usersInChannel
+                // set subbed status to true on return object, and online status by reconciling with usersInChannel
                 let users = subbedUsers.map(user => {
                     user.subbed = true;
                     user.online = usersInChannel.indexOf(user.id) === -1 ? false : true;
                     return user;
                 });
-                // push online users onto array if they aren't there already, setting subbed status to false since they weren't in the previous block
+                // push online users into array if they aren't there already, setting subbed status to false since they weren't in the previous block
                 for (let i = 0; i < onlineUsers.length; i++) {
                     if (users.findIndex(user => user.id === onlineUsers[i].id) === -1)
                         users.push({ ...onlineUsers[i], online: true, subbed: false })
@@ -62,27 +62,23 @@ module.exports = {
             console.log(err);
         }
     },
-    async createMessage(db, socket, message) {
+    async createMessage(db, socket, io, message) {
         if (!socket.request.session.user)
             return;
         const { id: myId, username: myUsername } = socket.request.session.user;
         const { currentRoom } = socket.request.session;
         const timestamp = Date.now();
-        await db.channels.createMessage(message.channelId, myId, message.contentText.trim(), null, timestamp);
-        const outgoingMessage = {
-            content_text: message.contentText,
-            content_image: null,
-            time_stamp: timestamp,
-            username: myUsername,
-            user_image: null
-        }
-        socket.to(currentRoom).emit('new message', outgoingMessage);
+        const messageResponse = await db.channels.createMessage(message.channelId, myId, message.contentText.trim(), null, timestamp);
+        let newMessage = messageResponse[0];
+        delete newMessage.user_id;
+        delete newMessage.channel_id;
+        newMessage.username = myUsername;
+        io.in(currentRoom).emit('new message', newMessage);
     },
     async leaveChannel(socket) {
         const { currentRoom } = socket.request.session;
         if (socket.request.session.user) {
             const { username } = socket.request.session.user;
-            // console.log(username, ' - is leaving - ', currentRoom);
             socket.to(currentRoom).emit('user left channel', username);
         }
         socket.leave(currentRoom);
@@ -151,22 +147,20 @@ module.exports = {
         let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
         if (channelResponse[0])
             return socket.emit('channel creation error', 'Channel name or channel url already in use');
-        console.log('channel passed valication checks');
+        // console.log('channel passed valication checks');
         let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
         newChannel = response[0];
         return io.emit('new channel created', newChannel);
     },
-    async likeMessage(db, socket, io, messageId, channelId, reactionName) {
-        // if (!socket.request.session.user)
-        //     return;
-        // const { id: myId } = socket.request.session.user;
-        const existingReactions = await db.channels.getMessageReactionsByType(messageId, reactionName);
-        if (!existingReactions[0]) {
-            db.channels.createReactionRecord(messageId, channelId, reactionName);
-        } else {
-            db.channels.updateReactionRecord(messageId, reactionName);
-        }
-        io.to(socket.request.session.currentRoom).emit('message was reacted to', messageId, reactionName);
-
+    async reactToMessage(db, socket, io, messageId, channelId, reactionName) {
+        if (!socket.request.session.user)
+            return;
+        const { id: myId, username: myUsername } = socket.request.session.user;
+        const existingReaction = await db.channels.getExistingUserReaction(messageId, myId, reactionName);
+        if (!existingReaction[0])
+            db.channels.addReaction(messageId, channelId, myId, reactionName)
+        else
+            db.channels.removeReaction(messageId, myId, reactionName);
+        io.to(socket.request.session.currentRoom).emit('message was reacted to', messageId, reactionName, myUsername);
     }
 }

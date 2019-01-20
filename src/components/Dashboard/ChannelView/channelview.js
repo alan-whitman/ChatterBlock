@@ -23,40 +23,65 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
-            // let messageReactions = {};
-            // initialResponse.existingMessageReactions.forEach(reaction => {
-            //     if (!messageReactions[reaction.channel_message_id])
-            //         messageReactions[reaction.channel_message_id] = {}
-            //     messageReactions[reaction.channel_message_id][reaction.reaction_name] = reaction.reaction_count;
-            // });
-            // initialResponse.existingMessages.forEach(message => {
-            //     if (messageReactions[message.id])
-            //         message.reactions = messageReactions[message.id];
-            // })
-            // console.log(JSON.stringify(initialResponse.existingMessages[0], null, 2));
+            let messageReactions = {}
+            initialResponse.existingMessageReactions.forEach(reaction => {
+                if (!messageReactions[reaction.channel_message_id])
+                    messageReactions[reaction.channel_message_id] = {};
+                if (!messageReactions[reaction.channel_message_id][reaction.reaction_name])
+                messageReactions[reaction.channel_message_id][reaction.reaction_name] = [];
+                messageReactions[reaction.channel_message_id][reaction.reaction_name].push(reaction.username);
+            });
+            initialResponse.existingMessages.forEach(message => {
+                if (messageReactions[message.id])
+                    message.reactions = messageReactions[message.id];
+            });
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
         });
         this.props.socket.on('new message', newMessage => {
-            let { messages } = this.state
+            let { messages } = this.state;
+            console.log(newMessage);
             messages.push(newMessage);
             this.setState({ messages });
             // this.userNotTyping(newMessage.username)
         });
-        this.props.socket.on('message was reacted to', (messageId, reactionName) => {
-            // let { messages } = this.state;
-            // const messageIndex = messages.findIndex(message => message.id === messageId);
-            // console.log(messages[messageIndex]);
-            // if (messages[messageIndex].reactions) {
-            //     messages[messageIndex].reactions[reactionName]++;
-            // } else {
-            //     messages[messageIndex].reactions = {};
-            //     messages[messageIndex].reactions[reactionName] = 1;
-            // }
-            // this.setState({messages});
+        this.props.socket.on('message was reacted to', (messageId, reactionName, username) => {
+            const { messages } = this.state;
+            // find the message
+            const messageIndex = messages.findIndex(message => message.id === messageId)
+            // check if message has any reactions
+            if (messages[messageIndex].reactions) {
+                // check if it has reactions of the specified type
+                if (messages[messageIndex].reactions[reactionName]) {
+                    // check for the username in reactions of the specified type
+                    const usernameIndex = messages[messageIndex].reactions[reactionName].indexOf(username);
+                    // add the username to that array if it's not there
+                    if (usernameIndex === -1) {
+                        messages[messageIndex].reactions[reactionName].push(username);
+                    } else {
+                        // remove it if it is there
+                        messages[messageIndex].reactions[reactionName] = messages[messageIndex].reactions[reactionName].filter(reactionUsername => reactionUsername !== username);
+                        if (messages[messageIndex].reactions[reactionName].length === 0)
+                            delete messages[messageIndex].reactions[reactionName];
+                        // console.log(messages[messageIndex].reactions);
+                        if (Object.keys(messages[messageIndex].reactions).length === 0 && messages[messageIndex].reactions.constructor === Object)
+                            delete messages[messageIndex].reactions;
+                    }
+                } else {
+                    // if no reactions of the specified type set them up
+                    messages[messageIndex].reactions[reactionName] = [];
+                    messages[messageIndex].reactions[reactionName].push(username);
+                }
+
+            } else {
+                // if no reactions at all set them up
+                messages[messageIndex].reactions = {};
+                messages[messageIndex].reactions[reactionName] = [];
+                messages[messageIndex].reactions[reactionName].push(username);
+            }
+            this.setState({messages});
         });
         this.props.socket.on('user joined channel', newUser => {
-            // console.log('user joining channel: ', newUser)
             let channelUsers = [...this.props.channelUsers];
             if (channelUsers.findIndex(existingUser => existingUser.id === newUser.id && existingUser.online === newUser.online) !== -1)
                 return;
@@ -93,7 +118,6 @@ class ChannelView extends Component {
                 this.setState({
                     typingUsers: typing
                 })
-
                 setTimeout(this.userNotTyping, 3000)
             }
         });
@@ -199,15 +223,6 @@ class ChannelView extends Component {
                 channelId: this.state.channelId
             }
             this.props.socket.emit('create message', message);
-            const localMessage = {
-                content_text: newMessage.trim(),
-                content_image: null,
-                time_stamp: Date.now(),
-                username: this.props.user.user.username,
-                user_image: null
-            }
-            messages.push(localMessage);
-            this.setState({messages});
         }
     }
     likeMessage(messageId) {
@@ -220,15 +235,6 @@ class ChannelView extends Component {
         Render Methods
     */
 
-    // renderMessageReactions(messageReactions) {
-    //     let reactions = [];
-    //     let jsxKey = 0;
-    //     for (let key in messageReactions) {
-    //         reactions.push(<span key={jsxKey}><i className="fas fa-thumbs-up"></i> {messageReactions[key]}</span>)
-    //         jsxKey++;
-    //     }
-    //     return reactions;
-    // }
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
@@ -241,7 +247,7 @@ class ChannelView extends Component {
                 <div className="message-content">{message.content_text}</div>
                 <div className="message-reactions">
                     <span>
-                        <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like : null}
+                        <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like.length : null}
                     </span>
                 </div>
             </div>
