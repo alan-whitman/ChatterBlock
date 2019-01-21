@@ -19,16 +19,20 @@ class NavBar extends Component {
             channel_description: '',
             showSubs: true,
             showDms: true,
-            showAllChannels: true
+            showAllChannels: true,
+            channelFilter: ''
         };
         this.props.socket.on('new direct message', newMessage => {
             if (newMessage.sender === this.props.user.user.username)
                 return;
             let activeDms = [...this.props.activeDms];
-            let { sender } = newMessage
-            if (activeDms.indexOf(sender) === -1) {
+            let sender = {
+                username: newMessage.sender,
+                id: newMessage.id
+            }
+            if (activeDms.findIndex(user => user.username === sender.username) === -1) {
                 activeDms.push(sender);
-                activeDms.sort();
+                activeDms.sort((a, b) => a.username < b.username ? -1 : 1);
                 this.props.populateActiveDms(activeDms);
             }
         });
@@ -81,7 +85,7 @@ class NavBar extends Component {
             this.setState({channels, subbedChannels});
         }).catch(err => console.error(err));
         axios.get('/api/dm/getActiveDms').then(response => {
-            this.props.populateActiveDms(response.data.map(user => user.username));
+            this.props.populateActiveDms(response.data);
         }).catch(err => console.error(err));
     }
     handleChannel = (val) => {
@@ -111,10 +115,9 @@ class NavBar extends Component {
         }
         this.props.socket.emit('create new channel', newChannel)
     }
-    handleSearch = (val) => {
-        this.setState({
-            searchInput: val
-        })
+    updateInput(e) {
+        const { name, value } = e.target;
+        this.setState({[name]: value})
     }
     openModal = (e) => {
         e.preventDefault()
@@ -124,11 +127,18 @@ class NavBar extends Component {
         this.setState({ open: false })
     }
     renderDms() {
+        if (this.props.activeDms.length === 0)
+            return <div className="channel-list">No Active Conversations</div>
         return this.props.activeDms.map((user, i) =>
-            <div key={i} className="dm-list"><Link to={`/dashboard/dm/${user}`}>{user}</Link></div>
+            <div key={i} className="channel-list">
+                <div className="sub" onClick={e => this.hideConversation(user)}>-</div>
+                <Link to={`/dashboard/dm/${user.username}`}>{user.username}</Link>
+            </div>
         )
     }
     renderSubbedChannels() {
+        if (this.state.subbedChannels.length === 0)
+            return <div className="channel-list">No Subscribed Channels</div>
         return this.state.subbedChannels
             .map((channel, i) =>
                 <div key={channel.channel_name} className="channel-list">
@@ -143,7 +153,10 @@ class NavBar extends Component {
             )
     }
     renderUnsubbedChannels() {
-        return this.state.channels
+        let channels = [...this.state.channels]
+        if (this.state.channelFilter.trim())
+            channels = channels.filter(channel => channel.channel_name.toLowerCase().includes(this.state.channelFilter.trim().toLowerCase()));
+        return channels
             .map((channel, i) => 
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
@@ -156,6 +169,13 @@ class NavBar extends Component {
     toggleMenu(menuName) {
         this.setState({[menuName]: !this.state[menuName]})
     }
+    hideConversation(user) {
+        console.log(user);
+        let activeDms = [...this.props.activeDms];
+        activeDms = activeDms.filter(username => username.username !== user.username);
+        this.props.populateActiveDms(activeDms);
+        axios.delete('/api/dm/hideDm/' + user.id);
+    }
     render() {
         let count = 100;
         count -= this.state.channel_description.length;
@@ -167,29 +187,48 @@ class NavBar extends Component {
                         <div>
                             <div className="subbed-channels">
                                 <div className="channels-header" onClick={e => this.toggleMenu('showSubs')}>Subscribed Channels</div>
-                                {this.state.showSubs ?
-                                    <div key="subbedChannels">
+                                <Transition
+                                    transitionName="menu"
+                                    transitionEnterTimeout={200}
+                                    transitionLeaveTimeout={200}
+                                >
+                                    {this.state.showSubs ?
+                                        <div key="subbedChannels">
+                                            <Transition
+                                                transitionName="list"
+                                                transitionEnterTimeout={200}
+                                                transitionLeaveTimeout={200}
+
+                                            >
+                                                {this.renderSubbedChannels()}
+                                            </Transition>
+                                        </div>
+                                    : null}
+                                </Transition>
+                            </div>
+                            <div className="direct-messages">
+                                <div className="channels-header" onClick={e => this.toggleMenu('showDms')}>Direct Messages</div>
+                                <Transition
+                                    transitionName="menu"
+                                    transitionEnterTimeout={200}
+                                    transitionLeaveTimeout={200}
+                                >
+                                    {this.state.showDms ?
                                         <Transition
                                             transitionName="list"
                                             transitionEnterTimeout={200}
                                             transitionLeaveTimeout={200}
-
                                         >
-                                            {this.renderSubbedChannels()}
+                                            {this.renderDms()}
                                         </Transition>
-                                    </div>
-                                : null}
-                            </div>
-                            <div className="direct-messages">
-                                <div className="channels-header" onClick={e => this.toggleMenu('showDms')}>Direct Messages</div>
-                                {this.state.showDms ?
-                                    this.renderDms()
-                                : null}
+                                    : null}
+                                </Transition>
                             </div>
                         </div>
                     : null}
                     <div className="all-channels">
                         <div className="channels-header" onClick={e => this.toggleMenu('showAllChannels')}>All Channels</div>
+                        <div className="channels-search-add">
                             <Popup
                                 trigger={<div className="add-channel-button"> + </div>}
                                 modal
@@ -216,27 +255,43 @@ class NavBar extends Component {
                                     </div>
                                 </div>
                             </Popup>
-                        {this.state.showAllChannels ?
-                            <Transition
-                                transitionName="list"
-                                transitionEnterTimeout={200}
-                                transitionLeaveTimeout={200}
-                            >
-                                {this.renderUnsubbedChannels()}
-                            </Transition>
-                        : null}
+                            <input 
+                                type="text"
+                                name="channelFilter"
+                                className="channel-filter"
+                                placeholder="Filter Channels"
+                                value={this.state.channelFilter}
+                                onChange={e => this.updateInput(e)}
+                            />
+                        </div>
+                        <Transition
+                            transitionName="menu"
+                            transitionEnterTimeout={200}
+                            transitionLeaveTimeout={200}
+                        >
+
+                            {this.state.showAllChannels ?
+                                <Transition
+                                    transitionName="list"
+                                    transitionEnterTimeout={200}
+                                    transitionLeaveTimeout={200}
+                                >
+                                    {this.renderUnsubbedChannels()}
+                                </Transition>
+                            : null}
+                        </Transition>
                     </div>
                 </div>
-                <div className="profileAndSettings">
-                    {this.props.isAuthenticated ?
-                        <div>
-                            <Link to={`/dashboard/profile/${this.props.user.user.id}`} >{this.props.user.user.username}</Link>
-                            <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
-                        </div>
-                    :
+                {this.props.isAuthenticated ?
+                    <div className="profile-and-settings">
+                        <div><Link to={`/dashboard/profile/${this.props.user.user.id}`}>{this.props.user.user.username}</Link></div>
+                        <div><Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link></div>
+                    </div>
+                :
+                    <div className="profile-and-settings">
                         <h3>Guest</h3>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         )
     }

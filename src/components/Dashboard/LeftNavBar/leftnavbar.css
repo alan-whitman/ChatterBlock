@@ -50,17 +50,6 @@
     color: white;
     background-color: rgb(65, 65, 65);
 }
-.NavBar .dm-list a {
-    padding-left: 3px;
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding-left: 25px;
-    border-bottom: 1px solid rgb(55, 55, 55);
-}
-.NavBar .dm-list a:hover {
-    background-color: rgb(65, 65, 65);
-}
 
 .NavBar .nav-logo {
     height: 50px;
@@ -75,15 +64,26 @@
     color: white;
     text-decoration: none;
 }
-.NavBar .profileAndSettings {
+.NavBar .nav-logo a:hover {
+    color: rgb(200, 200, 200);
+}
+.NavBar .profile-and-settings {
     height: 50px;
     background-color: rgb(55, 55, 55);
+    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    
 } 
+.NavBar .profile-and-settings a {
+    color: white;
+    text-decoration: none;
+}
+.NavBar .profile-and-settings a:hover {
+    color: rgb(200, 200, 200);
+}
+
+
 .NavBar .add-channel-button {
     background-color: rgb(100, 100, 100);
     border: none;
@@ -100,23 +100,21 @@
     background-color: rgb(120, 120, 120);
     cursor: pointer;
 }
-
-.unseen-channel-messages{
-    font-size: 16px;
-    color: #fff;
-    display: block;
-    float: left;
-    background: red;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    text-align: center;
+.NavBar .channels-search-add {
+    border-bottom: 1px solid rgb(55, 55, 55);
+    padding: 4px;
+    display: flex;
 }
-.channel-list {
-    width: 100%;
-    clear: both;
-
+.NavBar .channels-search-add input {
+    width: 140px;
+    border-radius: 5px;
+    background-color: rgb(40, 40, 40);
+    outline: none;
+    color: white;
+    font-size: 15px;
+    margin-left: auto;
 }
+
 
 /* MODAL STUFF */
 
@@ -164,22 +162,34 @@
 /* Transitions */
 
 .NavBar .menu-enter {
-    max-height: 0px;
+    font-size: 0;
+    margin: 0;
+    opacity: 0;
+    padding: 0;
 }
-
 .NavBar .menu-enter.menu-enter-active {
-    max-height: 0px;
-    transition: all 400ms linear;
+    font-size: initial;
+    margin: initial;
+    opacity: initial;
+    padding: initial;
+    transition: all 200ms linear;
 }
-
 .NavBar .menu-leave {
-    max-height: 1px;
+    font-size: initial;
+    margin: initial;
+    opacity: initial;
+    padding: initial;
+}
+.NavBar .menu-leave.menu-leave-active {
+    font-size: 0;
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    transition: all 200ms linear
 }
 
-.NavBar .menu-leave.menu-leave-active {
-    max-height: 1px;
-    transition: all 400ms linear
-}
+
+
 
 .NavBar .list-enter {
     transform: translateX(-200px)

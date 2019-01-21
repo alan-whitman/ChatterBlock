@@ -139,7 +139,6 @@ io.on('connection', socket => {
     socket.on('unsubscribe from channel', channelId => scc.unsubscribeFromChannel(db, socket, io, channelId));
     socket.on('create new channel', newChannel => scc.createNewChannel(db, socket, io, newChannel));
     socket.on('react to message', (messageId, channelId, reactionName) => scc.reactToMessage(db, socket, io, messageId, channelId, reactionName));
-    // socket.on('unlike message', message => scc.unlikeMessage());
 
     socket.on('is typing', () => scc.isTyping(socket));
     socket.on('stopped typing', () => scc.stoppedTyping(socket));

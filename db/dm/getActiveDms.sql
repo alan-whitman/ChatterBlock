@@ -1,4 +1,4 @@
-SELECT u.username
+SELECT u.username, u.id
 FROM active_private_messages apm
 INNER JOIN users u
 ON u.id = apm.partner_id
