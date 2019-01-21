@@ -44,8 +44,8 @@ class DirectMessage extends Component {
             return;
         this.props.socket.emit('send direct message', newMessage, this.state.dmPartner.id);
         let activeDms = [...this.props.activeDms];
-        if (activeDms.indexOf(this.state.dmPartner.username) === -1) {
-            activeDms.push(this.state.dmPartner.username);
+        if (activeDms.findIndex(user => user.username === this.state.dmPartner.username) === -1) {
+            activeDms.push(this.state.dmPartner);
             activeDms.sort();
             this.props.populateActiveDms(activeDms);
         }
