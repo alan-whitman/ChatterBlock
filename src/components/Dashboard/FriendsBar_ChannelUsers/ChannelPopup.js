@@ -29,7 +29,8 @@ class FriendsPopup extends Component {
     }
 
     handleMouse = e => {
-        this.setState({ x: e.screenX, y: e.screenY })
+        
+        this.setState({ x: e.pageX, y: e.pageY })
     }
 
     render(){
@@ -37,7 +38,7 @@ class FriendsPopup extends Component {
         return (
             <div style={{position: 'relative', height: '30px', marginLeft: '15px'}}>
                 <h3 style={{fontSize: '15px'}} onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{user.username}</h3><br />
-                {this.state.show && <div className="channel-popupmenu" style={{top: `calc(${this.state.y}px - 130px)`, left: `calc(${this.state.x}px - 200px`}}>
+                {this.state.show && <div className="channel-popupmenu" style={{top: this.state.y, left: `calc(${this.state.x}px - 200px`}}>
                     <div className="channel-popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${user.id}`)}}>Profile</div>
                     <div className="channel-popup-sections" onClick={() => {this.props.history.push(`/dashboard/dm/${user.username}`)}}>Send Message</div>
                     <div className="channel-popup-sections" style={{height: '34%'}} onClick={()=> {this.props.socket.emit('request friend', user.username);}} >Send Friend Request</div>

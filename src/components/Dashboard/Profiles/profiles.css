@@ -23,6 +23,7 @@ img {
     height: 100px;
     width: 100%;
     color: white;
+    margin-bottom: 15px;
 }
 
 .profileSection1 {
@@ -30,48 +31,50 @@ img {
     align-items: center;
     justify-content: space-evenly; 
     width: 100%;
-    height: 325px;
+    height: 350px;
 }
 
 .about {
     width: 35%;
     height: 250px;
-    border: 1px solid white;
+    border: 3px inset white;
     color: white;
-}
-
-.profileChannels {
-    width: 35%;
-    height: 250px;
-    border: 1px solid white;
-    overflow: auto;
-}
-
-.profileSection2 {
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly; 
-    width: 100%;
-    height: 325px;
-}
-
-.friends {
-    width: 35%;
-    height: 250px;
-    border: 1px solid white;
-    color: white;
-}
-
-.extraBox {
-    width: 35%;
-    height: 250px;
-    border: 1px solid white;
-    color: white;
+    padding: 10px 20px;
+    font-size: 27.5px;
+    background: rgb(44, 44, 44);
     overflow: auto;
 }
 
 .channels {
     width: 100%;
-    height: 50px;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.Links {
     color: white;
+}
+
+.Links:hover {
+    color: rgb(190, 190, 190);
+    text-decoration: none;
+}
+
+.profileSection2 {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 325px;
+}
+
+.data {
+    width: 80%;
+    height: 250px;
+    border: 3px inset white;
+    color: white;
+    padding: 10px 20px;
+    font-size: 27.5px;
+    background: rgb(44, 44, 44);
+    overflow: auto;
+    margin: 0 auto;
 }
