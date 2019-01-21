@@ -16,7 +16,7 @@ class NavBar extends Component {
             open: false,
             channel_description: ''
         };
-        this.props.socket.on('relay direct message', newMessage => {
+        this.props.socket.on('new direct message', newMessage => {
             let activeDms = [...this.props.activeDms];
             let { sender } = newMessage
             if (activeDms.indexOf(sender) === -1) {

@@ -17,6 +17,7 @@ class ChannelView extends Component {
             messageFilter: ''
         }
         this.messageWindowRef = React.createRef();
+        this.lastMessageRef = React.createRef();
         this.sendMessage = this.sendMessage.bind(this);
         /*
             Socket Listeners
@@ -36,7 +37,7 @@ class ChannelView extends Component {
                     message.reactions = messageReactions[message.id];
             });
             this.props.populateChannelUsers(initialResponse.users);
-            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName });
+            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName }, this.forceScrollDown);
         });
         this.props.socket.on('new message', newMessage => {
             let { messages } = this.state;
@@ -48,6 +49,8 @@ class ChannelView extends Component {
             const { messages } = this.state;
             // find the message
             const messageIndex = messages.findIndex(message => message.id === messageId)
+            if (messageIndex === -1)
+                return;
             // check if message has any reactions
             if (messages[messageIndex].reactions) {
                 // check if it has reactions of the specified type
@@ -163,11 +166,13 @@ class ChannelView extends Component {
             const { channelName } = this.props.match.params;
             this.props.socket.emit('join channel', channelName);
         }
-        // const { clientHeight, scrollHeight, scrollTop } = this.messageWindowRef.current;
-        // console.log(clientHeight, scrollHeight - scrollTop);
-        // console.log(this.state.messages);
-        // if (clientHeight === scrollHeight - scrollTop)
-        this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+        const { clientHeight, scrollHeight, scrollTop } = this.messageWindowRef.current;
+        // console.log(clientHeight, scrollHeight - scrollTop - 101);
+        if (this.lastMessageRef.current) {
+            console.log(scrollHeight - scrollTop - this.lastMessageRef.current.clientHeight, clientHeight + 150)
+            if (scrollHeight - scrollTop - this.lastMessageRef.current.clientHeight <= clientHeight + 150)
+                this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+        }
     }
     componentWillUnmount() {
         // console.log('channel view component unmounting');
@@ -228,8 +233,7 @@ class ChannelView extends Component {
             return;
         this.props.socket.emit('react to message', messageId, this.state.channelId, 'like');
     }
-
-    handleInput(e) {
+    updateInput(e) {
         const { name, value } = e.target;
         this.setState({[name]: value});
     }
@@ -238,40 +242,47 @@ class ChannelView extends Component {
     /*
         Render Methods
     */
-
+    forceScrollDown() {
+        this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+    }
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
         let { messages }= this.state;
         if (this.state.messageFilter.trim())
             messages = messages.filter(message => message.content_text.includes(this.state.messageFilter.trim()))
-        return messages.map((message, i) =>
-            <div className="user-message" key={i}>
-                <div className="message-data">
-                    <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
-                    <div className="time-stamp">{getDate(message.time_stamp)}</div>
+        return messages.map((message, i) => {
+            let messageRef = '';
+            if (i === messages.length - 1)
+                messageRef = this.lastMessageRef;
+            return (
+                <div className="user-message" key={i} ref={messageRef}>
+                    <div className="message-data">
+                        <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
+                        <div className="time-stamp">{getDate(message.time_stamp)}</div>
+                    </div>
+                    <div className="message-content">{message.content_text}</div>
+                    <div className="message-reactions">
+                        <span>
+                            <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like.length : null}
+                        </span>
+                    </div>
                 </div>
-                <div className="message-content">{message.content_text}</div>
-                <div className="message-reactions">
-                    <span>
-                        <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like.length : null}
-                    </span>
-                </div>
-            </div>
-        );
+            )
+        });
     }
     render() {
         return (
             <div className="ChannelView">
                 <div className="header">
-                    <h2>{this.state.channelName}</h2>
+                    <h2>#{this.state.channelName}</h2>
                     <input 
                         type="text" 
                         name="messageFilter" 
                         className="message-filter"
                         placeholder="Filter Messages"
                         value={this.state.messageFilter}
-                        onChange={e => this.handleInput(e)}
+                        onChange={e => this.updateInput(e)}
                     />
                 </div>
                 <div className="messages" ref={this.messageWindowRef}>

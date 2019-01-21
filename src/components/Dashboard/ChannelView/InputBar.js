@@ -21,6 +21,7 @@ class InputBar extends Component {
                 name="messageInput"
                 value={this.props.isAuthenticated ? this.state.messageInput : ''}
                 onChange={e => this.updateInput(e)}
+                maxLength="400"
                 onKeyPress={
                     e => {
                         if (e.key === 'Enter') {
