@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { userLoggedOut, populateActiveDms } from '../../../redux/reducer';
 import axios from 'axios';
 import Popup from 'reactjs-popup'
+import Transition from 'react-addons-css-transition-group';
 
 class NavBar extends Component {
     constructor(props) {
@@ -14,7 +15,10 @@ class NavBar extends Component {
             channel_name: "",
             channels: [],
             open: false,
-            channel_description: ''
+            channel_description: '',
+            showSubs: true,
+            showDms: true,
+            showAllChannels: true
         };
         this.props.socket.on('new direct message', newMessage => {
             if (newMessage.sender === this.props.user.user.username)
@@ -32,6 +36,7 @@ class NavBar extends Component {
            const channelIndex = channels.findIndex(channel => channel.id === channelId);
            if (channelIndex !== -1) {
                 channels[channelIndex].subbed = true;
+                channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
                 this.setState({channels});
            }
         });
@@ -40,6 +45,7 @@ class NavBar extends Component {
             const channelIndex = channels.findIndex(channel => channel.id === channelId);
             if (channelIndex !== -1) {
                  channels[channelIndex].subbed = false;
+                 channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
                  this.setState({channels});
             }
         });
@@ -91,6 +97,7 @@ class NavBar extends Component {
         this.props.socket.emit('unsubscribe from channel', channelId);
     }
     handleAddChannel = (e) => {
+        console.log(e);
         const { channel_name, channel_description } = this.state;
         if (!channel_name.trim())
             return;
@@ -120,10 +127,9 @@ class NavBar extends Component {
     renderSubbedChannels() {
         return this.state.channels
             .filter(channel => channel.subbed)
-            .sort ((a, b) => a.channel_name < b.channel_name ? -1 : 1)
             .map((channel, i) =>
-                <div key={i} className="channel-list">
-                    <span className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</span>
+                <div key={'subbed' + i} className="channel-list">
+                    <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
                         {channel.channel_name}
                             {channel.count > 0 ? 
@@ -136,112 +142,93 @@ class NavBar extends Component {
     renderUnsubbedChannels() {
         return this.state.channels
             .filter(channel => !channel.subbed)
-            .sort ((a, b) => a.channel_name < b.channel_name ? -1 : 1)
             .map((channel, i) => 
-                <div key={i} className="channel-list">
-                    <span className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</span>
+                <div key={'unsubbed' + i} className="channel-list">
+                    <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
                         {channel.channel_name}
                     </Link>
                 </div>
             )
     }
+    toggleMenu(menuName) {
+        this.setState({[menuName]: !this.state[menuName]})
+    }
     render() {
         let count = 100;
         count -= this.state.channel_description.length;
         return (
-            <div className="NavBar" id="NavBar">
+            <div className="NavBar">
                 <div className="nav-top">
                     <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>ChatterBlock</h2></Link> : <Link to="/"><h2>ChatterBlock</h2></Link>}</div>
-                    <div className="accordion" id="accordionExample">
-                        {this.props.isAuthenticated ?
-                            <div className="card">
-                                <div className="card-header" id="headingOne">
-                                    <h2 className="mb-0">
-                                        <button className="subscribed-channels-header btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="">
-                                            Subscribed Channels
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                    <div className="card-body">
-                                        {this.renderSubbedChannels()}
-                                    </div>
-                                </div>
-                            </div> : <div></div>}
-                        {this.props.isAuthenticated ?
-                            <div className="card">
-                                <div className="card-header" id="headingTwo">
-                                    <h2 className="mb-0">
-                                        <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            Direct Messages
-                                </button>
-                                    </h2>
-                                </div>
-                                <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                    <div className="card-body">
-                                        {this.renderDms()}
-                                    </div>
-                                </div>
-                            </div> : <div></div>}
-
-                        <div className="card">
-                            <div className="card-header" id="headingThree">
-                                <h2 className="mb-0">
-                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Channels
-                                </button>
-                                </h2>
-                            </div>
-                            <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                                <div className="card-body">
-                                    <input className="searchInput" type="text" value={this.state.searchInput} onChange={(e) => this.handleSearch(e.target.value)} placeholder="Find Channel" />
-
-                                    <span className="addChannel">
-                                        <Popup
-                                            trigger={<button className="button"> + </button>}
-                                            modal
-                                            closeOnDocumentClick
+                    {this.props.isAuthenticated ?
+                        <div>
+                            <div className="subbed-channels">
+                                <div className="channels-header" onClick={e => this.toggleMenu('showSubs')}>Subscribed Channels</div>
+                                {this.state.showSubs ?
+                                    <div key="subbedChannels">
+                                        <Transition
+                                            transitionName="list"
+                                            transitionEnterTimeout={200}
+                                            transitionLeaveTimeout={200}
                                         >
-                                            <div>
-                                                <h1 style={{ color: "green", textAlign: 'center' }}> Add Channel </h1>
-                                                <hr />
-                                                <div>
-                                                    <div className="container">
-                                                        <div className="row">
-                                                            <div className="col">
-                                                                <label style={{ color: "black", paddingRight: "10px" }}>Channel Name: </label>
-                                                                <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} />
-                                                            </div>
-                                                            <div className="col">
-
-                                                                <label style={{ color: "black", paddingRight: "10px" }}>Channel Description: </label>
-                                                                <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)} />
-                                                                <span style={{ color: "blue", textAlign: "right", paddingRight: "35px" }}>{count}x</span>
-                                                            </div>
-                                                            <button onClick={this.handleAddChannel}>Add</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Popup>
-                                    </span>
-                                    <br /><br />
-                                    {this.renderUnsubbedChannels()}
-                                </div>
+                                            {this.renderSubbedChannels()}
+                                        </Transition>
+                                    </div>
+                                : null}
+                            </div>
+                            <div className="direct-messages">
+                                <div className="channels-header" onClick={e => this.toggleMenu('showDms')}>Direct Messages</div>
+                                {this.state.showDms ?
+                                    this.renderDms()
+                                : null}
                             </div>
                         </div>
+                    : null}
+                    <div className="all-channels">
+                        <div className="channels-header" onClick={e => this.toggleMenu('showAllChannels')}>All Channels
+                            <Popup
+                                trigger={<div className="add-channel-button"> + </div>}
+                                modal
+                                closeOnDocumentClick
+                            >
+                                <div>
+                                    <h1 style={{ color: "green", textAlign: 'center' }}> Add Channel </h1>
+                                    <hr />
+                                    <div>
+                                        <div className="container">
+                                            <div className="row">
+                                                <div className="col">
+                                                    <label style={{ color: "black", paddingRight: "10px" }}>Channel Name: </label>
+                                                    <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} />
+                                                </div>
+                                                <div className="col">
+                                                    <label style={{ color: "black", paddingRight: "10px" }}>Channel Description: </label>
+                                                    <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)} />
+                                                    <span style={{ color: "blue", textAlign: "right", paddingRight: "35px" }}>{count}x</span>
+                                                </div>
+                                                <button onClick={this.handleAddChannel}>Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Popup>
+                        </div>
+                        {this.state.showAllChannels ?
+                            this.renderUnsubbedChannels()
+                        : null}
                     </div>
                 </div>
-                {this.props.isAuthenticated ?
-                    <div className="profileAndSettings">
-                        <Link to={`/dashboard/profile/${this.props.user.user.id}`} >{this.props.user.user.username}</Link>
-                        <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
-                    </div> :
-                    <div className="profileAndSettings">
+                <div className="profileAndSettings">
+                    {this.props.isAuthenticated ?
+                        <div>
+                            <Link to={`/dashboard/profile/${this.props.user.user.id}`} >{this.props.user.user.username}</Link>
+                            <Link to="/dashboard/settings" ><i className="fas fa-cog"></i></Link>
+                        </div>
+                    :
                         <h3>Guest</h3>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         )
     }
