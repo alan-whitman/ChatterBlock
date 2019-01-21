@@ -3,7 +3,7 @@ module.exports = {
         try {
             let response = await db.channels.getChannelIdByName(channelName);
             if (!response[0])
-                return console.log('channel doesn\'t exist');
+                return socket.emit('no such channel');
             let initialChannelResponse = {};
             const channelId = response[0].id;
             const name = response[0].channel_name

@@ -4,7 +4,6 @@ import Transition from 'react-addons-css-transition-group';
 import InputBar from './InputBar';
 import ChannelViewMessage from './ChannelViewMessage';
 import { populateChannelUsers } from '../../../redux/reducer';
-
 import './channelview.css';
 
 class ChannelView extends Component {
@@ -16,13 +15,16 @@ class ChannelView extends Component {
             channelId: -1,
             typing: false,
             messageFilter: '',
-            messagesBelow: false
+            messagesBelow: false,
+            noSuchChannel: false,
+            initialLoadComplete: false
         }
         this.messageWindowRef = React.createRef();
         this.lastMessageRef = React.createRef();
         this.sendMessage = this.sendMessage.bind(this);
         this.checkForScrollDown = this.checkForScrollDown.bind(this);
-        this.likeMessage =this.likeMessage.bind(this);
+        this.likeMessage = this.likeMessage.bind(this);
+
         /*
             Socket Listeners
         */
@@ -41,7 +43,7 @@ class ChannelView extends Component {
                     message.reactions = messageReactions[message.id];
             });
             this.props.populateChannelUsers(initialResponse.users);
-            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName }, this.forceScrollDown);
+            this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName, noSuchChannel: false }, this.forceScrollDown);
         });
         this.props.socket.on('new message', newMessage => {
             let messages = [...this.state.messages];
@@ -148,6 +150,9 @@ class ChannelView extends Component {
             }
         });
 
+        this.props.socket.on('no such channel', () => {
+            this.setState({noSuchChannel: true})
+        })
 
         /*
             End Socket Listeners
@@ -166,10 +171,11 @@ class ChannelView extends Component {
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
             this.props.socket.emit('leave channel');
             const { channelName } = this.props.match.params;
-            this.props.socket.emit('join channel', channelName);
+            this.setState({initialLoadComplete: false}, () => this.props.socket.emit('join channel', channelName));
+            // this.props.socket.emit('join channel', channelName);
         }
         const { clientHeight, scrollHeight, scrollTop } = this.messageWindowRef.current;
-        if (this.lastMessageRef.current) {
+        if (this.lastMessageRef.current && this.state.initialLoadComplete) {
             if (scrollHeight - scrollTop - this.lastMessageRef.current.clientHeight <= clientHeight + 150)
                 this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
             else {
@@ -256,6 +262,7 @@ class ChannelView extends Component {
     }
     forceScrollDown() {
         this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+        this.setState({initialLoadComplete: true});
     }
 
 
@@ -278,16 +285,18 @@ class ChannelView extends Component {
                     messageRef={messageRef} 
                     likeMessage={this.likeMessage}
                     key={i}
-                    likes={message.reactions ? message.reactions.like.length : 0}
+                    likes={message.reactions ? message.reactions.like ? message.reactions.like.length : 0 : 0 }
                 />
             )
         });
     }
     render() {
+        const componentLoadingStyles = this.state.initialLoadComplete ? {animationName: 'fadeIn'} : {opacity: 0};
+        const messagesLoadingStyles = this.state.initialLoadComplete ? {scrollBehavior: 'smooth'} : {scrollBehavior: 'initial'}
         return (
-            <div className="ChannelView">
+            <div className="ChannelView" style={componentLoadingStyles}>
                 <div className="header">
-                    <h2>#{this.state.channelName}</h2>
+                    <h2>#{this.state.noSuchChannel ? 'Channel Does\'t Exist' : this.state.channelName}</h2>
                     <input 
                         type="text" 
                         name="messageFilter" 
@@ -297,7 +306,7 @@ class ChannelView extends Component {
                         onChange={e => this.updateInput(e)}
                     />
                 </div>
-                <div className="messages" ref={this.messageWindowRef} onScroll={this.checkForScrollDown}>
+                <div className="messages" ref={this.messageWindowRef} onScroll={this.checkForScrollDown} style={messagesLoadingStyles}>
                         <Transition 
                             transitionName="mbt"
                             transitionEnterTimeout={200}
@@ -307,7 +316,11 @@ class ChannelView extends Component {
                                 <div className="messages-below">New Messages Below</div>
                             : null}
                         </Transition>
-                    {this.renderMessages()}
+                    {this.state.noSuchChannel ?
+                        <div className="user-message">This channel doesn't exist, but you can create it by clicking the + icon in the lefthand navigation bar</div>
+                    :
+                        this.renderMessages()
+                    }
                 </div>
                     {/* {displayTypingUsers} */}
                 <div className="input-holder">
