@@ -228,7 +228,7 @@ class NavBar extends Component {
                     : null}
                     <div className="all-channels">
                         <div className="channels-header" onClick={e => this.toggleMenu('showAllChannels')}>All Channels</div>
-                        <div className="channels-search-add">
+                        <div className="channels-search-add" style={{display: this.state.showAllChannels ? 'flex': 'none'}}>
                             <Popup
                                 trigger={<div className="add-channel-button"> + </div>}
                                 modal
