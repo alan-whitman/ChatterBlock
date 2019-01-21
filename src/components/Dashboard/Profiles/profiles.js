@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './profiles.css'
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 class Profile extends Component {
     constructor(){
@@ -35,50 +36,40 @@ class Profile extends Component {
                 
                 <div className="mainProfile">
                 <div className="profileHeader">
-                    <div style={{display: "flex", alignItems: 'center', width: '500px', justifyContent: 'space-between'}}>
                         <div className="profileImage"><img src={this.state.profileInfo.user.user_image} alt="profile pic"/></div>
                         <h1>{this.state.profileInfo.user.username}</h1>
-                    </div>
+                        <div className="profileImage" />
                 </div>
                 <div className="profileSection1">
                     <div className="about">
-                        <h2>{this.state.profileInfo.user.about_text ? this.state.profileInfo.user.about_text : <h3>You do not have a summary yet.</h3>}</h2>
+                        {this.state.profileInfo.user.about_text ? <div><div style={{marginBottom: '10px'}}>Summary:</div><div style={{fontSize: '20px'}}>{this.state.profileInfo.user.about_text}</div></div> : <h3>You do not have a summary yet.</h3>}
                     </div>
-                    <div className="profileChannels">
-                        {this.state.profileInfo.userSubChannels ? this.state.profileInfo.userSubChannels.map((channel, i) => {
+                    <div className="about">
+                        {this.state.profileInfo.userSubChannels ? <div><div style={{marginBottom: '10px'}}>Subscribed Channels:</div>{this.state.profileInfo.userSubChannels.map((channel, i) => {
                             return (
                             <p key={i} className="channels">  
-                                {channel.channel_name}
+                                <Link to={`/dashboard/channel/${channel.channel_url}`} className="Links">{channel.channel_name}</Link>
                             </p>             
-                        )}) : <h3>You are not subbed to any channels yet.</h3>}
+                        )})}</div> : <h3>You are not subbed to any channels yet.</h3>}
                     </div>
                 </div>
 
-                <div className="profileSection2">
-                    <div className="friends">
-                        {this.state.profileInfo.userFriends ? this.state.profileInfo.userFriends.map((friend, i) => {
+                <div className="profileSection1">
+                    <div className="about">
+                        {this.state.profileInfo.userFriends ? <div><div style={{marginBottom: '10px'}}>Friends:</div>{this.state.profileInfo.userFriends.map((friend, i) => {
                             return (
                             <p key={i} className="channels">  
-                                {friend.username}
+                                <Link to={`/dashboard/profile/${friend.friend_id}`} className="Links">{friend.username}</Link>
                             </p>             
-                        )}) : <h3>You don't have any friends yet.</h3>}
+                        )})}</div> : <h3>You don't have any friends yet.</h3>}
                     </div>
-                    <div className="extraBox">
-                        {this.state.profileInfo.postMeta.count ? this.state.profileInfo.postMeta.count : <h3>You haven't posted any messages yet.</h3>}
-                    </div>
-                </div>
-                <div className="profileSection2">
-                    <div className="friends">
-                    
-                    </div>
-                    <div className="extraBox">
-                        {this.state.profileInfo.profileRecentMessages ? this.state.profileInfo.profileRecentMessages.map((message, i)=> {
+                    <div className="about">
+                        {this.state.profileInfo.profileRecentMessages ? <div><div style={{marginBottom: '10px'}}>Total Posts: {this.state.profileInfo.postMeta.count}</div><div style={{marginBottom: '10px'}}>Recent Posts:</div>{this.state.profileInfo.profileRecentMessages.map((message, i)=> {
                             return (
-                                <p key={i}>
-                                    {message.content_text}
-                                </p>
-                            )
-                        }) : <h3>You haven't posted any messages yet.</h3>}
+                            <p key={i} className="channels">
+                                {message.content_text}
+                            </p>
+                        )})}</div> : <h3>You haven't posted any messages yet.</h3>}
                     </div>
                 </div>
                 </div>}
