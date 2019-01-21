@@ -32,7 +32,7 @@ class FriendsPopup extends Component {
     }
 
     handleMouse = e => {
-        this.setState({ x: e.screenX, y: e.screenY })
+        this.setState({ x: e.pageX, y: e.pageY })
     }
 
     render(){
@@ -40,7 +40,7 @@ class FriendsPopup extends Component {
         return (
             <div style={{height: '30px', marginLeft: '15px'}}>
                 <h3 onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</h3><br />
-                {this.state.show && <div className="popupmenu" style={{top: `calc(${this.state.y}px - 130px)`, left: `calc(${this.state.x}px - 200px`}}>
+                {this.state.show && <div className="popupmenu" style={{top: this.state.y, left: `calc(${this.state.x}px - 200px`}}>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${friend.id}`)}}>Profile</div>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/dm/${friend.username}`)}}>Send Message</div>
                     <span onClick={e => this.deleteFriend({id: friend.id, username: friend.username})} className="delete">Remove Friend</span>

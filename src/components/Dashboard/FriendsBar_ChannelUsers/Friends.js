@@ -126,6 +126,7 @@ class Friends extends Component {
                 <ul className="pending-friends">
                     {pendingFriends}
                 </ul>
+                <h4 style={{letterSpacing: "3px",paddingBottom: "10px", borderBottom: "1px solid lightgrey", textAlign: "center", width: "70%"}}>My Friends</h4>
                 <div style={{fontWeight: 'bold'}}>Online</div>
                 <ul className="online-friends" style={{marginBottom: 10}}>
                     {onlineFriends}
