@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import Transition from 'react-addons-css-transition-group';
 import InputBar from './InputBar';
+import ChannelViewMessage from './ChannelViewMessage';
 import { populateChannelUsers } from '../../../redux/reducer';
-import getDate from '../../DateFormat/dateStamp';
+
 import './channelview.css';
 
 class ChannelView extends Component {
@@ -14,11 +15,14 @@ class ChannelView extends Component {
             messages: [],
             channelId: -1,
             typing: false,
-            messageFilter: ''
+            messageFilter: '',
+            messagesBelow: false
         }
         this.messageWindowRef = React.createRef();
         this.lastMessageRef = React.createRef();
         this.sendMessage = this.sendMessage.bind(this);
+        this.checkForScrollDown = this.checkForScrollDown.bind(this);
+        this.likeMessage =this.likeMessage.bind(this);
         /*
             Socket Listeners
         */
@@ -40,7 +44,7 @@ class ChannelView extends Component {
             this.setState({ messages: initialResponse.existingMessages, channelId: initialResponse.channelId, channelName: initialResponse.channelName }, this.forceScrollDown);
         });
         this.props.socket.on('new message', newMessage => {
-            let { messages } = this.state;
+            let messages = [...this.state.messages];
             messages.push(newMessage);
             this.setState({ messages });
             // this.userNotTyping(newMessage.username)
@@ -159,19 +163,19 @@ class ChannelView extends Component {
         this.props.socket.emit('join channel', channelName);
     }
     componentDidUpdate(prevProps, prevState) {
-
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
-            // console.log('switching channels...');
             this.props.socket.emit('leave channel');
             const { channelName } = this.props.match.params;
             this.props.socket.emit('join channel', channelName);
         }
         const { clientHeight, scrollHeight, scrollTop } = this.messageWindowRef.current;
-        // console.log(clientHeight, scrollHeight - scrollTop - 101);
         if (this.lastMessageRef.current) {
-            console.log(scrollHeight - scrollTop - this.lastMessageRef.current.clientHeight, clientHeight + 150)
             if (scrollHeight - scrollTop - this.lastMessageRef.current.clientHeight <= clientHeight + 150)
                 this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+            else {
+                if (prevState.messages.length !== this.state.messages.length)
+                    this.setState({messagesBelow: true});
+            }
         }
     }
     componentWillUnmount() {
@@ -233,22 +237,35 @@ class ChannelView extends Component {
             return;
         this.props.socket.emit('react to message', messageId, this.state.channelId, 'like');
     }
+
+    /*
+        UI Methods
+    */
+
     updateInput(e) {
         const { name, value } = e.target;
         this.setState({[name]: value});
+    }
+    checkForScrollDown() {
+        if (this.state.messagesBelow) {
+            const { scrollHeight, scrollTop, clientHeight } = this.messageWindowRef.current;
+            if (scrollHeight - scrollTop === clientHeight) {
+                this.setState({messagesBelow: false});
+            }
+        }
+    }
+    forceScrollDown() {
+        this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
     }
 
 
     /*
         Render Methods
     */
-    forceScrollDown() {
-        this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
-    }
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
-        let { messages }= this.state;
+        let messages = [...this.state.messages];
         if (this.state.messageFilter.trim())
             messages = messages.filter(message => message.content_text.includes(this.state.messageFilter.trim()))
         return messages.map((message, i) => {
@@ -256,18 +273,13 @@ class ChannelView extends Component {
             if (i === messages.length - 1)
                 messageRef = this.lastMessageRef;
             return (
-                <div className="user-message" key={i} ref={messageRef}>
-                    <div className="message-data">
-                        <Link to={`/dashboard/profile/${message.user_id}`}>{message.username}</Link>
-                        <div className="time-stamp">{getDate(message.time_stamp)}</div>
-                    </div>
-                    <div className="message-content">{message.content_text}</div>
-                    <div className="message-reactions">
-                        <span>
-                            <i className="fas fa-thumbs-up" onClick={() => this.likeMessage(message.id)}></i> {message.reactions ? message.reactions.like.length : null}
-                        </span>
-                    </div>
-                </div>
+                <ChannelViewMessage 
+                    message={message} 
+                    messageRef={messageRef} 
+                    likeMessage={this.likeMessage}
+                    key={i}
+                    likes={message.reactions ? message.reactions.like.length : 0}
+                />
             )
         });
     }
@@ -285,7 +297,16 @@ class ChannelView extends Component {
                         onChange={e => this.updateInput(e)}
                     />
                 </div>
-                <div className="messages" ref={this.messageWindowRef}>
+                <div className="messages" ref={this.messageWindowRef} onScroll={this.checkForScrollDown}>
+                        <Transition 
+                            transitionName="mbt"
+                            transitionEnterTimeout={200}
+                            transitionLeaveTimeout={200}
+                        >
+                            {this.state.messagesBelow ?
+                                <div className="messages-below">New Messages Below</div>
+                            : null}
+                        </Transition>
                     {this.renderMessages()}
                 </div>
                     {/* {displayTypingUsers} */}

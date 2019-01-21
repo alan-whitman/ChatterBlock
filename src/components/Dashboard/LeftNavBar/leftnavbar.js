@@ -17,6 +17,8 @@ class NavBar extends Component {
             channel_description: ''
         };
         this.props.socket.on('new direct message', newMessage => {
+            if (newMessage.sender === this.props.user.user.username)
+                return;
             let activeDms = [...this.props.activeDms];
             let { sender } = newMessage
             if (activeDms.indexOf(sender) === -1) {

@@ -117,7 +117,37 @@
     font-size: 12px;
     display: inline-block;
 }
-
 .DirectMessage .message-reactions:hover {
     cursor: pointer;
+}
+.DirectMessage .messages-below {
+    height: 30px;
+    width: 180px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgb(25, 25, 25);
+    position: fixed;
+    bottom: 50px;
+    left: calc(100vw / 2 - 90px);
+    z-index: 1000;
+    color: white;
+}
+.DirectMessage .mbt-enter {
+    opacity: 0.01;
+    transform: translateY(30px);
+}
+.DirectMessage .mbt-enter.mbt-enter-active {
+    opacity: 1;
+    transform: translateY(0px);
+    transition: all 200ms linear;
+}
+.DirectMessage .mbt-leave {
+    opacity: 1;
+    transform: translateY(0px);
+}
+.DirectMessage .mbt-leave.mbt-leave-active {
+    opacity: 0.01;
+    transform: translateY(30px);
+    transition: all 200ms linear;
 }

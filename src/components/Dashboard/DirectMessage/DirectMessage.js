@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { populateActiveDms } from '../../../redux/reducer';
 import './DirectMessage.css';
-import { Link } from 'react-router-dom';
 import InputBar from '../ChannelView/InputBar';
-import getDate from '../../DateFormat/dateStamp';
 import axios from 'axios';
+import DirectMessageMessage from './DirectMessageMessage';
 
 class DirectMessage extends Component {
     constructor(props) {
@@ -17,24 +16,26 @@ class DirectMessage extends Component {
             messageFilter: ''
         }
         this.sendMessage = this.sendMessage.bind(this);
+        this.directMessageWindowRef = React.createRef();
         this.props.socket.on('send initial dm response', initialResponse => {
             this.setState({ messages: initialResponse.existingMessages, dmPartner: initialResponse.dmPartner });
         });
         this.props.socket.on('new direct message', newMessage => {
-            let { messages } = this.state;
+            if (newMessage.sender !== this.props.match.params.username && newMessage.sender !== this.props.user.user.username)
+                return;
+            let messages = [...this.state.messages];
             messages.push(newMessage);
             this.setState({ messages });
         });
-        this.messageWindowRef = React.createRef();
     }
     componentDidMount() {
         this.props.socket.emit('join direct message', this.props.match.params.username);
     }
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.match.params.username !== this.props.match.params.username) {
             this.props.socket.emit('join direct message', this.props.match.params.username);
         }
-        this.messageWindowRef.current.scrollTop = this.messageWindowRef.current.scrollHeight;
+        this.directMessageWindowRef.current.scrollTop = this.directMessageWindowRef.current.scrollHeight;
     }
     sendMessage(newMessage) {
         if (newMessage.trim() === '')
@@ -67,47 +68,47 @@ class DirectMessage extends Component {
             return <div className="user-message">Try sending a message to someone that's not you!</div>
         if (!this.state.messages[0])
             return <div className="user-message">You have no message history with {this.props.match.params.username}. Say hello!</div>
-        let { messages } = this.state;
+        let messages = [...this.state.messages];
         if (this.state.messageFilter.trim())
             messages = messages.filter(message => message.content_text.includes(this.state.messageFilter.trim()))
-        return messages.map((message, i) =>
-            <div className="user-message" key={i}>
-                <div className="message-data">
-                    <Link to={`/dashboard/profile/${message.sender_id}`}>{message.sender}</Link>
-                    <div className="time-stamp">{getDate(message.time_stamp)}</div>
-                </div>
-                <div className="message-content">{message.content_text}</div>
-            </div>
-        );
+        return messages.map((message, i) => {
+            return (
+                <DirectMessageMessage
+                    message={message}
+                    key={i}
+                />
+            )
+        });
     }
     render() {
         const friendIndex = this.props.friends.findIndex(friend => friend.username === this.props.match.params.username);
         let indicatorColor;
         if (friendIndex !== -1)
             indicatorColor = this.props.friends[friendIndex].online ? 'green' : 'red';
+        if (this.state.loading)
+            return <div className="DirectMessage"></div>;
         return (
             <div className="DirectMessage">
                 <div className="header">
                     <h2>@{this.props.match.params.username}</h2>
                     {friendIndex !== -1 ?
-                        <div className="online-indicator" style={{backgroundColor: indicatorColor}} />
-                    : null}
+                        <div className="online-indicator" style={{ backgroundColor: indicatorColor }} />
+                        : null}
                     <div>
                         {this.props.activeDms.indexOf(this.props.match.params.username) !== -1 ?
                             <button className="hide-conversation" onClick={e => this.hideConversation()}>Hide Conversation</button>
                         : null}
                     </div>
-                    <input 
-                        type="text" 
-                        name="messageFilter" 
+                    <input
+                        type="text"
+                        name="messageFilter"
                         className="message-filter"
                         placeholder="Filter Messages"
                         value={this.state.messageFilter}
                         onChange={e => this.updateInput(e)}
                     />
-
                 </div>
-                <div className="messages" ref={this.messageWindowRef}>
+                <div className="messages" ref={this.directMessageWindowRef}>
                     {this.renderMessages()}
                 </div>
                 <div className="input-holder">
@@ -128,4 +129,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, {populateActiveDms})(DirectMessage);
+export default connect(mapStateToProps, { populateActiveDms })(DirectMessage);
