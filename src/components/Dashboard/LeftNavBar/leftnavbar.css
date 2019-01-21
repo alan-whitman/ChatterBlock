@@ -7,8 +7,8 @@
     resize: horizontal;
 }
 
-.nav-top {
-    height: calc(100% - 50px);
+.nav-channels {
+    height: calc(100vh - 100px);
     overflow: scroll;
 }
 
@@ -62,7 +62,7 @@
     background-color: rgb(65, 65, 65);
 }
 
-.NavBar .navLogo {
+.NavBar .nav-logo {
     height: 50px;
     background-color: rgb(40, 40, 40);
     border-bottom: 1px solid rgb(55, 55, 55);
@@ -71,13 +71,13 @@
     justify-content: space-between;
 
 }
-.NavBar .navLogo a {
+.NavBar .nav-logo a {
     color: white;
     text-decoration: none;
 }
 .NavBar .profileAndSettings {
     height: 50px;
-    border-top: 1px solid black;
+    background-color: rgb(55, 55, 55);
     display: flex;
     align-items: center;
     justify-content: space-between;

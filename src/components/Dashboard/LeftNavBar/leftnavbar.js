@@ -14,6 +14,7 @@ class NavBar extends Component {
             searchInput: "",
             channel_name: "",
             channels: [],
+            subbedChannels: [],
             open: false,
             channel_description: '',
             showSubs: true,
@@ -32,22 +33,20 @@ class NavBar extends Component {
             }
         });
         this.props.socket.on('successfully subbed to channel', channelId => {
-           let { channels } = this.state;
-           const channelIndex = channels.findIndex(channel => channel.id === channelId);
-           if (channelIndex !== -1) {
-                channels[channelIndex].subbed = true;
-                channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
-                this.setState({channels});
-           }
+            let { channels, subbedChannels } = this.state;
+            const channelIndex = channels.findIndex(channel => channel.id === channelId);
+            subbedChannels.push(channels[channelIndex]);
+            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            channels = channels.filter(channel => channel.id !== channelId)
+            this.setState({channels, subbedChannels});
         });
         this.props.socket.on('successfully unsubbed to channel', channelId => {
-            let { channels } = this.state;
-            const channelIndex = channels.findIndex(channel => channel.id === channelId);
-            if (channelIndex !== -1) {
-                 channels[channelIndex].subbed = false;
-                 channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
-                 this.setState({channels});
-            }
+            let { channels, subbedChannels } = this.state;
+            const channelIndex = subbedChannels.findIndex(channel => channel.id === channelId);
+            channels.push(subbedChannels[channelIndex]);
+            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            subbedChannels = subbedChannels.filter(channel => channel.id !== channelId);
+            this.setState({channels, subbedChannels});
         });
         this.props.socket.on('channel creation error', error => {
             console.log(error);
@@ -63,7 +62,7 @@ class NavBar extends Component {
 
     componentDidMount() {
         axios.get('/api/channel/getChannels').then(res => {
-            const channels = res.data.map(channel => {
+            let channels = res.data.map(channel => {
                 return {
                     id: channel.id,
                     channel_name: channel.channel_name,
@@ -71,10 +70,15 @@ class NavBar extends Component {
                     channel_description: channel.channel_description,
                     last_view_time: channel.last_view_time,
                     creator_id: channel.creator_id,
-                    subbed: channel.user_id ? true : false
+                    user_id: channel.user_id
+                    // subbed: channel.user_id ? true : false
                 }
             });
-            this.setState({channels});
+            let subbedChannels = channels.filter(channel => channel.user_id);
+            channels = channels.filter(channel => !channel.user_id);
+            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            this.setState({channels, subbedChannels});
         }).catch(err => console.error(err));
         axios.get('/api/dm/getActiveDms').then(response => {
             this.props.populateActiveDms(response.data.map(user => user.username));
@@ -125,10 +129,9 @@ class NavBar extends Component {
         )
     }
     renderSubbedChannels() {
-        return this.state.channels
-            .filter(channel => channel.subbed)
+        return this.state.subbedChannels
             .map((channel, i) =>
-                <div key={'subbed' + i} className="channel-list">
+                <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
                         {channel.channel_name}
@@ -141,9 +144,8 @@ class NavBar extends Component {
     }
     renderUnsubbedChannels() {
         return this.state.channels
-            .filter(channel => !channel.subbed)
             .map((channel, i) => 
-                <div key={'unsubbed' + i} className="channel-list">
+                <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
                         {channel.channel_name}
@@ -159,8 +161,8 @@ class NavBar extends Component {
         count -= this.state.channel_description.length;
         return (
             <div className="NavBar">
-                <div className="nav-top">
-                    <div className="navLogo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>ChatterBlock</h2></Link> : <Link to="/"><h2>ChatterBlock</h2></Link>}</div>
+                <div className="nav-logo">{this.props.isAuthenticated ? <Link to="/dashboard"><h2>ChatterBlock</h2></Link> : <Link to="/"><h2>ChatterBlock</h2></Link>}</div>
+                <div className="nav-channels">
                     {this.props.isAuthenticated ?
                         <div>
                             <div className="subbed-channels">
@@ -171,6 +173,7 @@ class NavBar extends Component {
                                             transitionName="list"
                                             transitionEnterTimeout={200}
                                             transitionLeaveTimeout={200}
+
                                         >
                                             {this.renderSubbedChannels()}
                                         </Transition>
@@ -186,7 +189,7 @@ class NavBar extends Component {
                         </div>
                     : null}
                     <div className="all-channels">
-                        <div className="channels-header" onClick={e => this.toggleMenu('showAllChannels')}>All Channels
+                        <div className="channels-header" onClick={e => this.toggleMenu('showAllChannels')}>All Channels</div>
                             <Popup
                                 trigger={<div className="add-channel-button"> + </div>}
                                 modal
@@ -213,9 +216,14 @@ class NavBar extends Component {
                                     </div>
                                 </div>
                             </Popup>
-                        </div>
                         {this.state.showAllChannels ?
-                            this.renderUnsubbedChannels()
+                            <Transition
+                                transitionName="list"
+                                transitionEnterTimeout={200}
+                                transitionLeaveTimeout={200}
+                            >
+                                {this.renderUnsubbedChannels()}
+                            </Transition>
                         : null}
                     </div>
                 </div>
