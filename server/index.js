@@ -25,6 +25,8 @@ massive(CONNECTION_STRING).then(db => {
     console.log('db connected!')
 }) 
 
+app.use(express.static(`${__dirname}/../build`));
+
 app.use(bodyParser.json());
 
 const sessionMiddleware = session({
@@ -67,6 +69,8 @@ io.use((socket, next) => {
 
 //Channel Actions
     // Get all Channels
+    app.get('/api/channel/getChannels', Channel.getChannels);
+
     app.get('/api/channel/all', Channel.getAllChannels)
     // Get all subscribed channels for user
     app.get('/api/channel/all/subscribed', Channel.getAllSubscribedChannels)
@@ -130,10 +134,12 @@ io.on('connection', socket => {
     // channel listeners
     socket.on('join channel', channelName => scc.joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName));
     socket.on('leave channel', () => scc.leaveChannel(socket));
-    socket.on('create message', message => scc.createMessage(db, socket, message));
-    
-    socket.on('like message', message => scc.likeMessage());
-    socket.on('unlike message', message => scc.unlikeMessage());
+    socket.on('create message', message => scc.createMessage(db, socket, io, message));
+    socket.on('subscribe to channel', channelId => scc.subscribeToChannel(db, socket, io, channelId));
+    socket.on('unsubscribe from channel', channelId => scc.unsubscribeFromChannel(db, socket, io, channelId));
+    socket.on('create new channel', newChannel => scc.createNewChannel(db, socket, io, newChannel));
+    socket.on('react to message', (messageId, channelId, reactionName) => scc.reactToMessage(db, socket, io, messageId, channelId, reactionName));
+    // socket.on('unlike message', message => scc.unlikeMessage());
 
     socket.on('is typing', () => scc.isTyping(socket));
     socket.on('stopped typing', () => scc.stoppedTyping(socket));

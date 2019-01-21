@@ -1,45 +1,75 @@
-import React, { Component } from 'react'
+const getDate = timestamp => {
+    const date = Number(timestamp)
+    const displayDate = new Date(date)
+    const now = Number(new Date())
 
-class DateStamp extends Component {
-    getDate() {
-        let date = Number(this.props.date)
-        let displayDate = new Date(date)
-        var now = Number(new Date())
+    const older = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+    const thisWeek = {
+        weekday: 'long',
+        hour: 'numeric'
+    };
+    const today = {
+        hour: 'numeric'
+    };
+    const old = displayDate.toLocaleString("en-US", older)
+    const insideWeek = displayDate.toLocaleString("en-US", thisWeek)
+    const thisDay = "Today @ " + displayDate.toLocaleString("en-US", today)
 
-        var older = {
-            // weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-            // hour: 'numeric'
-        };
-        var thisWeek = {
-            weekday: 'long',
-            hour: 'numeric'
-        };
-        var today = {
-            hour: 'numeric'
-        };
-        var old = displayDate.toLocaleString("en-US", older)
-        var insideWeek = displayDate.toLocaleString("en-US", thisWeek)
-        var thisDay = "Today @ " + displayDate.toLocaleString("en-US", today)
-
-        if (date + (1000 * 60 * 60 * 24) > now) {
-            return thisDay
-        }
-        else if (date + (1000 * 60 * 60 * 24 * 7) > now) {
-
-            return <div>{insideWeek}</div>
-        }
-        else {
-            return <div>{old}</div>
-        }
+    if (date + (1000 * 60 * 60 * 24) > now) {
+        return thisDay
     }
-
-    render() {
-        return (
-            <div>{this.getDate()}</div>
-        )
+    else if (date + (1000 * 60 * 60 * 24 * 7) > now) {
+        return insideWeek
+    }
+    else {
+        return old
     }
 }
-export default DateStamp
+
+export default getDate;
+
+// import React, { Component } from 'react'
+
+// class DateStamp extends Component {
+//     getDate() {
+//         const date = Number(timestamp)
+//         const displayDate = new Date(date)
+//         const now = Number(new Date())
+
+//         const older = {
+//             year: 'numeric',
+//             month: 'long',
+//             day: 'numeric'
+//         };
+//         const thisWeek = {
+//             weekday: 'long',
+//             hour: 'numeric'
+//         };
+//         const today = {
+//             hour: 'numeric'
+//         };
+//         const old = displayDate.toLocaleString("en-US", older)
+//         const insideWeek = displayDate.toLocaleString("en-US", thisWeek)
+//         const thisDay = "Today @ " + displayDate.toLocaleString("en-US", today)
+
+//         if (date + (1000 * 60 * 60 * 24) > now) {
+//             return thisDay
+//         }
+//         else if (date + (1000 * 60 * 60 * 24 * 7) > now) {
+//             return insideWeek
+//         }
+//         else {
+//             return old
+//         }
+//     }
+
+//     render() {
+//         return (
+//             <div>{this.getDate()}</div>
+//         )
+//     }
+// }

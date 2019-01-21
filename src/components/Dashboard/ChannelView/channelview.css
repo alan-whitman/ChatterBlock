@@ -1,15 +1,25 @@
 .ChannelView {
     z-index: -999999;
+    font-size: 15px;
+    color: white;
 }
 
 
 .ChannelView .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
     height: 50px;
-    background-color: rgb(35, 35, 35);
+    padding: 0px 10px 0px 10px;
+    background-color: rgb(55, 55, 55);
+}
+
+.ChannelView .header input.message-filter  {
+    margin-left: auto;
+    width: 200px;
+    border-radius: 5px;
+    background-color: rgb(55, 55, 55);
+    outline: none;
+    color: white;
 }
 
 .ChannelView .input-holder {
@@ -17,6 +27,7 @@
     height: 50px;
     background-color: rgb(35, 35, 35);
     padding: 10px;
+    /* border-top: 1px solid black; */
 }
 
 .ChannelView .input-bar {
@@ -31,82 +42,94 @@
 }
 
 .ChannelView .messages {
-    background: rgb(55, 55, 55);
+    background: rgb(35, 35, 35);
     height: calc(100vh - 100px);
     overflow: auto;
+    padding: 10px 10px 0px 10px;
+    position: relative;
 }
 .ChannelView .messages div:last-child {
-    border-bottom: none;
     margin-bottom: 0px;
 }
 
 .ChannelView .user-message {
-    border-bottom:  1px solid lightgrey;
-    padding: 10px 5px 10px 5px;
-    margin-bottom: 10px;
-    display: block;
+    background: rgb(75, 75, 75);
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    position: relative;
+
+}
+.ChannelView .user-message .message-data {
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    padding-bottom: 5px;
 }
 
+.ChannelView .user-message a {
+    color: white;
+    text-decoration: none;
+}
+.ChannelView .user-message a:hover {
+    color: rgb(185, 185, 185);
+}
 .ChannelView .message-user-info {
     display: flex;
     padding: 3px;
 
 }
-.ChannelView .message-user-info-image {
-    width: 55px;
-    height: 55px;
+.ChannelView .time-stamp {
+    margin-left: auto;
+
+    
+}
+.ChannelView .message-content {
+    padding-top: 3px;
 }
 
-.ChannelView .user-message h6 {
-    text-align: initial;
-    color: tan;
-    font-weight: bold;
-}
-
-.ChannelView .user-message p {
-    color: white;
-}
-
-.ChannelView .timestamp {
-    font-size: 10px;
-    padding-top: 5px;
-    padding-left: 5px;
-}
-
-.ChannelView .searchInput {
-    border-radius: 7.5px;
-    margin-right: 10px;
-    padding-left: 7.5px;
-    width: 70%;
-}
-
-.ChannelView .message-user-image {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    padding-right: 10px;
-}
-
-.ChannelView .my-msg h6 {
-
-}
-
-.ChannelView .user-message img {
-
-}
-
-.ChannelView .user-message h6 {
-    padding-top: 0px;
-    font-weight: lighter;
-    width: 92%;
-    height: 12px;
-}
-
-.ChannelView .user-message.their-msg {
-    width: 100%;
-    clear: both;
-}
 .ChannelView .typing-users{
     color:#fff;
     font-size: 8px;
+}
+.ChannelView .message-reactions {
+    background-color: rgb(60, 60, 60);
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
+}
+.ChannelView .message-reactions:hover {
+    cursor: pointer;
+}
+
+.ChannelView .messages-below {
+    height: 30px;
+    width: 180px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgb(25, 25, 25);
+    position: fixed;
+    bottom: 50px;
+    left: calc(100vw / 2 - 90px);
+    z-index: 1000;
+    color: white;
+}
+.ChannelView .mbt-enter {
+    opacity: 0.01;
+    transform: translateY(30px);
+}
+.ChannelView .mbt-enter.mbt-enter-active {
+    opacity: 1;
+    transform: translateY(0px);
+    transition: all 200ms linear;
+}
+.ChannelView .mbt-leave {
+    opacity: 1;
+    transform: translateY(0px);
+}
+.ChannelView .mbt-leave.mbt-leave-active {
+    opacity: 0.01;
+    transform: translateY(30px);
+    transition: all 200ms linear;
 }

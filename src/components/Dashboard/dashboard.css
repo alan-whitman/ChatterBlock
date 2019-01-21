@@ -13,7 +13,7 @@
 .mobile-nav{
 display:none;
 }
-@media screen and (max-width: 960px) {
+/* @media screen and (max-width: 960px) {
     .Dashboard{
         overflow:hidden;
     }
@@ -51,4 +51,4 @@ display:none;
         border-left: 1px solid #fff;
         border-right: 1px solid #fff;
       }
-  }
+  } */

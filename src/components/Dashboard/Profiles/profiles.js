@@ -57,7 +57,6 @@ class Profile extends Component {
 
                 <div className="profileSection2">
                     <div className="friends">
-                        {console.log(this.state.profileInfo)}
                         {this.state.profileInfo.userFriends.map((friend, i) => {
                             return (
                             <p key={i} className="channels">  

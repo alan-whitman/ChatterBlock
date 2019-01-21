@@ -1,14 +1,43 @@
 .DirectMessage {
+    z-index: -999999;
+    font-size: 15px;
     color: white;
 }
 
 .DirectMessage .header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
     height: 50px;
-    background-color: rgb(35, 35, 35);
+    padding: 0px 10px 0px 10px;
+    background-color: rgb(55, 55, 55);
+}
+
+.DirectMessage .header input.message-filter {
+    margin-left: auto;
+    width: 200px;
+    border-radius: 5px;
+    background-color: rgb(55, 55, 55);
+    outline: none;
+    color: white;
+}
+.DirectMessage .hide-conversation {
+    background-color: rgb(100, 100, 100);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    height: 30px;
+    margin-left: 10px;
+}
+.DirectMessage .hide-conversation:hover {
+    background-color: rgb(120, 120, 120);
+    cursor: pointer;
+}
+
+.DirectMessage .online-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-left: 10px;
 }
 
 .DirectMessage .input-holder {
@@ -30,21 +59,37 @@
 }
 
 .DirectMessage .messages {
-    background: rgb(55, 55, 55);
+    background: rgb(35, 35, 35);
     height: calc(100vh - 100px);
     overflow: auto;
+    padding: 10px;
 }
 
 .DirectMessage .messages div:last-child {
-    border-bottom: none;
     margin-bottom: 0px;
 }
 
 .DirectMessage .user-message {
-    border-bottom: 1px solid lightgrey;
-    padding: 10px 5px 10px 5px;
-    margin-bottom: 10px;
-    display: block;
+    background: rgb(75, 75, 75);
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.DirectMessage .user-message .message-data {
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    padding-bottom: 5px;
+}
+
+.DirectMessage .user-message a {
+    color: white;
+    text-decoration: none;
+}
+
+.DirectMessage .user-message a:hover {
+    color: rgb(185, 185, 185);
 }
 
 .DirectMessage .message-user-info {
@@ -52,59 +97,57 @@
     padding: 3px;
 }
 
-.DirectMessage .message-user-info-image {
-    width: 55px;
-    height: 55px;
+.DirectMessage .time-stamp {
+    margin-left: auto;
 }
 
-.DirectMessage .user-message h6 {
-    text-align: initial;
-    color: tan;
-    font-weight: bold;
+.DirectMessage .message-content {
+    padding-top: 3px;
 }
 
-.DirectMessage .user-message p {
+.DirectMessage .typing-users {
+    color: #fff;
+    font-size: 8px;
+}
+
+.DirectMessage .message-reactions {
+    background-color: rgb(60, 60, 60);
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
+}
+.DirectMessage .message-reactions:hover {
+    cursor: pointer;
+}
+.DirectMessage .messages-below {
+    height: 30px;
+    width: 180px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgb(25, 25, 25);
+    position: fixed;
+    bottom: 50px;
+    left: calc(100vw / 2 - 90px);
+    z-index: 1000;
     color: white;
 }
-
-.DirectMessage .timestamp {
-    font-size: 10px;
-    padding-top: 5px;
-    padding-left: 5px;
+.DirectMessage .mbt-enter {
+    opacity: 0.01;
+    transform: translateY(30px);
 }
-
-.DirectMessage .searchInput {
-    border-radius: 7.5px;
-    margin-right: 10px;
-    padding-left: 7.5px;
-    width: 70%;
+.DirectMessage .mbt-enter.mbt-enter-active {
+    opacity: 1;
+    transform: translateY(0px);
+    transition: all 200ms linear;
 }
-
-.DirectMessage .message-user-image {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    padding-right: 10px;
+.DirectMessage .mbt-leave {
+    opacity: 1;
+    transform: translateY(0px);
 }
-
-.DirectMessage .my-msg h6 {}
-
-.DirectMessage .user-message img {}
-
-.DirectMessage .user-message h6 {
-    padding-top: 0px;
-    font-weight: lighter;
-    width: 92%;
-
-}
-
-.DirectMessage .user-message.their-msg {
-    width: 100%;
-    clear: both;
-}
-
-.DirectMessage .online-indicator {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+.DirectMessage .mbt-leave.mbt-leave-active {
+    opacity: 0.01;
+    transform: translateY(30px);
+    transition: all 200ms linear;
 }
