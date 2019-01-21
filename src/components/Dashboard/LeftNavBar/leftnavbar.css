@@ -9,11 +9,29 @@
 
 .nav-top {
     height: calc(100% - 50px);
+    overflow: scroll;
 }
 
 .NavBar .card-body, .card-header, #headingTwo, #headingOne, #headingThree {
     background: rgb(40, 40, 40);
 } 
+.NavBar .sub {
+    
+}
+.NavBar .sub:hover {
+    cursor: pointer;
+}
+
+.NavBar .channel-list {
+    border: 1px solid white;
+}
+.NavBar .channel-list a {
+    color: white;
+    text-decoration: none;
+}
+.NavBar a:hover {
+    color: white;
+}
 
 #headingTwo, #headingOne, #headingThree {
     padding: 0px;
@@ -35,9 +53,6 @@
     margin-left: -1em;    
 }
 
-.NavBar ul li {
-      margin-left: 20%;
-}
 
 
 .NavBar div.card {
@@ -61,7 +76,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+
 }
 .NavBar .profileAndSettings {
     height: 50px;
@@ -69,25 +84,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+
     
 } 
 
-/* .NavBar .addChannel {
-.NavBar .unSub, .NavBar .sub{
-margin-left:10px;
-float: left;
-cursor: pointer;
-}
-.NavBar .addChannel {
-    display: inline;
-    margin-right: -10%;
-} */
-
-/* .NavBar .addChannelBar {
-    width: 20%;
-    margin-right: 3%;
-} */
 
 .channel-link h4 {
     text-decoration: none;
@@ -96,6 +96,7 @@ cursor: pointer;
     display: block;
     float: left;
 }
+
 .unseen-channel-messages{
     font-size: 16px;
     color: #fff;

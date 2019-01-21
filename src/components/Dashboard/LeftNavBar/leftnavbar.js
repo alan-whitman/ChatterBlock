@@ -99,24 +99,11 @@ class NavBar extends Component {
             channel_description
         }
         this.props.socket.emit('create new channel', newChannel)
-        // axios.post('/api/channel/new', this.state).then(response => {
-        //     this.setState({
-        //         channels: [...this.state.channels, response.data],
-        //         channel_name: "",
-        //         channel_description: ""
-
-        //     })
-        // })
     }
     handleSearch = (val) => {
         this.setState({
             searchInput: val
         })
-    }
-    renderDms() {
-        return this.props.activeDms.map((user, i) =>
-            <li key={i}><Link to={`/dashboard/dm/${user}`}>{user}</Link></li>
-        )
     }
     openModal = (e) => {
         e.preventDefault()
@@ -125,19 +112,24 @@ class NavBar extends Component {
     closeModal = () => {
         this.setState({ open: false })
     }
+    renderDms() {
+        return this.props.activeDms.map((user, i) =>
+            <div key={i} className="dm-list"><Link to={`/dashboard/dm/${user}`}>{user}</Link></div>
+        )
+    }
     renderSubbedChannels() {
         return this.state.channels
             .filter(channel => channel.subbed)
             .sort ((a, b) => a.channel_name < b.channel_name ? -1 : 1)
             .map((channel, i) =>
                 <div key={i} className="channel-list">
+                    <span className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</span>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        <h4 className="channel-name">{channel.channel_name}</h4> 
+                        {channel.channel_name}
                             {channel.count > 0 ? 
                                 <p className="unseen-channel-messages">{channel.count}</p> 
                             : null}
                     </Link>
-                    <div className="unSub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
                 </div>
             )
     }
@@ -147,10 +139,10 @@ class NavBar extends Component {
             .sort ((a, b) => a.channel_name < b.channel_name ? -1 : 1)
             .map((channel, i) => 
                 <div key={i} className="channel-list">
+                    <span className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</span>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        <h4 className="channel-name">{channel.channel_name}</h4>
+                        {channel.channel_name}
                     </Link>
-                    <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
                 </div>
             )
     }
@@ -166,16 +158,14 @@ class NavBar extends Component {
                             <div className="card">
                                 <div className="card-header" id="headingOne">
                                     <h2 className="mb-0">
-                                        <button className="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="">
+                                        <button className="subscribed-channels-header btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="">
                                             Subscribed Channels
                                         </button>
                                     </h2>
                                 </div>
                                 <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div className="card-body">
-                                        <ul className="leftbarUL">
-                                            {this.renderSubbedChannels()}
-                                        </ul>
+                                        {this.renderSubbedChannels()}
                                     </div>
                                 </div>
                             </div> : <div></div>}
@@ -190,9 +180,7 @@ class NavBar extends Component {
                                 </div>
                                 <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                                     <div className="card-body">
-                                        <ul className="leftbarUL">
-                                            {this.renderDms()}
-                                        </ul>
+                                        {this.renderDms()}
                                     </div>
                                 </div>
                             </div> : <div></div>}
@@ -239,9 +227,7 @@ class NavBar extends Component {
                                         </Popup>
                                     </span>
                                     <br /><br />
-                                    <ul className="leftbarUL">
-                                        {this.renderUnsubbedChannels()}
-                                    </ul>
+                                    {this.renderUnsubbedChannels()}
                                 </div>
                             </div>
                         </div>
