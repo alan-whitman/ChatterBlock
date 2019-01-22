@@ -114,7 +114,12 @@
     font-size: 15px;
     margin-left: auto;
 }
-
+.NavBar .channel-list .unseen-messages {
+    text-align: center;
+    float: right;
+    border-left: 1px solid rgb(55, 55, 55);
+    width: 25px;
+}
 
 /* MODAL STUFF */
 
@@ -204,4 +209,19 @@
 .NavBar .list-leave.list-leave-active {
     transform: translateX(-200px);
     transition: all 200ms linear;
+}
+
+.NavBar .um-enter {
+    opacity: 0;
+}
+.NavBar .um-enter.um-enter-active {
+    opacity: 1;
+    transition: all 200ms ease-in;
+}
+.NavBar .um-leave {
+    opacity: 1;
+}
+.NavBar .um-leave.um-leave-active {
+    opacity: 0;
+    transition: all 200ms ease-in;
 }

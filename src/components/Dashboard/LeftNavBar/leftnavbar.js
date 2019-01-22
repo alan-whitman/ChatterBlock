@@ -62,6 +62,12 @@ class NavBar extends Component {
             channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1);
             this.setState({channels});
         });
+        this.props.socket.on('new message in subbed channel', channelName => {
+            let subbedChannels = [...this.state.subbedChannels];
+            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === channelName);
+            subbedChannels[channelIndex].unseenMessages++;
+            this.setState({subbedChannels});
+        });
     }
 
     componentDidMount() {
@@ -74,7 +80,8 @@ class NavBar extends Component {
                     channel_description: channel.channel_description,
                     last_view_time: channel.last_view_time,
                     creator_id: channel.creator_id,
-                    user_id: channel.user_id
+                    user_id: channel.user_id,
+                    unseenMessages: 0
                     // subbed: channel.user_id ? true : false
                 }
             });
@@ -88,6 +95,16 @@ class NavBar extends Component {
             this.props.populateActiveDms(response.data);
         }).catch(err => console.error(err));
     }
+    componentDidUpdate(prevProps) {
+        if (prevProps.channelToClear !== this.props.channelToClear) {
+            let subbedChannels = [...this.state.subbedChannels];
+            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === this.props.channelToClear);
+            if (channelIndex !== -1) {
+                subbedChannels[channelIndex].unseenMessages = 0;
+                this.setState({subbedChannels});
+            }
+        }
+    } 
     handleChannel = (val) => {
         this.setState({
             channel_name: val
@@ -144,9 +161,15 @@ class NavBar extends Component {
                     <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
                         {channel.channel_name}
-                            {channel.count > 0 ? 
-                                <p className="unseen-channel-messages">{channel.count}</p> 
+                        <Transition
+                            transitionName="um"
+                            transitionEnterTimeout={200}
+                            transitionLeaveTimeout={200}
+                        >
+                            {channel.unseenMessages > 0 ? 
+                                <div className="unseen-messages">{channel.unseenMessages}</div>
                             : null}
+                        </Transition>
                     </Link>
                 </div>
             )

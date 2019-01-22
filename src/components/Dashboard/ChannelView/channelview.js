@@ -30,6 +30,7 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
+            console.log('receiving initial response...');
             let messageReactions = {}
             initialResponse.existingMessageReactions.forEach(reaction => {
                 if (!messageReactions[reaction.channel_message_id])
@@ -49,6 +50,7 @@ class ChannelView extends Component {
                 channelName: initialResponse.channelName, 
                 noSuchChannel: false 
             }, this.forceScrollDown);
+            this.props.clearUnseenMessages(initialResponse.channelName);
         });
         this.props.socket.on('new message', newMessage => {
             let messages = [...this.state.messages];

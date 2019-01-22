@@ -1,7 +1,7 @@
 module.exports = {
-    async joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName) {
+    async joinChannel(db, io, socket, clientLookupDictionary, channelName) {
         try {
-            let response = await db.channels.getChannelIdByName(channelName);
+            let response = await db.channels.getChannelIdByUrl(channelName);
             if (!response[0])
                 return socket.emit('no such channel');
             let initialChannelResponse = {};
@@ -62,7 +62,7 @@ module.exports = {
             console.log(err);
         }
     },
-    async createMessage(db, socket, io, message) {
+    async createMessage(db, socket, io, connectedUsers, message) {
         try {
             if (!socket.request.session.user)
                 return socket.emit('send user feedback', 'You must be logged in to send channel messages.');
@@ -75,6 +75,16 @@ module.exports = {
             delete newMessage.channel_id;
             newMessage.username = myUsername;
             io.in(currentRoom).emit('new message', newMessage);
+            // alert subscribers not in channel that there's a new message
+            const channelSubscribers = await db.channels.getChannelSubscribersByUrl(currentRoom);
+            if (!channelSubscribers[0])
+                return;
+            io.in(channelSubscribers[0].channel_url).clients((err, clients) => {
+                channelSubscribers.forEach(subscriber => {
+                    if (clients.indexOf(connectedUsers[subscriber.user_id]) === -1 && subscriber.user_id !== myId)
+                        io.to(connectedUsers[subscriber.user_id]).emit('new message in subbed channel', subscriber.channel_name);
+                });
+            });
         } catch(err) {
             console.log(err);
         }
