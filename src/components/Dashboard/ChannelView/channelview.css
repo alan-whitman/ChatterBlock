@@ -93,12 +93,14 @@
 }
 .ChannelView .message-reactions {
     background-color: rgb(60, 60, 60);
+    background-color:royalblue;
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 14px;
     display: inline-block;
+    margin:1px;
 }
-.ChannelView .message-reactions:hover {
+.ChannelView .message-reactions:hover ,.ChannelView .message-reaction-option:hover{
     cursor: pointer;
 }
 
@@ -132,4 +134,35 @@
     opacity: 0.01;
     transform: translateY(30px);
     transition: all 200ms linear;
+}
+
+.ChannelView .reaction-options{
+    width: 130px;
+    position: absolute;
+    z-index: 1;
+    background-color:rgb(40, 40, 40);
+    border-radius: 5px;
+}
+.ChannelView .message-reaction-option {
+    background-color: rgb(60, 60, 60);
+    background-color:red;
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: inline-block;
+    margin:2px;
+}
+.ChannelView .toggleReactions{
+    float:left;
+    background-color: rgb(60, 60, 60);
+    background-color:red;
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: inline-block;
+    margin:1px;
+}
+.ChannelView .userReactions {
+    margin-left: 25px;
+    min-height: 28px;
 }
