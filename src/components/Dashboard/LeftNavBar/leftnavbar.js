@@ -169,7 +169,6 @@ class NavBar extends Component {
         this.setState({[menuName]: !this.state[menuName]})
     }
     hideConversation(user) {
-        console.log(user);
         let activeDms = [...this.props.activeDms];
         activeDms = activeDms.filter(username => username.username !== user.username);
         this.props.populateActiveDms(activeDms);
