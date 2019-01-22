@@ -65,7 +65,7 @@ module.exports = {
     async createMessage(db, socket, io, message) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to send channel messages.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const { currentRoom } = socket.request.session;
             const timestamp = Date.now();
@@ -106,7 +106,7 @@ module.exports = {
     async subscribeToChannel(db, socket, io, channelId) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to subscribe to channels.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const timeStamp = Date.now();
             const response = await db.channels.subAndGetName(channelId, myId, timeStamp);
@@ -139,7 +139,7 @@ module.exports = {
     async createNewChannel(db, socket, io, newChannel) {
         try {
             if (!socket.request.session.user)
-                return socket.emit('channel creation error', 'Please register or log into create channels.');
+                return socket.emit('channel creation error', 'Please register or log in to create channels.');
             const { id: creator_id } = socket.request.session.user;
             const { channel_name, channel_description } = newChannel;
             const reg = /[^a-zA-Z0-9\_\ \|]+/;
@@ -163,7 +163,7 @@ module.exports = {
     async reactToMessage(db, socket, io, messageId, channelId, reactionName) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to react to messages.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const existingReaction = await db.channels.getExistingUserReaction(messageId, myId, reactionName);
             if (!existingReaction[0])

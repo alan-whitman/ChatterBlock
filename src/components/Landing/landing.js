@@ -63,7 +63,7 @@ class Landing extends Component {
             <div>
                 {this.props.isAuthenticated ? <Redirect to="/dashboard" /> : <div>
                 <header className="landingHeader">
-                    <h1>Logo Here</h1>
+                    <h1>ChatterBlock</h1>
                     <section className="LoginBar">
                         <h1>Login: </h1>
                         <input className="loginInputs" name="loginEmail" type="text" placeholder="Email" value={this.state.loginEmail} onChange={this.handleChange} />
@@ -73,7 +73,6 @@ class Landing extends Component {
                 </header>
 
                 <div className="landingBody">
-                    <h2>Title Here</h2>
                     <div className="sideways">
                         <div className="registrationForm">
                             <h2>Registration</h2>
@@ -88,9 +87,10 @@ class Landing extends Component {
                         <div className="divider"/>
 
                         <div className="whyRegister">
-                            <p>
-                                You should register because...
-                            </p>
+                            <p>Regisering will allow you to...</p>
+                            <p>Post into channels and create your own!<br />
+                            Send and receive direct messages!<br />
+                            Keep tabs on your friends!</p>
                             <Link to="/dashboard"><h1>Continue as Guest</h1></Link>
                         </div>
                     </div>

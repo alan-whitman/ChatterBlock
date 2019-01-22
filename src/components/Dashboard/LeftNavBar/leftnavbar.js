@@ -40,7 +40,7 @@ class NavBar extends Component {
             let { channels, subbedChannels } = this.state;
             const channelIndex = channels.findIndex(channel => channel.id === channelId);
             subbedChannels.push(channels[channelIndex]);
-            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            subbedChannels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             channels = channels.filter(channel => channel.id !== channelId)
             this.setState({channels, subbedChannels});
         });
@@ -48,7 +48,7 @@ class NavBar extends Component {
             let { channels, subbedChannels } = this.state;
             const channelIndex = subbedChannels.findIndex(channel => channel.id === channelId);
             channels.push(subbedChannels[channelIndex]);
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             subbedChannels = subbedChannels.filter(channel => channel.id !== channelId);
             this.setState({channels, subbedChannels});
         });
@@ -59,7 +59,7 @@ class NavBar extends Component {
             let { channels } = this.state;
             newChannel.subbed = false;
             channels.push(newChannel);
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1);
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1);
             this.setState({channels});
         });
     }
@@ -80,8 +80,8 @@ class NavBar extends Component {
             });
             let subbedChannels = channels.filter(channel => channel.user_id);
             channels = channels.filter(channel => !channel.user_id);
-            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            subbedChannels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             this.setState({channels, subbedChannels});
         }).catch(err => console.error(err));
         axios.get('/api/dm/getActiveDms').then(response => {
@@ -129,7 +129,7 @@ class NavBar extends Component {
         if (this.props.activeDms.length === 0)
             return <div className="channel-list">No Active Conversations</div>
         return this.props.activeDms.map((user, i) =>
-            <div key={i} className="channel-list">
+            <div key={user.username} className="channel-list">
                 <div className="sub" onClick={e => this.hideConversation(user)}>-</div>
                 <Link to={`/dashboard/dm/${user.username}`}>{user.username}</Link>
             </div>

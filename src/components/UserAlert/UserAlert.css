@@ -1,5 +1,6 @@
 .UserAlert {
     position: fixed;
+    z-index: 1000;
     top: 5px;
     left: calc(100vw / 2 - 160px);
 }
@@ -18,7 +19,7 @@
 
 .ua-enter {
     transform: translateY(-60px);
-    visibility: initial; 
+    visibility: initial;
 }
 .ua-enter.ua-enter-active {
     transform: translateY(0px);
