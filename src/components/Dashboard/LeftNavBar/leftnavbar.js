@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
 import { connect } from 'react-redux';
-import { userLoggedOut, populateActiveDms } from '../../../redux/reducer';
+import { userLoggedOut, populateActiveDms, createAlertMessage } from '../../../redux/reducer';
 import axios from 'axios';
 import Popup from 'reactjs-popup'
 import Transition from 'react-addons-css-transition-group';
@@ -53,7 +53,7 @@ class NavBar extends Component {
             this.setState({channels, subbedChannels});
         });
         this.props.socket.on('channel creation error', error => {
-            console.log(error);
+            this.props.createAlertMessage(error)
         });
         this.props.socket.on('new channel created', newChannel => {
             let { channels } = this.state;
@@ -105,7 +105,6 @@ class NavBar extends Component {
         this.props.socket.emit('unsubscribe from channel', channelId);
     }
     handleAddChannel = (e) => {
-        console.log(e);
         const { channel_name, channel_description } = this.state;
         if (!channel_name.trim())
             return;
@@ -306,4 +305,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, { userLoggedOut, populateActiveDms })(NavBar);
+export default connect(mapStateToProps, { userLoggedOut, populateActiveDms, createAlertMessage })(NavBar);

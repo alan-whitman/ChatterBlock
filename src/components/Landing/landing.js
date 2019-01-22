@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userLoggedIn } from '../../redux/reducer';
+import { userLoggedIn, createAlertMessage } from '../../redux/reducer';
 import './landing.css';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 class Landing extends Component {
     constructor(){
         super()
-
         this.state ={
             loginEmail: '',
             loginPassword: '',
@@ -33,7 +30,10 @@ class Landing extends Component {
         if (this.state.registerPassword === this.state.confirmPassword) {
             axios.post('/auth/login', this.state).then(response => {
                 this.props.userLoggedIn(response.data)
-            })
+            }).catch(err => {
+                if (typeof err.response.data === 'string')
+                    this.props.createAlertMessage(err.response.data);
+            });
         }
     }
     
@@ -41,9 +41,11 @@ class Landing extends Component {
         axios.post('/auth/register', this.state).then(response => {
             let user = response.data
             this.props.userLoggedIn(user)
-
-        })
-    }
+        }).catch(err => {
+            if (typeof err.response.data === 'string')
+                this.props.createAlertMessage(err.response.data);
+        });
+}
     
     handleKeyUpL = (e) => {
         if(e.keyCode === 13){
@@ -55,10 +57,7 @@ class Landing extends Component {
         if(e.keyCode === 13){
             this.handleRegister()
         }
-    }
-
-    notify = () => toast("Wow so easy!");
-    
+    }    
     render(){
         return (
             <div>
@@ -109,4 +108,4 @@ function mapStateToProps(state) {
     }
   }
   
-export default connect(mapStateToProps, { userLoggedIn })(Landing)
+export default connect(mapStateToProps, { userLoggedIn, createAlertMessage })(Landing)

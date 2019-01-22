@@ -49,15 +49,15 @@ module.exports = {
             const response = await db.getUserByUsername(username);
             const requestee = response[0];
             if (!requestee)
-                return socket.emit('confirm friend request', 'user not found');
+                return socket.emit('confirm friend request', 'User not found.');
             if (requestee.id === myId)
-                return socket.emit('confirm friend request', 'you can\'t be friends with yourself');
+                return socket.emit('confirm friend request', 'You can\'t be friends with yourself.');
             const existingFriendRelationship = await db.friends.getFriendRelationship([myId, requestee.id]);
             if (existingFriendRelationship[0])
-                return socket.emit('confirm friend request', 'friend relationship already exists');
+                return socket.emit('confirm friend request', username + ' is already your friend.');
             const existingRequest = await db.friends.getFriendRequestById([myId, requestee.id]);
             if (existingRequest[0])
-                return socket.emit('confirm friend request', 'friend request already exists');
+                return socket.emit('confirm friend request', 'You\'ve already sent a friend request to ' + username );
             await db.friends.createFriendRequest([myId, requestee.id]);
             if (connectedUsers[requestee.id])
                 io.to(connectedUsers[requestee.id]).emit('new friend request', {username: myUsername, id: myId});

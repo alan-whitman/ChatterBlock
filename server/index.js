@@ -35,8 +35,6 @@ const sessionMiddleware = session({
     saveUninitialized: false
 });
 
-// io.use(sharedSession(sessionMiddleware), {autoSave: true})
-
 app.use(sessionMiddleware);
 
 
