@@ -14,7 +14,6 @@ class Profile extends Component {
     }
     componentDidMount(){
         this.getUser();
-        this.setState({prevProps: this.props.match.params});
     }
     componentDidUpdate(prevProps){
         if(prevProps.match.params.id !== this.props.match.params.id){
