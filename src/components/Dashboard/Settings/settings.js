@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { userLoggedOut, userEdit } from '../../../redux/reducer';
+import { userLoggedOut, userEdit, createAlertMessage } from '../../../redux/reducer';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import './settings.css';
@@ -39,6 +39,7 @@ class Settings extends Component {
     handleClickUpdate = () => {
         axios.put(`/auth/update/${this.props.user.user.id}`, this.state).then(response => {
             this.props.userEdit(response.data)
+            this.props.createAlertMessage('Settings Saved');
         })
     }
 
@@ -84,4 +85,4 @@ function mapStateToProps(state) {
     }
   }
   
-export default connect(mapStateToProps, { userLoggedOut, userEdit })(Settings);
+export default connect(mapStateToProps, { userLoggedOut, userEdit, createAlertMessage })(Settings);
