@@ -122,8 +122,24 @@ module.exports = {
             const { username, email, user_image, about_text } = req.body
             // console.log(id, username, email, user_image, about_text)
             let updateUser = await db.updateUser({ id, username, email, user_image, about_text })
+
+            req.session.user = updateUser[0]
+
+            //SUBBED CHANNELS
+            let userSubChannels = await db.getAllSubscibedChannels(req.session.user.id)
+            //FRIENDS
+            let userFriends = await db.getUserFriends(req.session.user.id)
+
             // console.log(99999999,updateUser)
-            res.status(200).send(updateUser[0])
+            function buildJSON(userData, userSubChannels, userFriends) {
+                let obj = {}
+                obj.user = userData;
+                obj.userSubChannels = userSubChannels;
+                obj.userFriends = userFriends;
+                res.status(200).send(obj)
+            }
+
+            buildJSON(updateUser[0], userSubChannels, userFriends)
 
         } catch (error) {
             console.log('error updating account:', error)
