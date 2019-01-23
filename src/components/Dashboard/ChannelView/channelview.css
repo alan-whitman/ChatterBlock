@@ -51,7 +51,7 @@
     overflow: auto;
     padding: 10px 10px 0px 10px;
     position: relative;
-    scroll-behavior: 
+    scroll-behavior: smooth;
 }
 .ChannelView .messages div:last-child {
     margin-bottom: 0px;
