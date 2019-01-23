@@ -1,7 +1,7 @@
 module.exports = {
-    async joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName) {
+    async joinChannel(db, io, socket, clientLookupDictionary, channelName) {
         try {
-            let response = await db.channels.getChannelIdByName(channelName);
+            let response = await db.channels.getChannelIdByUrl(channelName);
             if (!response[0])
                 return socket.emit('no such channel');
             let initialChannelResponse = {};
@@ -62,10 +62,10 @@ module.exports = {
             console.log(err);
         }
     },
-    async createMessage(db, socket, io, message) {
+    async createMessage(db, socket, io, connectedUsers, message) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to send channel messages.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const { currentRoom } = socket.request.session;
             const timestamp = Date.now();
@@ -75,6 +75,16 @@ module.exports = {
             delete newMessage.channel_id;
             newMessage.username = myUsername;
             io.in(currentRoom).emit('new message', newMessage);
+            // alert subscribers not in channel that there's a new message
+            const channelSubscribers = await db.channels.getChannelSubscribersByUrl(currentRoom);
+            if (!channelSubscribers[0])
+                return;
+            io.in(channelSubscribers[0].channel_url).clients((err, clients) => {
+                channelSubscribers.forEach(subscriber => {
+                    if (clients.indexOf(connectedUsers[subscriber.user_id]) === -1 && subscriber.user_id !== myId)
+                        io.to(connectedUsers[subscriber.user_id]).emit('new message in subbed channel', subscriber.channel_name);
+                });
+            });
         } catch(err) {
             console.log(err);
         }
@@ -106,7 +116,7 @@ module.exports = {
     async subscribeToChannel(db, socket, io, channelId) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to subscribe to channels.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const timeStamp = Date.now();
             const response = await db.channels.subAndGetName(channelId, myId, timeStamp);
@@ -139,19 +149,19 @@ module.exports = {
     async createNewChannel(db, socket, io, newChannel) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('channel creation error', 'Please register or log in to create channels.');
             const { id: creator_id } = socket.request.session.user;
             const { channel_name, channel_description } = newChannel;
             const reg = /[^a-zA-Z0-9\_\ \|]+/;
             if (reg.test(channel_name)) {
-                return socket.emit('channel creation error', 'Channel name must have only alphanumeric characters and spaces');
+                return socket.emit('channel creation error', 'Channel names must have only alphanumeric characters, spaces, and underscores.');
             }
             const channel_url = channel_name.toLowerCase().replace(/ /g, '_');
             if (channel_name.length < 4 || channel_name.length > 20)
                 return socket.emit('channel creation error', 'Channel names must be between 4 and 20 characters in length');
             let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
             if (channelResponse[0])
-                return socket.emit('channel creation error', 'Channel name or channel url already in use');
+                return socket.emit('channel creation error', 'That channel name or its corresponding url is already in use');
             // console.log('channel passed valication checks');
             let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
             newChannel = response[0];
@@ -163,7 +173,7 @@ module.exports = {
     async reactToMessage(db, socket, io, messageId, channelId, reactionName) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to react to messages.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const existingReaction = await db.channels.getExistingUserReaction(messageId, myId, reactionName);
             if (!existingReaction[0])
