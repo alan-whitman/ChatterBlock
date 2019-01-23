@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './recent.css';
+import { createAlertMessage } from '../../../redux/reducer';
 
 class Recent extends Component {
     render(){
@@ -11,4 +13,4 @@ class Recent extends Component {
     }
 }
 
-export default Recent;
+export default connect(null, { createAlertMessage })(Recent);

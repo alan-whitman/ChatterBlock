@@ -35,8 +35,6 @@ const sessionMiddleware = session({
     saveUninitialized: false
 });
 
-// io.use(sharedSession(sessionMiddleware), {autoSave: true})
-
 app.use(sessionMiddleware);
 
 
@@ -132,9 +130,9 @@ io.on('connection', socket => {
     socket.on('delete friend', friend => sfc.deleteFriend(db, io, socket, connectedUsers, friend));
 
     // channel listeners
-    socket.on('join channel', channelName => scc.joinChannel(db, io, socket, connectedUsers, clientLookupDictionary, channelName));
+    socket.on('join channel', channelName => scc.joinChannel(db, io, socket, clientLookupDictionary, channelName));
     socket.on('leave channel', () => scc.leaveChannel(socket));
-    socket.on('create message', message => scc.createMessage(db, socket, io, message));
+    socket.on('create message', message => scc.createMessage(db, socket, io, connectedUsers, message));
     socket.on('subscribe to channel', channelId => scc.subscribeToChannel(db, socket, io, channelId));
     socket.on('unsubscribe from channel', channelId => scc.unsubscribeFromChannel(db, socket, io, channelId));
     socket.on('create new channel', newChannel => scc.createNewChannel(db, socket, io, newChannel));

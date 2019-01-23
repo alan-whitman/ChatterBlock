@@ -53,7 +53,7 @@ class DirectMessage extends Component {
     }
     hideConversation() {
         let activeDms = [...this.props.activeDms];
-        activeDms = activeDms.filter(username => username !== this.props.match.params.username);
+        activeDms = activeDms.filter(user => user.username !== this.props.match.params.username);
         this.props.populateActiveDms(activeDms);
         axios.delete('/api/dm/hideDm/' + this.state.dmPartner.id);
     }
@@ -94,8 +94,8 @@ class DirectMessage extends Component {
                     {friendIndex !== -1 ?
                         <div className="online-indicator" style={{ backgroundColor: indicatorColor }} />
                         : null}
-                    <div>
-                        {this.props.activeDms.indexOf(this.props.match.params.username) !== -1 ?
+                        <div>
+                        {this.props.activeDms.findIndex(user => user.username === this.props.match.params.username) !== -1 ?
                             <button className="hide-conversation" onClick={e => this.hideConversation()}>Hide Conversation</button>
                         : null}
                     </div>

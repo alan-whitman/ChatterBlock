@@ -32,7 +32,7 @@ class FriendsPopup extends Component {
     }
 
     handleMouse = e => {
-        this.setState({ x: e.screenX, y: e.screenY })
+        this.setState({ x: e.clientX, y: e.clientY })
     }
 
     render(){
