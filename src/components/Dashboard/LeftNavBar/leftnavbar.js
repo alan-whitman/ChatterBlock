@@ -159,18 +159,18 @@ class NavBar extends Component {
             .map((channel, i) =>
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
-                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        {channel.channel_name}
+                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">{channel.channel_name}</Link>
+                        
                         <Transition
                             transitionName="um"
                             transitionEnterTimeout={200}
                             transitionLeaveTimeout={200}
+                            component="div"
                         >
                             {channel.unseenMessages > 0 ? 
                                 <div className="unseen-messages">{channel.unseenMessages}</div>
                             : null}
                         </Transition>
-                    </Link>
                 </div>
             )
     }

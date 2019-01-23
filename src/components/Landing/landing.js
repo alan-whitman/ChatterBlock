@@ -87,11 +87,11 @@ class Landing extends Component {
                         <div className="divider"/>
 
                         <div className="whyRegister">
-                            <p>Regisering will allow you to...</p>
-                            <p>Post into channels and create your own!<br />
+                            <p>Registering will allow you to...</p>
+                            <p>Post in channels and create your own!<br />
                             Send and receive direct messages!<br />
                             Keep tabs on your friends!</p>
-                            <Link to="/dashboard"><h1>Continue as Guest</h1></Link>
+                            <Link to="/dashboard">Continue as Guest</Link>
                         </div>
                     </div>
 
