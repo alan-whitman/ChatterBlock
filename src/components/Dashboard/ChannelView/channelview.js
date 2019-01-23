@@ -4,6 +4,7 @@ import Transition from 'react-addons-css-transition-group';
 import InputBar from './InputBar';
 import ChannelViewMessage from './ChannelViewMessage';
 import { populateChannelUsers } from '../../../redux/reducer';
+import reconcileReactions from './reconcileReactions';
 import './channelview.css';
 
 class ChannelView extends Component {
@@ -30,19 +31,8 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
-            console.log('receiving initial response...');
-            let messageReactions = {}
-            initialResponse.existingMessageReactions.forEach(reaction => {
-                if (!messageReactions[reaction.channel_message_id])
-                    messageReactions[reaction.channel_message_id] = {};
-                if (!messageReactions[reaction.channel_message_id][reaction.reaction_name])
-                    messageReactions[reaction.channel_message_id][reaction.reaction_name] = [];
-                messageReactions[reaction.channel_message_id][reaction.reaction_name].push(reaction.username);
-            });
-            initialResponse.existingMessages.forEach(message => {
-                if (messageReactions[message.id])
-                    message.reactions = messageReactions[message.id];
-            });
+
+            initialResponse.existingMessages = reconcileReactions(initialResponse.existingMessageReactions, initialResponse.existingMessages);
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ 
                 messages: initialResponse.existingMessages, 
