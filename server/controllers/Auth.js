@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const toast = require('react-toastify');
 
 module.exports = {
     register: async (req, res) => {

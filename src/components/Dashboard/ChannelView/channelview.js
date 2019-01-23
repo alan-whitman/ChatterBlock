@@ -31,7 +31,6 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
-
             initialResponse.existingMessages = reconcileReactions(initialResponse.existingMessageReactions, initialResponse.existingMessages);
             this.props.populateChannelUsers(initialResponse.users);
             this.setState({ 

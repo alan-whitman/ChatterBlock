@@ -1,4 +1,4 @@
-export default JSONtest = `[
+module.exports = `[
     {
         "content_text": "test message",
         "content_image": null,
