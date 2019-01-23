@@ -38,6 +38,7 @@ class Friends extends Component {
             let { pendingFriends } = this.state;
             pendingFriends.push(requester);
             this.setState({ pendingFriends });
+            this.props.createAlertMessage('New friend request from ' + requester.username + '.');
         });
         this.props.socket.on('send pending requests', pendingRequests => {
             if (pendingRequests !== 'no requests pending')
