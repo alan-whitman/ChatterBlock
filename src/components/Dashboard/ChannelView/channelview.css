@@ -51,7 +51,7 @@
     overflow: auto;
     padding: 10px 10px 0px 10px;
     position: relative;
-    scroll-behavior: 
+    scroll-behavior: smooth;
 }
 .ChannelView .messages div:last-child {
     margin-bottom: 0px;
@@ -98,12 +98,14 @@
 }
 .ChannelView .message-reactions {
     background-color: rgb(60, 60, 60);
+    background-color:royalblue;
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 14px;
     display: inline-block;
+    margin:1px;
 }
-.ChannelView .message-reactions:hover {
+.ChannelView .message-reactions:hover ,.ChannelView .message-reaction-option:hover{
     cursor: pointer;
 }
 
@@ -139,7 +141,36 @@
     transition: all 200ms linear;
 }
 
-
+.ChannelView .reaction-options{
+    width: 130px;
+    position: absolute;
+    z-index: 1;
+    background-color:rgb(40, 40, 40);
+    border-radius: 5px;
+}
+.ChannelView .message-reaction-option {
+    background-color: rgb(60, 60, 60);
+    background-color:red;
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: inline-block;
+    margin:2px;
+}
+.ChannelView .toggleReactions{
+    float:left;
+    background-color: rgb(60, 60, 60);
+    background-color:red;
+    padding: 1px 4px 1px 4px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: inline-block;
+    margin:1px;
+}
+.ChannelView .userReactions {
+    margin-left: 25px;
+    min-height: 28px;
+}
 @keyframes fadeIn {
     from {
         opacity: 0;
