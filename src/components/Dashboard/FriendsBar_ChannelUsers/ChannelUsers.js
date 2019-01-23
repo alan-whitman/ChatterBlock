@@ -20,8 +20,8 @@ class ChannelUsers extends Component {
     }
     render() {
         return (
-            <div className="ChannelUsers">
-                <h4>Channel Users</h4>
+            <div className="ChannelUsers container">
+                <h4 style={{padding: "5px", borderBottom: "1px solid white", width: "93%"}}>Channel Users</h4>
                 <h6>Online</h6>
                 <ul>
                     {this.renderOnlineUsers()}
