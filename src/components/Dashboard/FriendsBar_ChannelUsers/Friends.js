@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Friends.css';
 import { connect } from 'react-redux';
-import { populateFriends } from '../../../redux/reducer';
+import { populateFriends, createAlertMessage } from '../../../redux/reducer';
 import FriendsPopup from './popup';
 import Popup from 'reactjs-popup';
 
@@ -32,12 +32,13 @@ class Friends extends Component {
             this.props.populateFriends(updatedFriends);
         });
         this.props.socket.on('confirm friend request', confirmation => {
-            console.log(confirmation);
+            this.props.createAlertMessage(confirmation);
         });
         this.props.socket.on('new friend request', requester => {
             let { pendingFriends } = this.state;
             pendingFriends.push(requester);
             this.setState({ pendingFriends });
+            this.props.createAlertMessage('New friend request from ' + requester.username + '.');
         });
         this.props.socket.on('send pending requests', pendingRequests => {
             if (pendingRequests !== 'no requests pending')
@@ -70,7 +71,7 @@ class Friends extends Component {
     }
     requestFriend() {
         if (this.props.friends.findIndex(friend => friend.username === this.state.requestedFriend) !== -1)
-            return console.log(`${this.state.requestedFriend} is already your friend`);
+            return this.props.createAlertMessage(`${this.state.requestedFriend} is already your friend`);
         this.props.socket.emit('request friend', this.state.requestedFriend);
         this.setState({ requestedFriend: '' });
     }
@@ -157,4 +158,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, { populateFriends })(Friends);
+export default connect(mapStateToProps, { populateFriends, createAlertMessage })(Friends);

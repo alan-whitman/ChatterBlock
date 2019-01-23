@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "./leftnavbar.css";
 import { connect } from 'react-redux';
-import { userLoggedOut, populateActiveDms } from '../../../redux/reducer';
+import { userLoggedOut, populateActiveDms, createAlertMessage } from '../../../redux/reducer';
 import axios from 'axios';
 import Popup from 'reactjs-popup'
 import Transition from 'react-addons-css-transition-group';
@@ -40,7 +40,7 @@ class NavBar extends Component {
             let { channels, subbedChannels } = this.state;
             const channelIndex = channels.findIndex(channel => channel.id === channelId);
             subbedChannels.push(channels[channelIndex]);
-            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            subbedChannels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             channels = channels.filter(channel => channel.id !== channelId)
             this.setState({channels, subbedChannels});
         });
@@ -48,19 +48,25 @@ class NavBar extends Component {
             let { channels, subbedChannels } = this.state;
             const channelIndex = subbedChannels.findIndex(channel => channel.id === channelId);
             channels.push(subbedChannels[channelIndex]);
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             subbedChannels = subbedChannels.filter(channel => channel.id !== channelId);
             this.setState({channels, subbedChannels});
         });
         this.props.socket.on('channel creation error', error => {
-            console.log(error);
+            this.props.createAlertMessage(error)
         });
         this.props.socket.on('new channel created', newChannel => {
             let { channels } = this.state;
             newChannel.subbed = false;
             channels.push(newChannel);
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1);
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1);
             this.setState({channels});
+        });
+        this.props.socket.on('new message in subbed channel', channelName => {
+            let subbedChannels = [...this.state.subbedChannels];
+            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === channelName);
+            subbedChannels[channelIndex].unseenMessages++;
+            this.setState({subbedChannels});
         });
     }
 
@@ -74,20 +80,31 @@ class NavBar extends Component {
                     channel_description: channel.channel_description,
                     last_view_time: channel.last_view_time,
                     creator_id: channel.creator_id,
-                    user_id: channel.user_id
+                    user_id: channel.user_id,
+                    unseenMessages: 0
                     // subbed: channel.user_id ? true : false
                 }
             });
             let subbedChannels = channels.filter(channel => channel.user_id);
             channels = channels.filter(channel => !channel.user_id);
-            subbedChannels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
-            channels.sort((a, b) => a.channel_name < b.channel_name ? -1 : 1)
+            subbedChannels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
+            channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             this.setState({channels, subbedChannels});
         }).catch(err => console.error(err));
         axios.get('/api/dm/getActiveDms').then(response => {
             this.props.populateActiveDms(response.data);
         }).catch(err => console.error(err));
     }
+    componentDidUpdate(prevProps) {
+        if (prevProps.channelToClear !== this.props.channelToClear) {
+            let subbedChannels = [...this.state.subbedChannels];
+            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === this.props.channelToClear);
+            if (channelIndex !== -1) {
+                subbedChannels[channelIndex].unseenMessages = 0;
+                this.setState({subbedChannels});
+            }
+        }
+    } 
     handleChannel = (val) => {
         this.setState({
             channel_name: val
@@ -105,7 +122,6 @@ class NavBar extends Component {
         this.props.socket.emit('unsubscribe from channel', channelId);
     }
     handleAddChannel = (e) => {
-        console.log(e);
         const { channel_name, channel_description } = this.state;
         if (!channel_name.trim())
             return;
@@ -130,7 +146,7 @@ class NavBar extends Component {
         if (this.props.activeDms.length === 0)
             return <div className="channel-list">No Active Conversations</div>
         return this.props.activeDms.map((user, i) =>
-            <div key={i} className="channel-list">
+            <div key={user.username} className="channel-list">
                 <div className="sub" onClick={e => this.hideConversation(user)}>-</div>
                 <Link to={`/dashboard/dm/${user.username}`}>{user.username}</Link>
             </div>
@@ -143,12 +159,18 @@ class NavBar extends Component {
             .map((channel, i) =>
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
-                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        {channel.channel_name}
-                            {channel.count > 0 ? 
-                                <p className="unseen-channel-messages">{channel.count}</p> 
+                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">{channel.channel_name}</Link>
+                        
+                        <Transition
+                            transitionName="um"
+                            transitionEnterTimeout={200}
+                            transitionLeaveTimeout={200}
+                            component="div"
+                        >
+                            {channel.unseenMessages > 0 ? 
+                                <div className="unseen-messages">{channel.unseenMessages}</div>
                             : null}
-                    </Link>
+                        </Transition>
                 </div>
             )
     }
@@ -170,7 +192,6 @@ class NavBar extends Component {
         this.setState({[menuName]: !this.state[menuName]})
     }
     hideConversation(user) {
-        console.log(user);
         let activeDms = [...this.props.activeDms];
         activeDms = activeDms.filter(username => username.username !== user.username);
         this.props.populateActiveDms(activeDms);
@@ -306,4 +327,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, { userLoggedOut, populateActiveDms })(NavBar);
+export default connect(mapStateToProps, { userLoggedOut, populateActiveDms, createAlertMessage })(NavBar);

@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userLoggedIn } from '../../redux/reducer';
+import { userLoggedIn, createAlertMessage } from '../../redux/reducer';
 import './landing.css';
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 class Landing extends Component {
     constructor(){
         super()
-
         this.state ={
             loginEmail: '',
             loginPassword: '',
@@ -33,7 +30,10 @@ class Landing extends Component {
         if (this.state.registerPassword === this.state.confirmPassword) {
             axios.post('/auth/login', this.state).then(response => {
                 this.props.userLoggedIn(response.data)
-            })
+            }).catch(err => {
+                if (typeof err.response.data === 'string')
+                    this.props.createAlertMessage(err.response.data);
+            });
         }
     }
     
@@ -41,9 +41,11 @@ class Landing extends Component {
         axios.post('/auth/register', this.state).then(response => {
             let user = response.data
             this.props.userLoggedIn(user)
-
-        })
-    }
+        }).catch(err => {
+            if (typeof err.response.data === 'string')
+                this.props.createAlertMessage(err.response.data);
+        });
+}
     
     handleKeyUpL = (e) => {
         if(e.keyCode === 13){
@@ -55,16 +57,13 @@ class Landing extends Component {
         if(e.keyCode === 13){
             this.handleRegister()
         }
-    }
-
-    notify = () => toast("Wow so easy!");
-    
+    }    
     render(){
         return (
             <div>
                 {this.props.isAuthenticated ? <Redirect to="/dashboard" /> : <div>
                 <header className="landingHeader">
-                    <h1>Logo Here</h1>
+                    <h1>ChatterBlock</h1>
                     <section className="LoginBar">
                         <h1>Login: </h1>
                         <input className="loginInputs" name="loginEmail" type="text" placeholder="Email" value={this.state.loginEmail} onChange={this.handleChange} />
@@ -74,7 +73,6 @@ class Landing extends Component {
                 </header>
 
                 <div className="landingBody">
-                    <h2>ChatterBlock</h2>
                     <div className="sideways">
                         <div className="registrationForm">
                             <h2>Registration</h2>
@@ -89,10 +87,11 @@ class Landing extends Component {
                         <div className="divider"/>
 
                         <div className="whyRegister">
-                            <p>
-                                You should register because...
-                            </p>
-                            <Link to="/dashboard"><h1>Continue as Guest</h1></Link>
+                            <p>Registering will allow you to...</p>
+                            <p>Post in channels and create your own!<br />
+                            Send and receive direct messages!<br />
+                            Keep tabs on your friends!</p>
+                            <Link to="/dashboard">Continue as Guest</Link>
                         </div>
                     </div>
 
@@ -109,4 +108,4 @@ function mapStateToProps(state) {
     }
   }
   
-export default connect(mapStateToProps, { userLoggedIn })(Landing)
+export default connect(mapStateToProps, { userLoggedIn, createAlertMessage })(Landing)

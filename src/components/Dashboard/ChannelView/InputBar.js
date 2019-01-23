@@ -17,7 +17,7 @@ class InputBar extends Component {
             <input
                 className="input-bar"
                 type="text"
-                placeholder={this.props.isAuthenticated ? 'New Message' : 'Please log in or register to send messages'}
+                placeholder={this.props.isAuthenticated ? 'New Message' : 'Please register or log in to send messages'}
                 name="messageInput"
                 value={this.props.isAuthenticated ? this.state.messageInput : ''}
                 onChange={e => this.updateInput(e)}

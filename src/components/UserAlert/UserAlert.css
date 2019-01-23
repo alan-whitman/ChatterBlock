@@ -1,0 +1,36 @@
+.UserAlert {
+    position: fixed;
+    z-index: 1000;
+    top: 5px;
+    left: calc(100vw / 2 - 160px);
+}
+.UserAlert .alert {
+    color: black;
+    width: 380px;
+    border-radius: 5px;
+    background-color: rgb(220, 220, 220);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    min-height: 50px;
+
+}
+
+.ua-enter {
+    transform: translateY(-60px);
+    visibility: initial;
+}
+.ua-enter.ua-enter-active {
+    transform: translateY(0px);
+    transition: all 200ms linear;
+}
+.ua-leave {
+    visibility: initial; 
+    transform: translateY(0px);
+
+}
+.ua-leave.ua-leave-active {
+    transform: translateY(-50px);
+    transition: all 200ms linear;
+}

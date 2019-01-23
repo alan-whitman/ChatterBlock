@@ -23,33 +23,48 @@
     background-color: rgb(65, 65, 65);
     cursor: pointer;
 }
+
+
+.NavBar .channel-list {
+    border-bottom: 1px solid rgb(55, 55, 55);
+    display: flex;
+    flex-wrap: nowrap;
+}
+
 .NavBar .channel-list .sub {
-    display: inline-block;
     border-right: 1px solid rgb(55, 55, 55);
     width: 25px;
     text-align: center;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 .NavBar .channel-list .sub:hover {
     cursor: pointer;
     background-color: rgb(65, 65, 65);
 }
 
-.NavBar .channel-list {
-    border-bottom: 1px solid rgb(55, 55, 55);
-    
-}
 .NavBar .channel-list a {
     padding-left: 3px;
     color: white;
     text-decoration: none;
-    display: inline-block;
-    width: 195px;
+    display: block;
+    width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
 
 }
 .NavBar .channel-list a:hover {
     color: white;
     background-color: rgb(65, 65, 65);
 }
+.NavBar .channel-list .unseen-messages {
+    border-left: 1px solid rgb(55, 55, 55);
+    text-align: center;
+    min-width: 25px;
+}
+
+
+
 
 .NavBar .nav-logo {
     height: 50px;
@@ -114,7 +129,6 @@
     font-size: 15px;
     margin-left: auto;
 }
-
 
 /* MODAL STUFF */
 
@@ -204,4 +218,19 @@
 .NavBar .list-leave.list-leave-active {
     transform: translateX(-200px);
     transition: all 200ms linear;
+}
+
+.NavBar .um-enter {
+    opacity: 0;
+}
+.NavBar .um-enter.um-enter-active {
+    opacity: 1;
+    transition: all 200ms ease-in;
+}
+.NavBar .um-leave {
+    opacity: 1;
+}
+.NavBar .um-leave.um-leave-active {
+    opacity: 0;
+    transition: all 200ms ease-in;
 }

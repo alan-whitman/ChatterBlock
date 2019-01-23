@@ -2,159 +2,128 @@ const bcrypt = require('bcryptjs');
 const toast = require('react-toastify');
 
 module.exports = {
-    register: async (req,res) => {
+    register: async (req, res) => {
         try {
-        const db = req.app.get('db')
-        // console.log('registering user')
-        //get info from req body
-        const {registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text} =req.body
-        // see if email is already in use
-        let userResponse = await db.getUserByEmail(email)
-        //if anything is returned email is already in use
-        if (userResponse[0]) {
-            return res.status(409).send('this email is already registered')
-        }
-        let userName = await db.getUserByUsername(username)
-        
-        //Checking validation for Username
-        let userNameToCheck = username;
-
-        var reg=/[^a-zA-Z0-9\_\|]+/;
-
-            if(reg.test(userNameToCheck)) {
-                console.log("Your Password Cant Have any thing other than a-zA-Z0-9_|");
-                return res.status(408).send("Your Password Cant Have any thing other than a-zA-Z0-9_| - No spaces!");
+            const { registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text } = req.body;
+            var reg = /[^a-zA-Z0-9\_\|]+/;
+            if (reg.test(username)) {
+                return res.status(408).send("Usernames must have only alphanumeric characters and underscores.");
             }
-            let length = username.split('').length
-            if(length < 4 || length > 16){
-                console.log("too short or long")
-                return res.status(409).send("too short or long");
+            if (username.length < 4 || username.length > 16) {
+                return res.status(409).send("Usernames must be between 4 and 16 characters long.");
+            }
+            const db = req.app.get('db')
+             const emailCheck = await db.getUserByEmail(email)
+            if (emailCheck[0])
+                return res.status(409).send('This email address is already registered.')
+            const usernameCheck = await db.getUserByUsername(username)
+            if (usernameCheck[0])
+                return res.status(409).send('That username is taken');
+
+            if (pw.length < 4)
+                return res.status(409).send('Passwords must be at least 4 characters long');
+
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(pw, salt)
+            let response = await db.createUser({ username, email, hash, user_image, about_text })
+            let newUser = response[0]
+            delete newUser.pw
+            req.session.user = newUser
+
+            //SUBBED CHANNELS
+            let userSubChannels = await db.getAllSubscibedChannels(newUser.id)
+            //FRIENDS
+            let userFriends = await db.getUserFriends(newUser.id)
+
+            function buildJSON() {
+                let obj = {}
+                obj.user = newUser;
+                obj.userSubChannels = userSubChannels;
+                obj.userFriends = userFriends;
+                res.status(200).send(obj)
             }
 
-        //if anything is returned username is already in use
-        if (userName[0]) {
-            return res.status(409).send('this username is already registered')
-            console.log('attemping to register with existing username')
-        }
-        // generate salt and apply to password then hash
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(pw, salt)
-        // console.log(hash)
-        //send user info and new hash to the database
-        let response = await db.createUser( {username, email, hash, user_image, about_text} )
-        // database will return the newly created user
-        let newUser = response[0]
-        // remove users hash before saving to session
-        delete newUser.hash
-        // add user info to the session rather than making them log in after registration
-        req.session.user = newUser
-        //send user info back to client
-
-        //SUBBED CHANNELS
-        let userSubChannels = await db.getAllSubscibedChannels(newUser.id)
-        //FRIENDS
-        let userFriends = await db.getUserFriends(newUser.id)
-
-        function buildJSON(userData){
-            let obj = {}
-            obj.user = newUser;
-            obj.userSubChannels = userSubChannels;
-            obj.userFriends = userFriends;
-            res.status(200).send(obj)
-        }
-
-        buildJSON(userResponse,userSubChannels,userFriends)
+            buildJSON()
 
         } catch (error) {
-            
+
             console.log('error registering account:', error)
-            
+
         }
     },
-    login: async (req,res) =>{
+    login: async (req, res) => {
         try {
-            // console.log('attempting to login in user')
-        const db = req.app.get('db')
-        // get info from req body
-        const {loginEmail: email,loginPassword: pw} = req.body
-        // make sure email exists on database
-        let userResponse = await db.getUserByEmail(email)
-        // console.log("userResponse",userResponse)
-        //if email exists user object should be returned
-        let user = userResponse[0]
-        //if not send an error
-        if (!user) {
-            return res.status(401).send('Email not found')
-        }
-        //compare the password entered hashed to the stored hash
-        const isAuthenticated = bcrypt.compareSync(pw,user.pw)
-        // console.log("found user", userResponse)
-        //if hashes don't match send error
-        if(!isAuthenticated) {
-            return res.status(403).send('Password does not match')
-        }
-        // remove user hash before storing to session
-        delete user.pw
-        // console.log(user.pw)
-        req.session.user = user
+            const db = req.app.get('db')
+            const { loginEmail: email, loginPassword: pw } = req.body
+            let userResponse = await db.getUserByEmail(email)
+            let user = userResponse[0]
+            if (!user) {
+                return res.status(401).send('Email not found')
+            }
+            const isAuthenticated = bcrypt.compareSync(pw, user.pw)
+            if (!isAuthenticated) {
+                return res.status(403).send('Incorrect Password')
+            }
+            delete user.pw
+            req.session.user = user
 
-        //SUBBED CHANNELS
-        let userSubChannels = await db.getAllSubscibedChannels(userResponse[0].id)
-        //FRIENDS
-        let userFriends = await db.getUserFriends(userResponse[0].id)
+            //SUBBED CHANNELS
+            let userSubChannels = await db.getAllSubscibedChannels(userResponse[0].id)
+            //FRIENDS
+            let userFriends = await db.getUserFriends(userResponse[0].id)
 
-        function buildJSON(userData){
-            let obj = {}
-            obj.user = userData[0];
-            obj.userSubChannels = userSubChannels;
-            obj.userFriends = userFriends;
-            res.status(200).send(obj)
-        }
+            function buildJSON(userData) {
+                let obj = {}
+                obj.user = userData[0];
+                obj.userSubChannels = userSubChannels;
+                obj.userFriends = userFriends;
+                res.status(200).send(obj)
+            }
 
-        buildJSON(userResponse,userSubChannels,userFriends)
+            buildJSON(userResponse, userSubChannels, userFriends)
 
         } catch (error) {
             console.log('error logging into account:', error)
             res.status(500).send(error)
         }
     },
-    getCurrentUser: async (req,res) => {
+    getCurrentUser: async (req, res) => {
         try {
             const db = req.app.get('db')
             //SUBBED CHANNELS
             let userSubChannels = await db.getAllSubscibedChannels(req.session.user.id)
             //FRIENDS
             let userFriends = await db.getUserFriends(req.session.user.id)
-    
-            function buildJSON(userData,userSubChannels,userFriends){
+
+            function buildJSON(userData, userSubChannels, userFriends) {
                 let obj = {}
-                obj.user =userData;
+                obj.user = userData;
                 obj.userSubChannels = userSubChannels;
                 obj.userFriends = userFriends;
                 res.status(200).send(obj)
             }
-    
-            buildJSON(req.session.user,userSubChannels,userFriends)
-        }catch(error){
+
+            buildJSON(req.session.user, userSubChannels, userFriends)
+        } catch (error) {
 
         }
     },
-    logout: (req,res) =>{
+    logout: (req, res) => {
         // console.log('destorying session')
         req.session.destroy()
         // console.log('session destroyed')
         res.sendStatus(200)
     },
-    update: async (req,res) =>{
+    update: async (req, res) => {
         try {
-        const db = req.app.get('db')
-        // console.log("right here------",req.body)
-        const { id } = req.params
-        const { username, email, user_image, about_text} = req.body
-        // console.log(id, username, email, user_image, about_text)
-        let updateUser = await db.updateUser({id, username, email, user_image, about_text})
-        // console.log(99999999,updateUser)
-        res.status(200).send(updateUser[0])
+            const db = req.app.get('db')
+            // console.log("right here------",req.body)
+            const { id } = req.params
+            const { username, email, user_image, about_text } = req.body
+            // console.log(id, username, email, user_image, about_text)
+            let updateUser = await db.updateUser({ id, username, email, user_image, about_text })
+            // console.log(99999999,updateUser)
+            res.status(200).send(updateUser[0])
 
         } catch (error) {
             console.log('error updating account:', error)

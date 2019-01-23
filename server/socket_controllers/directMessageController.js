@@ -2,7 +2,7 @@ module.exports = {
     async joinDm(db, io, socket, connectedUsers, username) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to send and receive direct messages.');
             if (username === socket.request.session.user.username)
                 return;
             const { id: myId, username: myUsername } = socket.request.session.user;
@@ -28,7 +28,7 @@ module.exports = {
     async sendDm(db, io, socket, message, receiverId, connectedUsers) {
         try {
             if (!socket.request.session.user)
-                return;
+                return socket.emit('send user feedback', 'You must be logged in to send and receive direct messages.');
             const { id: myId, username: myUsername } = socket.request.session.user;
             const newDirectMessage = await db.dm.createDirectMessage(myId, receiverId, message, Date.now());
             newDirectMessage[0].sender = myUsername;
