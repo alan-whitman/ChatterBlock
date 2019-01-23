@@ -97,20 +97,35 @@ class Message extends React.PureComponent {
             ],
             displayReactions: false
         }
+        this.close = this.close.bind(this)
 
     }
 
     showReactionOptions = () => {
+        if(this.state.displayReactions === false){
+            this.setState({
+                displayReactions: !this.state.displayReactions
+            })
+            document.addEventListener('click', this.close)
+            document.addEventListener('contextmenu', this.close)
+        } else {
+            this.close()
+        }
+    }
+
+    close ()  {
         this.setState({
             displayReactions: !this.state.displayReactions
         })
+        document.removeEventListener('click', this.close)
+        document.removeEventListener('contextmenu', this.close)
     }
 
     render() {
         let reactionOptions = this.state.reactionOptions.map((reaction,i) =>{
-            return <div className="message-reaction-option" key={i}>
+            return <div className="message-reaction-option" key={i} onClick={() => {this.props.likeMessage(this.props.message.id, reaction.value);this.showReactionOptions()}}>
             <span>
-                <i className={reaction.class} value={reaction.value} onClick={() => {this.props.likeMessage(this.props.message.id, reaction.value);this.showReactionOptions()}}>
+                <i className={reaction.class} value={reaction.value}>
                 </i>
                 </span>
             </div>
