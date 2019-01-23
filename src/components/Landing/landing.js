@@ -74,7 +74,7 @@ class Landing extends Component {
                 </header>
 
                 <div className="landingBody">
-                    <h2>Title Here</h2>
+                    <h2>ChatterBlock</h2>
                     <div className="sideways">
                         <div className="registrationForm">
                             <h2>Registration</h2>

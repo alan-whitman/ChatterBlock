@@ -32,6 +32,7 @@ module.exports = {
             const { id: myId, username: myUsername } = socket.request.session.user;
             const newDirectMessage = await db.dm.createDirectMessage(myId, receiverId, message, Date.now());
             newDirectMessage[0].sender = myUsername;
+            newDirectMessage[0].id = myId;
             socket.emit('new direct message', newDirectMessage[0])
             if (connectedUsers[receiverId])
                 io.to(connectedUsers[receiverId]).emit('new direct message', newDirectMessage[0]);

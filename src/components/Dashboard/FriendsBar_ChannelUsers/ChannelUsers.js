@@ -21,13 +21,13 @@ class ChannelUsers extends Component {
     render() {
         return (
             <div className="ChannelUsers container">
-                <h4 style={{}}>Channel Users</h4>
+                <h4 style={{padding: "5px", borderBottom: "1px solid white", width: "93%"}}>Channel Users</h4>
                 <h6>Online</h6>
                 <ul>
                     {this.renderOnlineUsers()}
                 </ul>
                 <h6>Offline Subscribers</h6>
-                <ul className="offline-channel-subscribers">
+                <ul>
                     {this.renderOfflineUsers()}
                 </ul>
             </div>
