@@ -245,10 +245,11 @@ class ChannelView extends Component {
             this.props.socket.emit('create message', message);
         }
     }
-    likeMessage(messageId) {
+    likeMessage(messageId,val) {
+        console.log(messageId, val)
         if (!this.props.user)
             return;
-        this.props.socket.emit('react to message', messageId, this.state.channelId, 'like');
+        this.props.socket.emit('react to message', messageId, this.state.channelId, val);
     }
 
     /*
@@ -286,17 +287,30 @@ class ChannelView extends Component {
             let messageRef = '';
             if (i === messages.length - 1)
                 messageRef = this.lastMessageRef;
+            // console.log(message.reactions);
+            // debugger;
+            let messageReactionKey = 0;
+            if (message.reactions) {
+                for (let key in message.reactions) {
+                    if (message.reactions[key])
+                        messageReactionKey += message.reactions[key].length;
+                }
+            }
+
             return (
                 <ChannelViewMessage
                     message={message}
                     messageRef={messageRef}
                     likeMessage={this.likeMessage}
                     key={i}
-                    likes={message.reactions ? message.reactions.like ? message.reactions.like.length : 0 : 0}
+                    messageReactionKey={messageReactionKey}
+                    // likes={message.reactions ? message.reactions.like ? message.reactions.like.length : 0 : 0 }
+
                 />
             )
         });
     }
+    
     render() {
         const componentLoadingStyles = this.state.initialLoadComplete ? { animationName: 'fadeIn' } : { opacity: 0 };
         const messagesLoadingStyles = this.state.initialLoadComplete ? { scrollBehavior: 'smooth' } : { scrollBehavior: 'initial' }
