@@ -22,7 +22,7 @@ class Recent extends Component {
         return (
             <div className="Recent">
                 <h1 style={{color: 'white'}}>Recent stuff</h1>
-                <button onClick={() => this.props.createAlertMessage('test')}>click</button>
+                {/* <button onClick={() => this.props.createAlertMessage('test')}>click</button> */}
 
             </div>
         )

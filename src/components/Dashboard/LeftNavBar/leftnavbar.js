@@ -186,7 +186,9 @@ class NavBar extends Component {
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        {channel.channel_name}
+                        <div className="channel-name">
+                            {channel.channel_name}
+                        </div>
                     </Link>
                 </div>
             )

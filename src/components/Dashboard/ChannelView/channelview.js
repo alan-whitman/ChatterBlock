@@ -306,7 +306,7 @@ class ChannelView extends Component {
         return (
             <div className="ChannelView" style={componentLoadingStyles}>
                 <div className="header">
-                    <h2>#{this.state.noSuchChannel ? 'Channel Does\'t Exist' : this.state.channelName}</h2>
+                    <h2 className="channel-name">#{this.state.noSuchChannel ? 'Channel Does\'t Exist' : this.state.channelName}</h2>
                     <input
                         type="text"
                         name="messageFilter"

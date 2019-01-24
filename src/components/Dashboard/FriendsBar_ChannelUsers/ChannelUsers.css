@@ -1,0 +1,30 @@
+.ChannelUsers .channel-users-title {
+    font-size: 22px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+.ChannelUsers .channel-users-header {
+    font-size: 22px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    background-color: rgb(55, 55, 55);
+}
+
+.ChannelUsers .channel-user {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgb(55, 55, 55);
+}
+
+.ChannelUsers .channel-user>div.clickable {
+    padding: 3px;
+    width: 100%;
+}
+
+.ChannelUsers .channel-user:hover {
+    background-color: rgb(65, 65, 65);
+    cursor: pointer;
+}

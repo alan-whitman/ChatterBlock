@@ -86,22 +86,18 @@ class Friends extends Component {
             .filter(friend => friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) =>
-                <li key={i}>
-                    <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
-                </li>
+                <FriendsPopup friend={friend} socket={this.props.socket} {...this.props} key={friend.username} />
             );
         const offlineFriends = this.props.friends
             .filter(friend => !friend.online)
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) =>
-                <li key={i}>
-                    <FriendsPopup friend={friend} socket={this.props.socket} {...this.props}/>
-                </li>
+                <FriendsPopup friend={friend} socket={this.props.socket} {...this.props} key={friend.username} />
             );
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) =>
-                <li style={{width: '100%'}} key={i}>
+                <li key={i}>
                     {friend.username}
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
                         <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
@@ -111,31 +107,31 @@ class Friends extends Component {
             );
         return (
             <div>
-                <div style={{fontWeight: 'bold', display: 'flex', justifyContent: 'space-between', paddingRight: '20px'}}>
-                    <h3 style={{fontWeight: 'bold'}}>Pending</h3> 
-                    <Popup trigger={<i className="fas fa-plus"></i>} position="bottom right">
-                        <input 
-                            type="text"
-                            name="requestedFriend"
-                            placeholder="add friend" 
-                            value={this.state.requestedFriend}  
-                            onChange={e => this.updateInput(e)}
-                            onKeyPress={e => {if (e.key === "Enter") this.requestFriend()}}
-                        />
-                    </Popup>
-                </div>
-                <ul className="pending-friends">
-                    {pendingFriends}
-                </ul>
-                <h4 style={{letterSpacing: "3px",paddingBottom: "10px", borderBottom: "1px solid lightgrey", textAlign: "center", width: "70%"}}>My Friends</h4>
-                <div style={{fontWeight: 'bold'}}>Online</div>
-                <ul className="online-friends" style={{marginBottom: 10}}>
-                    {onlineFriends}
-                </ul>
-                <div style={{ fontWeight: 'bold' }}>Offline</div>
-                <ul className="offline-friends" style={{ marginBottom: 10 }}>
-                    {offlineFriends}
-                </ul>
+                <Popup trigger={<i className="add-friend fas fa-plus"></i>} position="bottom right">
+                    <input 
+                        type="text"
+                        name="requestedFriend"
+                        placeholder="add friend" 
+                        value={this.state.requestedFriend}  
+                        onChange={e => this.updateInput(e)}
+                        onKeyPress={e => {if (e.key === "Enter") this.requestFriend()}}
+                    />
+                </Popup>
+                <div className="friends-title">Friends</div>
+                {pendingFriends.length > 0 ?
+                    <div>
+                        <div className="friends-header">
+                            Pending Requests
+                        </div>
+                        <ul className="pending-friends">
+                            {pendingFriends}
+                        </ul>
+                    </div>
+                : null}
+                <div className="friends-header">Online</div>
+                {onlineFriends}
+                <div className="friends-header">Offline</div>
+                {offlineFriends}
             </div>
         )
     }

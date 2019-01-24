@@ -4,21 +4,26 @@
     color: white;
     animation-duration: 0.3s;
     animation-delay: 0s;
-    animation-direction: normal; 
+    animation-direction: normal;
     animation-iteration-count: 1;
 }
-
 
 .ChannelView .header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: 50px;
     padding: 0px 10px 0px 10px;
     background-color: rgb(55, 55, 55);
 }
 
-.ChannelView .header input.message-filter  {
-    margin-left: auto;
+.ChannelView .header .channel-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ChannelView .header input.message-filter {
     width: 200px;
     border-radius: 5px;
     background-color: rgb(55, 55, 55);
@@ -31,7 +36,6 @@
     height: 50px;
     background-color: rgb(35, 35, 35);
     padding: 10px;
-    /* border-top: 1px solid black; */
 }
 
 .ChannelView .input-bar {
@@ -53,6 +57,7 @@
     position: relative;
     scroll-behavior: smooth;
 }
+
 .ChannelView .messages div:last-child {
     margin-bottom: 0px;
 }
@@ -63,8 +68,8 @@
     margin-bottom: 15px;
     border-radius: 5px;
     position: relative;
-
 }
+
 .ChannelView .user-message .message-data {
     border-bottom: 1px solid lightgray;
     display: flex;
@@ -75,37 +80,40 @@
     color: white;
     text-decoration: none;
 }
+
 .ChannelView .user-message a:hover {
     color: rgb(185, 185, 185);
 }
+
 .ChannelView .message-user-info {
     display: flex;
     padding: 3px;
-
 }
+
 .ChannelView .time-stamp {
     margin-left: auto;
-
-    
 }
+
 .ChannelView .message-content {
     padding-top: 3px;
 }
 
-.ChannelView .typing-users{
-    color:#fff;
+.ChannelView .typing-users {
+    color: #fff;
     font-size: 8px;
 }
+
 .ChannelView .message-reactions {
     background-color: rgb(60, 60, 60);
-    background-color:royalblue;
+    background-color: royalblue;
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
     font-size: 14px;
     display: inline-block;
-    margin:1px;
+    margin: 1px;
 }
-.ChannelView .message-reactions:hover ,.ChannelView .message-reaction-option:hover{
+
+.ChannelView .message-reactions:hover, .ChannelView .message-reaction-option:hover {
     cursor: pointer;
 }
 
@@ -122,59 +130,68 @@
     z-index: 1000;
     color: white;
 }
+
 .ChannelView .messages-below:hover {
     cursor: pointer;
     background-color: rgb(45, 45, 45);
 }
+
 .ChannelView .mbt-enter {
     opacity: 0.01;
     transform: translateY(30px);
 }
+
 .ChannelView .mbt-enter.mbt-enter-active {
     opacity: 1;
     transform: translateY(0px);
     transition: all 200ms linear;
 }
+
 .ChannelView .mbt-leave {
     opacity: 1;
     transform: translateY(0px);
 }
+
 .ChannelView .mbt-leave.mbt-leave-active {
     opacity: 0.01;
     transform: translateY(30px);
     transition: all 200ms linear;
 }
 
-.ChannelView .reaction-options{
+.ChannelView .reaction-options {
     width: 130px;
     position: absolute;
     z-index: 1;
-    background-color:rgb(40, 40, 40);
+    background-color: rgb(40, 40, 40);
     border-radius: 5px;
 }
+
 .ChannelView .message-reaction-option {
     background-color: rgb(60, 60, 60);
-    background-color:red;
+    background-color: red;
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
     font-size: 14px;
     display: inline-block;
-    margin:2px;
+    margin: 2px;
 }
-.ChannelView .toggleReactions{
-    float:left;
+
+.ChannelView .toggleReactions {
+    float: left;
     background-color: rgb(60, 60, 60);
-    background-color:red;
+    background-color: red;
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
     font-size: 14px;
     display: inline-block;
-    margin:1px;
+    margin: 1px;
 }
+
 .ChannelView .userReactions {
     margin-left: 25px;
     min-height: 28px;
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;

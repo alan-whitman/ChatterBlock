@@ -16,6 +16,7 @@ class FriendsPopup extends Component {
     }
     handleClick = (event) => {
         event.preventDefault();
+
         if (event.type === 'contextmenu') {
             this.setState({ show: true }, () => {
                 document.addEventListener('click', this.closeMenu);
@@ -32,14 +33,15 @@ class FriendsPopup extends Component {
     }
 
     handleMouse = e => {
+
         this.setState({ x: e.clientX, y: e.clientY })
     }
 
     render(){
         const { friend } = this.props;
         return (
-            <div style={{height: '30px', marginLeft: '15px'}}>
-                <h3 onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</h3><br />
+            <div className="friend">
+                <div className="clickable" onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</div>
                 {this.state.show && <div className="popupmenu" style={{top: this.state.y, left: `calc(${this.state.x}px - 200px`}}>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${friend.id}`)}}>Profile</div>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/dm/${friend.username}`)}}>Send Message</div>
