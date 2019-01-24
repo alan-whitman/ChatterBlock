@@ -41,6 +41,7 @@
 .NavBar .channel-list .sub:hover {
     cursor: pointer;
     background-color: rgb(65, 65, 65);
+    background: royalblue;
 }
 
 .NavBar .channel-list a {
@@ -68,6 +69,7 @@
     margin-left: auto;
     text-align: center;
     min-width: 25px;
+    background: royalblue;
 }
 
 
@@ -240,4 +242,32 @@
 .NavBar .um-leave.um-leave-active {
     opacity: 0;
     transition: all 200ms ease-in;
+}
+.NavBar .popup-content{
+    border:0px!important;
+    border-radius:5px;
+    background: rgb(35,35,35) !important;
+} 
+.NavBar .addChannelPopUp{
+    background-color:rgb(35,35,35);
+    padding: 10px;
+}
+.NavBar .addChannelButton{
+    background-color: rgb(100, 100, 100);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    height: 30px;
+    margin-top:34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.NavBar .addChannelBar{
+    border-radius: 5px;
+    background-color: rgb(40, 40, 40);
+    outline: none;
+    color: white;
+    font-size: 15px;
+    margin-left: auto;
 }
