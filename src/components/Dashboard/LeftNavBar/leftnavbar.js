@@ -255,22 +255,24 @@ class NavBar extends Component {
                                 modal
                                 closeOnDocumentClick
                             >
-                                <div>
-                                    <h1 style={{ color: "green", textAlign: 'center' }}> Add Channel </h1>
+                                <div className="addChannelPopUp">
+                                    <h1 style={{ color: "#fff", textAlign: 'center' }}> Create a Channel </h1>
                                     <hr />
                                     <div>
                                         <div className="container">
                                             <div className="row">
                                                 <div className="col">
-                                                    <label style={{ color: "black", paddingRight: "10px" }}>Channel Name: </label>
+                                                    <label style={{ color: "#fff", paddingRight: "10px" }}>Channel Name: </label>
                                                     <input className="addChannelBar" value={this.state.channel_name} type="text" placeholder="Channel to be added" onChange={(e) => this.handleChannel(e.target.value)} />
                                                 </div>
                                                 <div className="col">
-                                                    <label style={{ color: "black", paddingRight: "10px" }}>Channel Description: </label>
+                                                    <label style={{ color: "#fff", paddingRight: "10px" }}>Channel Description: </label>
                                                     <input className="addChannelBar" value={this.state.channel_description} type="text" maxLength="100" placeholder="Channel Description" onChange={(e) => this.handleDescription(e.target.value)} />
-                                                    <span style={{ color: "blue", textAlign: "right", paddingRight: "35px" }}>{count}x</span>
+                                                    <span style={{ color: "royalblue", textAlign: "left", paddingLeft: "5px" }}>{count}x</span>
                                                 </div>
-                                                <button onClick={this.handleAddChannel}>Add</button>
+                                                <div className="">
+                                                <button className="addChannelButton" onClick={this.handleAddChannel}>Add</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -150,7 +150,7 @@
 }
 .ChannelView .message-reaction-option {
     background-color: rgb(60, 60, 60);
-    background-color:red;
+    /* background-color:red; */
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
     font-size: 14px;
@@ -160,7 +160,7 @@
 .ChannelView .toggleReactions{
     float:left;
     background-color: rgb(60, 60, 60);
-    background-color:red;
+    /* background-color:red; */
     padding: 1px 4px 1px 4px;
     border-radius: 5px;
     font-size: 14px;
