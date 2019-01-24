@@ -47,11 +47,15 @@
     padding-left: 3px;
     color: white;
     text-decoration: none;
-    display: block;
-    width: 170px;
+    display: flex;
+    justify-content: space-between;
+    width: 195px;
+
+}
+.NavBar .channel-list .channel-name {
+    max-width: 195px;
     white-space: nowrap;
     overflow: hidden;
-
 }
 .NavBar .channel-list a:hover {
     color: white;
@@ -59,6 +63,8 @@
 }
 .NavBar .channel-list .unseen-messages {
     border-left: 1px solid rgb(55, 55, 55);
+    display: inline-block;
+    margin-left: auto;
     text-align: center;
     min-width: 25px;
 }

@@ -122,6 +122,10 @@
     z-index: 1000;
     color: white;
 }
+.ChannelView .messages-below:hover {
+    cursor: pointer;
+    background-color: rgb(45, 45, 45);
+}
 .ChannelView .mbt-enter {
     opacity: 0.01;
     transform: translateY(30px);
