@@ -1,3 +1,7 @@
+.ChannelUsers {
+    height: 50vh;
+    overflow: scroll;
+}
 .ChannelUsers .channel-users-title {
     font-size: 22px;
     padding: 3px;
