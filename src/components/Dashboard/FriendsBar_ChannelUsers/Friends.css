@@ -1,7 +1,7 @@
 .Friends {
     overflow: auto;
     height: 50vh;
-    border-bottom: 1px solid rgb(25, 25, 25);
+    border-bottom: 1px solid rgb(35, 35, 35);;
 }
 
 .pending-friends {
