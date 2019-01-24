@@ -63,7 +63,6 @@
     height: calc(100vh - 100px);
     overflow: auto;
     padding: 10px;
-    scroll-behavior: smooth;
 }
 
 .DirectMessage .messages div:last-child {

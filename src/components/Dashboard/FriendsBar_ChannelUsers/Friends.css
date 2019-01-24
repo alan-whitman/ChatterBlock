@@ -1,23 +1,53 @@
 .Friends {
     overflow: auto;
     height: 50vh;
-    border-bottom: 1px solid black;
-}
-
-.online-friends {
-    margin-left: 10px;
-}
-.offline-friends {
-    margin-left: 10px;
-    
-}
-.friends-holder {
-    margin-left: 10px;
+    border-bottom: 1px solid rgb(25, 25, 25);
 }
 
 .pending-friends {
     display: flex;
-    
+}
+
+.Friends .add-friend {
+    position: fixed;
+    top: 17px;
+    right: 8px;
+}
+
+.Friends .add-friend:hover {
+    cursor: pointer;
+}
+
+.Friends .friends-title {
+    font-size: 22px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+.Friends .friends-header {
+    font-size: 22px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    background-color: rgb(55, 55, 55);
+}
+
+.Friends .friend {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgb(55, 55, 55);
+}
+
+.Friends .friend>div.clickable {
+    padding: 3px;
+    width: 100%;
+}
+
+.Friends .friend:hover {
+    background-color: rgb(65, 65, 65);
+    cursor: pointer;
 }
 
 .accept-reject {
@@ -33,4 +63,3 @@
     background-color: rgb(121, 121, 121);
     cursor: pointer;
 }
-

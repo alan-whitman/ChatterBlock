@@ -82,7 +82,6 @@ class NavBar extends Component {
                     creator_id: channel.creator_id,
                     user_id: channel.user_id,
                     unseenMessages: 0
-                    // subbed: channel.user_id ? true : false
                 }
             });
             let subbedChannels = channels.filter(channel => channel.user_id);
@@ -159,7 +158,10 @@ class NavBar extends Component {
             .map((channel, i) =>
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleUnSubChannel(channel.id)}>-</div>
-                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">{channel.channel_name}</Link>
+                    <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
+                        <div className="channel-name">
+                            {channel.channel_name}
+                        </div>
                         
                         <Transition
                             transitionName="um"
@@ -171,6 +173,7 @@ class NavBar extends Component {
                                 <div className="unseen-messages">{channel.unseenMessages}</div>
                             : null}
                         </Transition>
+                    </Link>
                 </div>
             )
     }
@@ -183,7 +186,9 @@ class NavBar extends Component {
                 <div key={channel.channel_name} className="channel-list">
                     <div className="sub" onClick={e => this.handleSubChannel(channel.id)}>+</div>
                     <Link to={`/dashboard/channel/${channel.channel_url}`} className="channel-link">
-                        {channel.channel_name}
+                        <div className="channel-name">
+                            {channel.channel_name}
+                        </div>
                     </Link>
                 </div>
             )

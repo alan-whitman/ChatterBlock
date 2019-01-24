@@ -4,6 +4,7 @@ import Transition from 'react-addons-css-transition-group';
 import InputBar from './InputBar';
 import ChannelViewMessage from './ChannelViewMessage';
 import { populateChannelUsers } from '../../../redux/reducer';
+import reconcileReactions from './reconcileReactions';
 import './channelview.css';
 
 class ChannelView extends Component {
@@ -30,25 +31,13 @@ class ChannelView extends Component {
         */
 
         this.props.socket.on('send initial response', initialResponse => {
-            console.log('receiving initial response...');
-            let messageReactions = {}
-            initialResponse.existingMessageReactions.forEach(reaction => {
-                if (!messageReactions[reaction.channel_message_id])
-                    messageReactions[reaction.channel_message_id] = {};
-                if (!messageReactions[reaction.channel_message_id][reaction.reaction_name])
-                    messageReactions[reaction.channel_message_id][reaction.reaction_name] = [];
-                messageReactions[reaction.channel_message_id][reaction.reaction_name].push(reaction.username);
-            });
-            initialResponse.existingMessages.forEach(message => {
-                if (messageReactions[message.id])
-                    message.reactions = messageReactions[message.id];
-            });
+            initialResponse.existingMessages = reconcileReactions(initialResponse.existingMessageReactions, initialResponse.existingMessages);
             this.props.populateChannelUsers(initialResponse.users);
-            this.setState({ 
-                messages: initialResponse.existingMessages, 
-                channelId: initialResponse.channelId, 
-                channelName: initialResponse.channelName, 
-                noSuchChannel: false 
+            this.setState({
+                messages: initialResponse.existingMessages,
+                channelId: initialResponse.channelId,
+                channelName: initialResponse.channelName,
+                noSuchChannel: false
             }, this.forceScrollDown);
             this.props.clearUnseenMessages(initialResponse.channelName);
         });
@@ -158,7 +147,7 @@ class ChannelView extends Component {
         });
 
         this.props.socket.on('no such channel', () => {
-            this.setState({ noSuchChannel: true })
+            this.setState({ noSuchChannel: true, initialLoadComplete: true })
         })
 
         /*
@@ -245,7 +234,7 @@ class ChannelView extends Component {
             this.props.socket.emit('create message', message);
         }
     }
-    likeMessage(messageId,val) {
+    likeMessage(messageId, val) {
         console.log(messageId, val)
         if (!this.props.user)
             return;
@@ -304,20 +293,20 @@ class ChannelView extends Component {
                     likeMessage={this.likeMessage}
                     key={i}
                     messageReactionKey={messageReactionKey}
-                    // likes={message.reactions ? message.reactions.like ? message.reactions.like.length : 0 : 0 }
+                // likes={message.reactions ? message.reactions.like ? message.reactions.like.length : 0 : 0 }
 
                 />
             )
         });
     }
-    
+
     render() {
         const componentLoadingStyles = this.state.initialLoadComplete ? { animationName: 'fadeIn' } : { opacity: 0 };
         const messagesLoadingStyles = this.state.initialLoadComplete ? { scrollBehavior: 'smooth' } : { scrollBehavior: 'initial' }
         return (
             <div className="ChannelView" style={componentLoadingStyles}>
                 <div className="header">
-                    <h2>#{this.state.noSuchChannel ? 'Channel Does\'t Exist' : this.state.channelName}</h2>
+                    <h2 className="channel-name">#{this.state.noSuchChannel ? 'Channel Does\'t Exist' : this.state.channelName}</h2>
                     <input
                         type="text"
                         name="messageFilter"
@@ -334,11 +323,11 @@ class ChannelView extends Component {
                         transitionLeaveTimeout={200}
                     >
                         {this.state.messagesBelow ?
-                            <div className="messages-below">New Messages Below</div>
+                            <div className="messages-below" onClick={e => this.forceScrollDown()}>New Messages Below</div>
                             : null}
                     </Transition>
                     {this.state.noSuchChannel ?
-                        <div className="user-message">This channel doesn't exist, but you can create it by clicking the + icon in the lefthand navigation bar</div>
+                        <div className="user-message">This channel doesn't exist, but you can create it by clicking the + icon in the lefthand navigation bar.</div>
                         :
                         this.renderMessages()
                     }
@@ -360,6 +349,5 @@ const mapStateToProps = state => {
         channelUsers
     }
 }
-
 
 export default connect(mapStateToProps, { populateChannelUsers })(ChannelView);

@@ -9,12 +9,42 @@
     width: 380px;
     border-radius: 5px;
     background-color: rgb(220, 220, 220);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin-bottom: 10px;
     min-height: 50px;
+    position: relative;
+    padding: 10px 20px 10px 20px;
+}
+.UserAlert .alert-text {
+    text-align: center;
+}
+.UserAlert .pin-message {
+    position: absolute;
+    top: 25px;
+    right: 5px;
+}
+.UserAlert .pin-message:hover {
+    cursor: pointer;
+    color: rgb(150, 150, 150);
+}
+.UserAlert .close-message {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+}
+.UserAlert .close-message:hover {
+    cursor: pointer;
+    color: rgb(150, 150, 150);
+}
 
+.UserAlert .alert-timer {
+    height: 10px;
+    margin-left: 40px;
+    margin-right: 40px;
+    background-color: rgb(65, 65, 65);
+    animation-delay: 0s;
+    animation-fill-mode: forwards; 
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
 }
 
 .ua-enter {
@@ -31,6 +61,15 @@
 
 }
 .ua-leave.ua-leave-active {
-    transform: translateY(-50px);
+    transform: translateY(-60px);
     transition: all 200ms linear;
+}
+
+@keyframes alert-timer-animation {
+    from {
+        max-width: 260px;
+    }
+    to {
+        max-width: 0px;
+    }
 }

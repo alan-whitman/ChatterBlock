@@ -6,30 +6,22 @@ import ChannelPopup from './ChannelPopup';
 class ChannelUsers extends Component {
     renderOnlineUsers() {
         return this.props.channelUsers.filter(user => user.online).map((user, i) => 
-            <li key={i}>
-                <ChannelPopup socket={this.props.socket} user={user} {...this.props} />
-            </li>
+            <ChannelPopup socket={this.props.socket} user={user} {...this.props} key={user.username} />
         )
     }
     renderOfflineUsers() {
         return this.props.channelUsers.filter(user => !user.online).map((user, i) => 
-            <li key={i}>
-                <ChannelPopup socket={this.props.socket} user={user} {...this.props} />
-            </li>
+            <ChannelPopup socket={this.props.socket} user={user} {...this.props} key={user.username} />
         )
     }
     render() {
         return (
-            <div className="ChannelUsers container">
-                <h4 style={{padding: "5px", borderBottom: "1px solid white", width: "93%"}}>Channel Users</h4>
-                <h6>Online</h6>
-                <ul>
-                    {this.renderOnlineUsers()}
-                </ul>
-                <h6>Offline Subscribers</h6>
-                <ul>
-                    {this.renderOfflineUsers()}
-                </ul>
+            <div className="ChannelUsers">
+                <div className="channel-users-title">Channel Users</div>
+                <div className="channel-users-header">Online</div>
+                {this.renderOnlineUsers()}
+                <div className="channel-users-header">Offline</div>
+                {this.renderOfflineUsers()}
             </div>
         )
     }
