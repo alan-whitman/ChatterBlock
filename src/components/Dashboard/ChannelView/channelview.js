@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import Transition from 'react-addons-css-transition-group';
 import InputBar from './InputBar';
 import ChannelViewMessage from './ChannelViewMessage';
-import { populateChannelUsers } from '../../../redux/reducer';
+import { populateChannelUsers, clearUnseenMessages } from '../../../redux/reducer';
 import reconcileReactions from './reconcileReactions';
 import './channelview.css';
+import { withRouter } from 'react-router-dom';
 
 class ChannelView extends Component {
     constructor(props) {
@@ -161,7 +162,7 @@ class ChannelView extends Component {
 
     componentDidMount() {
         const { channelName } = this.props.match.params;
-        this.props.socket.emit('join channel', channelName);
+        this.props.socket.emit('join channel', channelName);       
     }
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.match.params.channelName !== this.props.match.params.channelName) {
@@ -351,4 +352,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, { populateChannelUsers })(ChannelView);
+export default connect(mapStateToProps, { populateChannelUsers, clearUnseenMessages })(withRouter(ChannelView));

@@ -1,11 +1,11 @@
-const USER_LOGGED_IN = 'USER_LOGGED_IN'
-const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
-const USER_EDIT = 'USER_EDIT'
-const POPULATE_FRIENDS = 'POPULATE_FRIENDS'
-const POPULATE_CHANNEL_USERS = 'POPULATE_CHANNEL_USERS'
-const POPULATE_ACTIVE_DMS = 'POPULATE_ACTIVE_DMS'
-const CREATE_ALERT_MESSAGE = 'CREATE_ALERT_MESSAGE'
-
+const USER_LOGGED_IN = 'USER_LOGGED_IN';
+const USER_LOGGED_OUT = 'USER_LOGGED_OUT';
+const USER_EDIT = 'USER_EDIT';
+const POPULATE_FRIENDS = 'POPULATE_FRIENDS';
+const POPULATE_CHANNEL_USERS = 'POPULATE_CHANNEL_USERS';
+const POPULATE_ACTIVE_DMS = 'POPULATE_ACTIVE_DMS';
+const CREATE_ALERT_MESSAGE = 'CREATE_ALERT_MESSAGE';
+const CLEAR_UNSEEN_MESSAGES = 'CLEAR_UNSEEN_MESSAGES';
 
 const initialState = {
     isAuthenticated: false,
@@ -13,11 +13,13 @@ const initialState = {
     friends: [],
     channelUsers: [],
     activeDms: [],
-    alertMessage: {}
+    alertMessage: {},
+    channelToClear: ''
 
 }
 
 let alertCount = 0;
+let clearChannelFlag = true;
 
 export default function reducer(state = initialState, action) {
     switch (action.type) {
@@ -35,7 +37,10 @@ export default function reducer(state = initialState, action) {
             return { ...state, activeDms: action.payload };
         case CREATE_ALERT_MESSAGE:
             alertCount++;
-            return { ...state, alertMessage: {message: action.payload, alertCount }};
+            return { ...state, alertMessage: { message: action.payload, alertCount } };
+        case CLEAR_UNSEEN_MESSAGES:
+            clearChannelFlag = !clearChannelFlag
+            return { ...state, channelToClear: action.payload + '&' + clearChannelFlag }
         default:
             return state;
     }
@@ -86,5 +91,12 @@ export function createAlertMessage(alertMessage) {
     return {
         type: CREATE_ALERT_MESSAGE,
         payload: alertMessage
+    }
+}
+
+export function clearUnseenMessages(channelToClear) {
+    return {
+        type: CLEAR_UNSEEN_MESSAGES,
+        payload: channelToClear
     }
 }

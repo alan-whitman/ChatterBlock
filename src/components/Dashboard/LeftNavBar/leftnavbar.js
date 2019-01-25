@@ -102,9 +102,9 @@ class NavBar extends Component {
         }).catch(err => console.error(err));
     }
     componentDidUpdate(prevProps) {
-        if (prevProps.channelToClear !== this.props.channelToClear) {
+        if (this.props.channelToClear !== prevProps.channelToClear) {
             let subbedChannels = [...this.state.subbedChannels];
-            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === this.props.channelToClear);
+            const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === this.props.channelToClear.split('&')[0]);
             if (channelIndex !== -1) {
                 subbedChannels[channelIndex].unseenMessages = 0;
                 this.setState({subbedChannels});
@@ -334,11 +334,12 @@ class NavBar extends Component {
 }
 
 function mapStateToProps(state) {
-    let { user, isAuthenticated, activeDms } = state
+    let { user, isAuthenticated, activeDms, channelToClear } = state
     return {
         user,
         isAuthenticated,
-        activeDms
+        activeDms,
+        channelToClear
     }
 }
 
