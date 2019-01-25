@@ -118,6 +118,9 @@ module.exports = {
             if (!socket.request.session.user)
                 return socket.emit('send user feedback', 'You must be logged in to subscribe to channels.');
             const { id: myId, username: myUsername } = socket.request.session.user;
+            const checkResponse = await db.channels.checkForSub(myId, channelId);
+            if (checkResponse[0])
+                return socket.emit('send user feedback', 'You are already subscribed to that channel');
             const timeStamp = Date.now();
             const response = await db.channels.subAndGetName(channelId, myId, timeStamp);
             const roomName = response[0].channel_url;

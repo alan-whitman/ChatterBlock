@@ -39,6 +39,8 @@ class NavBar extends Component {
         this.props.socket.on('successfully subbed to channel', channelId => {
             let { channels, subbedChannels } = this.state;
             const channelIndex = channels.findIndex(channel => channel.id === channelId);
+            if (!channels[channelIndex])
+                return;
             subbedChannels.push(channels[channelIndex]);
             subbedChannels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             channels = channels.filter(channel => channel.id !== channelId)
@@ -47,6 +49,8 @@ class NavBar extends Component {
         this.props.socket.on('successfully unsubbed to channel', channelId => {
             let { channels, subbedChannels } = this.state;
             const channelIndex = subbedChannels.findIndex(channel => channel.id === channelId);
+            if (!subbedChannels[channelIndex])
+                return;
             channels.push(subbedChannels[channelIndex]);
             channels.sort((a, b) => a.channel_name.toLowerCase() < b.channel_name.toLowerCase() ? -1 : 1)
             subbedChannels = subbedChannels.filter(channel => channel.id !== channelId);
