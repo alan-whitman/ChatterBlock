@@ -4,7 +4,7 @@ const session = require('express-session');
 const massive = require('massive');
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http, {pingTimeout: 15000});
+const io = require('socket.io')(http, {pingTimeout: 15000, rejectUnauthorized: false});
 
 
 require('dotenv').config();
