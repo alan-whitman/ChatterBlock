@@ -6,7 +6,6 @@ import ChannelViewMessage from './ChannelViewMessage';
 import { populateChannelUsers, clearUnseenMessages } from '../../../redux/reducer';
 import reconcileReactions from './reconcileReactions';
 import './channelview.css';
-import { withRouter } from 'react-router-dom';
 
 class ChannelView extends Component {
     constructor(props) {
@@ -352,4 +351,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, { populateChannelUsers, clearUnseenMessages })(withRouter(ChannelView));
+export default connect(mapStateToProps, { populateChannelUsers, clearUnseenMessages })(ChannelView);
