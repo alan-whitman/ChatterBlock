@@ -17,17 +17,10 @@ let socket;
 class Dashboard extends Component {
     constructor() {
         super();
-        this.state = {
-            channelToClear: ''
-        }
         socket = io(socketPath + ':5004');
         socket.on('send user feedback', feedback => {
             this.props.createAlertMessage(feedback);
-        })
-        this.clearUnseenMessages = this.clearUnseenMessages.bind(this);
-    }
-    clearUnseenMessages(channelName) {
-        this.setState({channelToClear: channelName})
+        });
     }
     showNav = (e, a) => {
         var x = document.getElementById(e);
@@ -38,15 +31,13 @@ class Dashboard extends Component {
         } else {
             x.style.display = "none";
         }
-
-
     }
     render() {
         return (
             <Route path="/dashboard" render={(props) => {
                 return (
                     <div className="Dashboard">
-                        <NavBar socket={socket} channelToClear={this.state.channelToClear} />
+                        <NavBar socket={socket} />
                         <div className="center-container">
                             <Switch>
                                 <Route path="/dashboard" exact component={Recent} />
@@ -54,7 +45,6 @@ class Dashboard extends Component {
                                     <ChannelView
                                         {...props}
                                         socket={socket}
-                                        clearUnseenMessages={this.clearUnseenMessages}
                                     />}
                                 />
                                 <Route path="/dashboard/profile/:id" component={Profile} />
