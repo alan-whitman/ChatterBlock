@@ -69,7 +69,10 @@ class NavBar extends Component {
         this.props.socket.on('new message in subbed channel', channelName => {
             let subbedChannels = [...this.state.subbedChannels];
             const channelIndex = subbedChannels.findIndex(channel => channel.channel_name === channelName);
-            subbedChannels[channelIndex].unseenMessages++;
+            if (subbedChannels[channelIndex].unseenMessages)
+                subbedChannels[channelIndex].unseenMessages++;
+            else
+                subbedChannels[channelIndex].unseenMessages = 1;
             this.setState({subbedChannels});
         });
     }

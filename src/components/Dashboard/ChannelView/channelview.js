@@ -266,6 +266,7 @@ class ChannelView extends Component {
     /*
         Render Methods
     */
+
     renderMessages() {
         if (!this.state.messages[0])
             return <div className="user-message">No messages in this channel yet. Start chatting!</div>
