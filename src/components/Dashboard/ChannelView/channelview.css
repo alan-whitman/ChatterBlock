@@ -68,6 +68,11 @@
     margin-bottom: 15px;
     border-radius: 5px;
     position: relative;
+    animation-duration: 0.3s;
+    animation-delay: 0s;
+    animation-direction: normal;
+    animation-iteration-count: 1;
+    animation-name: fadeIn;
 }
 
 .ChannelView .user-message .message-data {
