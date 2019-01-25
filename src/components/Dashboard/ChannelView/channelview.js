@@ -235,7 +235,6 @@ class ChannelView extends Component {
         }
     }
     likeMessage(messageId, val) {
-        console.log(messageId, val)
         if (!this.props.user)
             return;
         this.props.socket.emit('react to message', messageId, this.state.channelId, val);

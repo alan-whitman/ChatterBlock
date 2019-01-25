@@ -11,13 +11,12 @@ import { connect } from 'react-redux';
 import { createAlertMessage } from '../../redux/reducer';
 import './dashboard.css';
 import io from 'socket.io-client';
-const socketPath = window.location.host.split(':')[0];
 let socket;
 
 class Dashboard extends Component {
     constructor() {
         super();
-        socket = io(socketPath + ':5004');
+        socket = io();
         socket.on('send user feedback', feedback => {
             this.props.createAlertMessage(feedback);
         });
