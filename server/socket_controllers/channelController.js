@@ -1,7 +1,7 @@
 module.exports = {
-    async joinChannel(db, io, socket, clientLookupDictionary, channelName) {
+    async joinChannel(db, io, socket, clientLookupDictionary, channelUrl) {
         try {
-            let response = await db.channels.getChannelIdByUrl(channelName);
+            let response = await db.channels.getChannelIdByUrl(channelUrl);
             if (!response[0])
                 return socket.emit('no such channel');
             let initialChannelResponse = {};
@@ -13,14 +13,14 @@ module.exports = {
                 const lastViewTime = await db.channels.getUpdateLastViewTime(myId, channelId, time);
                 initialChannelResponse.lastViewTime = lastViewTime[0] ? lastViewTime[0].last_view_time : Date.now();
             }
-            socket.request.session.currentRoom = channelName;
+            socket.request.session.currentRoom = channelUrl;
             initialChannelResponse.existingMessages = await db.channels.getChannelMessages(channelId);
             initialChannelResponse.existingMessageReactions = await db.channels.getChannelMessageReactions(channelId);
             initialChannelResponse.channelId = channelId;
             initialChannelResponse.channelName = name;
-            socket.join(channelName);
+            socket.join(channelUrl);
             let usersInChannel;
-            io.in(channelName).clients(async (err, clients) => {
+            io.in(channelUrl).clients(async (err, clients) => {
                 // get list of online users in the channel, filter out ones who are not in clientDictionary, and therefore are guests and won't be displayed
                 usersInChannel = clients.map(client => clientLookupDictionary[client])
                 usersInChannel = usersInChannel.filter(user => user);
@@ -49,7 +49,7 @@ module.exports = {
                 socket.emit('send initial response', initialChannelResponse);
                 if (socket.request.session.user) {
                     const mySubStatus = subbedUsers.findIndex(user => user.id === socket.request.session.user.id) === -1 ? false : true;
-                    socket.to(channelName).emit('user joined channel', {
+                    socket.to(channelUrl).emit('user joined channel', {
                         username: socket.request.session.user.username,
                         id: socket.request.session.user.id,
                         subbed: mySubStatus,

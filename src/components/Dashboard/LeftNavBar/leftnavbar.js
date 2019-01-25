@@ -133,6 +133,7 @@ class NavBar extends Component {
             channel_description
         }
         this.props.socket.emit('create new channel', newChannel)
+        this.setState({channel_name: '', channel_description: ''});
     }
     updateInput(e) {
         const { name, value } = e.target;

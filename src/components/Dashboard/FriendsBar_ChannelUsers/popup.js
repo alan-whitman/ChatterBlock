@@ -40,7 +40,7 @@ class FriendsPopup extends Component {
     render(){
         const { friend } = this.props;
         return (
-            <div className="friend">
+            <div className="friend noselect">
                 <div className="clickable" onMouseDown={e=>this.handleMouse(e)} onContextMenu={this.handleClick}>{friend.username}</div>
                 {this.state.show && <div className="popupmenu" style={{top: this.state.y, left: `calc(${this.state.x}px - 200px`}}>
                     <div className="popup-sections" onClick={() => {this.props.history.push(`/dashboard/profile/${friend.id}`)}}>Profile</div>
