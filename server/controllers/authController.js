@@ -50,7 +50,7 @@ module.exports = {
         try {
             const db = req.app.get('db')
             const { loginEmail: email, loginPassword: pw } = req.body
-            let userResponse = await db.getUserByEmail(email)
+            let userResponse = await db.user.getUserByEmail(email)
             let user = userResponse[0]
             if (!user) {
                 return res.status(401).send('Email not found')
@@ -84,6 +84,8 @@ module.exports = {
     },
     async getCurrentUser(req, res) {
         try {
+            if (!req.session.user)
+                return;
             const db = req.app.get('db')
             //SUBBED CHANNELS
             let userSubChannels = await db.getAllSubscibedChannels(req.session.user.id)

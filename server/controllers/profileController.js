@@ -4,7 +4,7 @@ module.exports={
             const db = req.app.get('db')
             const {id} = req.params
             //USER DATA
-            let userData = await db.getUserById(id)
+            let userData = await db.user.getUserById(id)
             //SUBBED CHANNELS
             let userSubChannels = await db.getAllSubscibedChannels(id)
             //FRIENDS
@@ -13,7 +13,6 @@ module.exports={
             let postMeta = await db.profile.getPostMeta(id)
             // RECENT MESSAGES
             let profileRecentMessages = await db.profile.getProfileRecentMessages(id)
-                // console.log(userData, userSubChannels, userFriends,postMeta, profileRecentMessages)
             // create new object for frontend
             function buildJSON(userData, userSubChannels, userFriends,postMeta, profileRecentMessages){
                 let obj = {}
