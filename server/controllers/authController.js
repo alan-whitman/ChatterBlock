@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 module.exports = {
-    register: async (req, res) => {
+    async register(req, res) {
         try {
             const { registerUsername: username, registerEmail: email, registerPassword: pw, user_image, about_text } = req.body;
             var reg = /[^a-zA-Z0-9\_\|]+/;
@@ -12,19 +12,17 @@ module.exports = {
                 return res.status(409).send("Usernames must be between 4 and 16 characters long.");
             }
             const db = req.app.get('db')
-             const emailCheck = await db.getUserByEmail(email)
+            const emailCheck = await db.user.getUserByEmail(email)
             if (emailCheck[0])
                 return res.status(409).send('This email address is already registered.')
-            const usernameCheck = await db.getUserByUsername(username)
+            const usernameCheck = await db.user.getUserByUsername(username)
             if (usernameCheck[0])
                 return res.status(409).send('That username is taken');
-
             if (pw.length < 4)
                 return res.status(409).send('Passwords must be at least 4 characters long');
-
             const salt = bcrypt.genSaltSync(10)
             const hash = bcrypt.hashSync(pw, salt)
-            let response = await db.createUser({ username, email, hash, user_image, about_text })
+            let response = await db.auth.createUser({ username, email, hash, user_image, about_text })
             let newUser = response[0]
             delete newUser.pw
             req.session.user = newUser
@@ -44,13 +42,11 @@ module.exports = {
 
             buildJSON()
 
-        } catch (error) {
-
-            console.log('error registering account:', error)
-
+        } catch (err) {
+            console.log('error registering account:', err)
         }
     },
-    login: async (req, res) => {
+    async login(req, res) {
         try {
             const db = req.app.get('db')
             const { loginEmail: email, loginPassword: pw } = req.body
@@ -86,7 +82,7 @@ module.exports = {
             res.status(500).send(error)
         }
     },
-    getCurrentUser: async (req, res) => {
+    async getCurrentUser(req, res) {
         try {
             const db = req.app.get('db')
             //SUBBED CHANNELS
@@ -103,24 +99,24 @@ module.exports = {
             }
 
             buildJSON(req.session.user, userSubChannels, userFriends)
-        } catch (error) {
-
+        } catch (err) {
+            console.log(err);
         }
     },
-    logout: (req, res) => {
-        // console.log('destorying session')
-        req.session.destroy()
-        // console.log('session destroyed')
-        res.sendStatus(200)
+    logout(req, res) {
+        try {
+            req.session.destroy()
+            res.sendStatus(200)
+        } catch(err) {
+            console.log(err);
+        }
     },
-    update: async (req, res) => {
+    async update(req, res) {
         try {
             const db = req.app.get('db')
-            // console.log("right here------",req.body)
             const { id } = req.params
             const { username, email, user_image, about_text } = req.body
-            // console.log(id, username, email, user_image, about_text)
-            let updateUser = await db.updateUser({ id, username, email, user_image, about_text })
+            let updateUser = await db.user.updateUser({ id, username, email, user_image, about_text })
 
             req.session.user = updateUser[0]
 
@@ -129,7 +125,6 @@ module.exports = {
             //FRIENDS
             let userFriends = await db.getUserFriends(req.session.user.id)
 
-            // console.log(99999999,updateUser)
             function buildJSON(userData, userSubChannels, userFriends) {
                 let obj = {}
                 obj.user = userData;
@@ -140,12 +135,8 @@ module.exports = {
 
             buildJSON(updateUser[0], userSubChannels, userFriends)
 
-        } catch (error) {
-            console.log('error updating account:', error)
-            res.status(500).send(error)
+        } catch (err) {
+            console.log('error updating account:', err)
         }
     },
-    // deactivate: (req,res) =>{
-
-    // }
 }

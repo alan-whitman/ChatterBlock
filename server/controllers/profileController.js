@@ -10,9 +10,9 @@ module.exports={
             //FRIENDS
             let userFriends = await db.getUserFriends(id)
             // POST META DATA
-            let postMeta = await db.getPostMeta(id)
+            let postMeta = await db.profile.getPostMeta(id)
             // RECENT MESSAGES
-            let profileRecentMessages = await db.getProfileRecentMessages(id)
+            let profileRecentMessages = await db.profile.getProfileRecentMessages(id)
                 // console.log(userData, userSubChannels, userFriends,postMeta, profileRecentMessages)
             // create new object for frontend
             function buildJSON(userData, userSubChannels, userFriends,postMeta, profileRecentMessages){

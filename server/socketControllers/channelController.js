@@ -166,7 +166,7 @@ module.exports = {
             if (channelResponse[0])
                 return socket.emit('channel creation error', 'That channel name or its corresponding url is already in use');
             // console.log('channel passed valication checks');
-            let response = await db.createChannel({ channel_name, creator_id, channel_description, channel_url })
+            let response = await db.channels.createChannel({ channel_name, creator_id, channel_description, channel_url })
             newChannel = response[0];
             return io.emit('new channel created', newChannel);
         } catch(err) {
