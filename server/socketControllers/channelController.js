@@ -153,13 +153,13 @@ module.exports = {
                 return socket.emit('channel creation error', 'Please register or log in to create channels.');
             const { id: creator_id } = socket.request.session.user;
             const { channel_name, channel_description } = newChannel;
-            const reg = /[^a-zA-Z0-9\_\ \|]+/;
+            const reg = /[^a-zA-Z0-9\_@#$%^&*!?.\ \|]+/;
             if (reg.test(channel_name)) {
-                return socket.emit('channel creation error', 'Channel names must have only alphanumeric characters, spaces, and underscores.');
+                return socket.emit('channel creation error', 'Channel names must have only alphanumeric characters, spaces, and the following symbols: _@#$%^&*!?.');
             }
             const channel_url = channel_name.toLowerCase().replace(/ /g, '_');
-            if (channel_name.length < 4 || channel_name.length > 20)
-                return socket.emit('channel creation error', 'Channel names must be between 4 and 20 characters in length');
+            if (channel_name.length < 3 || channel_name.length > 25)
+                return socket.emit('channel creation error', 'Channel names must be between 3 and 25 characters in length');
             let channelResponse = await db.channels.checkChannelNameAndUrl(channel_name, channel_url);
             if (channelResponse[0])
                 return socket.emit('channel creation error', 'That channel name or its corresponding url is already in use');

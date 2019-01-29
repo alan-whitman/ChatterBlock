@@ -4,8 +4,18 @@
     border-bottom: 1px solid rgb(35, 35, 35);;
 }
 
-.pending-friends {
+
+.Friends .pending-friends {
     display: flex;
+}
+.Friends .pending-friend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid rgb(55, 55, 55);
+    padding: 3px;
+
 }
 
 .Friends .add-friend {

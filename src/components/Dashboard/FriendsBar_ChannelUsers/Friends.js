@@ -97,13 +97,13 @@ class Friends extends Component {
         const pendingFriends = this.state.pendingFriends
             .sort((a, b) => a.username < b.username ? -1 : 1)
             .map((friend, i) =>
-                <li key={i}>
+                <div key={friend.username}>
                     {friend.username}
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+                    <div className="pending-friend">
                         <span onClick={e => this.acceptFriend({ id: friend.id, username: friend.username })} className="accept-reject">Accept</span>&nbsp;&nbsp;
                         <span onClick={e => this.rejectFriend({ id: friend.id, username: friend.username })} className="accept-reject">Reject</span>
                     </div>
-                </li>
+                </div>
             );
         return (
             <div>
@@ -123,9 +123,7 @@ class Friends extends Component {
                         <div className="friends-header">
                             Pending Requests
                         </div>
-                        <ul className="pending-friends">
-                            {pendingFriends}
-                        </ul>
+                        {pendingFriends}
                     </div>
                 : null}
                 <div className="friends-header">Online</div>
