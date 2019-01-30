@@ -217,20 +217,20 @@
 
 .NavBar .list-enter {
     max-height: 0px;
-    transform: translateX(-200px);
+    /* transform: translateX(-200px); */
 }
 .NavBar .list-enter.list-enter-active {
     max-height: 26px;
-    transform: translateX(0px);
+    /* transform: translateX(0px); */
     transition: all 200ms linear;
 }
 .NavBar .list-leave {
     max-height: 26px;
-    transform: translateX(0px);
+    /* transform: translateX(0px); */
 }
 .NavBar .list-leave.list-leave-active {
     max-height: 0px;
-    transform: translateX(-200px);
+    /* transform: translateX(-200px); */
     transition: all 200ms linear;
 }
 
